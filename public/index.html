@@ -20,18 +20,21 @@
     <label>공개여부(의미불명)<input type="text" ng-model="ServerSettings.Private"></label>
   </fieldset>
   <fieldset id="gameDetailSettings">
+    <legend>게임 상세 설정</legend>
     <label>Teams<input type="text" ng-model="ServerSettins.NbMaxPlayer"></label>
-    <label>시작 점수<input type="number" min="1000" step="1000" ng-model="ServerSettings.InitMoney | parseInt"></label>
-    <label>승리 점수<input type="number" min="1000" step="1000" ng-model="ServerSettings.ScoreLimit | parseInt"></label>
-    <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit | parseInt"></label>
+    <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney | number"></label>
+    <label>승리 점수<input type="number" step="1000" ng-model="ServerSettings.ScoreLimit | number"></label>
+    <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit | number"></label>
     <label>점수 획득 속도<input type="text" ng-model="ServerSettings.IncomeRate"></label>
   </fieldset>
   <fieldset id="contraints">
+    <legend>Contraints</legend>
     <label>Thematic<input type="text" ng-model="ServerSettings.ThematicConstraint"></label>
     <label>Nations / Coalitions<input type="text" ng-model="ServerSettings.NationConstraint"></label>
     <label>Era<input type="text" ng-model="ServerSettings.DateConstraint"></label>
   </fieldset>
   <fieldset id="advancedSettings">
+    <legend>고급 설정</legend>
     <label>수동 명령(/없이)<input type="text"><button>미구현</button></label>
     <button>게임을 시작하기(미구현)</button>
     <button>카운트다운 취소(미구현)</button>
