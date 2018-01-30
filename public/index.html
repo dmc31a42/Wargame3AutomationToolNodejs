@@ -10,9 +10,40 @@
     <div id="tempServerSettingsView">{{ServerSettings}}</div>
     <div id="tempPlayersView">{{players}}</div>
   </div>
-  <div class="gameSetting">
+  <fieldset id="gameSettings">
+    <legend>게임 설정</legend>
     <label>방 이름<input type="text" ng-model="ServerSettings.ServerName"></label>
-  </div>
+    <label>방 비밀번호<input type="text" ng-model="ServerSettings.Password"></label>
+    <label>전장(Map)<input type="text" ng-model="ServerSettings.Map"></label>
+    <label>게임 모드<input type="text" ng-model="ServerSettings.VictoryCond"></label>
+    <label>상대<input type="text" ng-model="ServerSettings.GameType"></label>
+    <label>공개여부(의미불명)<input type="text" ng-model="ServerSettings.Private"></label>
+  </fieldset>
+  <fieldset id="gameDetailSettings">
+    <label>Teams<input type="text" ng-model="ServerSettins.NbMaxPlayer"></label>
+    <label>시작 점수<input type="number" min="1000" step="1000" ng-model="ServerSettings.InitMoney"></label>
+    <label>승리 점수<input type="text" min="1000" step="1000" ng-model="ServerSettings.ScoreLimit"></label>
+    <label>제한 시간(분)<input type="text" step="5" ng-model="ServerSettings.TimeLimit/60"></label>
+    <label>점수 획득 속도<input type="text" ng-model="ServerSettings.IncomeRate"></label>
+  </fieldset>
+  <fieldset id="contraints">
+    <label>Thematic<input type="text" ng-model="ServerSettings.ThematicConstraint"></label>
+    <label>Nations / Coalitions<input type="text" ng-model="ServerSettings.NationConstraint"></label>
+    <label>Era<input type="text" ng-model="ServerSettings.DateConstraint"></label>
+  </fieldset>
+  <fieldset id="advancedSettings">
+    <label>수동 명령(/없이)<input type="text" ng-model=""><button>미구현</button></label>
+    <button>게임을 시작하기(미구현)</button>
+    <button>카운트다운 취소(미구현)</button>
+    <label>자동 시작 조건(계산해야함)<input type="text" ng-model=""></label>
+    <label>자동시작 필요 인원수<input type="text" ng-model="ServerSettings.NbMinPlayer"></label>
+    <label>Countdown<input type="text" ng-model="ServerSettings.WarmupCountdown"></label>
+    <label>전개 시간<input type="text" ng-model="ServerSettings.DeploiementTimeMax"></label>
+    <label>최대 허용 불러오는 시간<input type="text" ng-model="ServerSettings.LoadingTimeMax"></label>
+    <label>디브리핑 시간<input type="text" ng-model="ServerSettings.DebriefingTimeMax"></label>
+    <label>팀간 최대 허용 인원수 차이(계산)<input type="text" ng-model="></label>
+    <label>팀당 최대 인원수(계산)<input type="text" ng-model=""></label>
+  </fieldset>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
