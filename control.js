@@ -79,7 +79,7 @@ server.listen(3000, function() {
 
 Tail = require('tail').Tail;
 
-tail = new Tail("serverlog.txt", {
+tail = new Tail("../serverlog.txt", {
 	separator: '\n',
 	fromBeginning: true,
 	follow: true
