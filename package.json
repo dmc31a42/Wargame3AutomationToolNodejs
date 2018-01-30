@@ -1,0 +1,17 @@
+{
+  "name": "control",
+  "version": "0.0.1",
+  "description": "Wargame server control =========================== A Python 3 script for Wargame server automation",
+  "main": "control.js",
+  "dependencies": {
+    "express": "~4.16.2",
+    "socket.io": "~2.0.4",
+    "tail": "~1.2.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "BSD"
+}
