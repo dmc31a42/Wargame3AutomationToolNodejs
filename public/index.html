@@ -10,6 +10,9 @@
     <div id="tempServerSettingsView">{{ServerSettings}}</div>
     <div id="tempPlayersView">{{players}}</div>
   </div>
+  <div class="gameSetting">
+    <label>방 이름<input type="text" ng-model="{{ServerSettings.ServerName}}"></label>
+  </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
