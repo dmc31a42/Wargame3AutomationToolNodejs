@@ -23,7 +23,7 @@
     <label>Teams<input type="text" ng-model="ServerSettins.NbMaxPlayer"></label>
     <label>시작 점수<input type="number" min="1000" step="1000" ng-model="ServerSettings.InitMoney"></label>
     <label>승리 점수<input type="text" min="1000" step="1000" ng-model="ServerSettings.ScoreLimit"></label>
-    <label>제한 시간(분)<input type="text" step="5" ng-model="ServerSettings.TimeLimit"></label>
+    <label>제한 시간(분)<input type="text" step="5" ng-model="ServerSettings.TimeLimit/60"></label>
     <label>점수 획득 속도<input type="text" ng-model="ServerSettings.IncomeRate"></label>
   </fieldset>
   <fieldset id="contraints">
