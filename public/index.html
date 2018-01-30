@@ -21,9 +21,9 @@
   </fieldset>
   <fieldset id="gameDetailSettings">
     <label>Teams<input type="text" ng-model="ServerSettins.NbMaxPlayer"></label>
-    <label>시작 점수<input type="number" min="1000" step="1000" ng-model="parseInt(ServerSettings.InitMoney)"></label>
-    <label>승리 점수<input type="number" min="1000" step="1000" ng-model="parseInt(ServerSettings.ScoreLimit)"></label>
-    <label>제한 시간(분)<input type="number" step="5" ng-model="parseInt(ServerSettings.TimeLimit)"></label>
+    <label>시작 점수<input type="number" min="1000" step="1000" ng-model="ServerSettings.InitMoney | parseInt"></label>
+    <label>승리 점수<input type="number" min="1000" step="1000" ng-model="ServerSettings.ScoreLimit | parseInt"></label>
+    <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit | parseInt"></label>
     <label>점수 획득 속도<input type="text" ng-model="ServerSettings.IncomeRate"></label>
   </fieldset>
   <fieldset id="contraints">

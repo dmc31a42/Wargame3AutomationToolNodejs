@@ -15,6 +15,8 @@ app.run(['socket','$rootScope',
       $rootScope.ServerSettings = data.ServerSettings;
       $rootScope.players = data.players;
     });
+
+
 }]);
 
 
@@ -40,4 +42,10 @@ app.factory('socket', function ($rootScope) {
       })
     }
   };
+});
+
+app.filter('parseInt',function(){
+  return function(input){
+    return parseInt(input);
+  }
 });
