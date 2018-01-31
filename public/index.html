@@ -15,14 +15,17 @@
     <label>
       게임 모드
       <select ng-model="ServerSettings.VictoryCond" ng-options="VictoryCond.value as VictoryCond.name for VictoryCond in Wargame3SelectOptions.VictoryCond">
+      </select>
     </label>
     <label>
       상대
       <select ng-model="ServerSettings.GameType" ng-options="GameType.value as GameType.name for GameType in Wargame3SelectOptions.GameType">
+      </select>
     </label>
     <label>
       공개여부(의미불명)
       <select ng-model="ServerSettings.Private" ng-options="Private.value as Private.name for Private in Wargame3SelectOptions.Private">
+      </select>
     </label>
   </fieldset>
   <fieldset id="gameDetailSettings">
@@ -30,6 +33,7 @@
     <label>
       Teams
       <select ng-model="ServerSettings.NbMaxPlayer" ng-options="Teams.value as Teams.name for Teams in Wargame3SelectOptions.Teams">
+      </select>
     </label>
     <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney"></label>
     <label>승리 점수<input type="number" step="1000" ng-model="ServerSettings.ScoreLimit"></label>
@@ -37,6 +41,7 @@
     <label>
       점수 획득 속도
       <select ng-model="ServerSettings.IncomeRate" ng-options="IncomeRate.value as IncomeRate.name for IncomeRate in Wargame3SelectOptions.IncomeRate">
+      </select>
     </label>
   </fieldset>
   <fieldset id="contraints">
@@ -44,13 +49,16 @@
     <label>
       Thematic
       <select ng-model="ServerSettings.ThematicConstraint" ng-options="ThematicConstraint.value as ThematicConstraint.name for ThematicConstraint in Wargame3SelectOptions.ThematicConstraint">
+      </select>
     </label>
     <label>
       Nations / Coalitions
       <select ng-model="ServerSettings.NationConstraint" ng-options="NationConstraint.value as NationConstraint.name for NationConstraint in Wargame3SelectOptions.NationConstraint">
+      </select>
     <label>
       Era
       <select ng-model="ServerSettings.DateConstraint" ng-options="DateConstraint.value as DateConstraint.name for DateConstraint in Wargame3SelectOptions.DateConstraint">
+      </select>
     </label>
   </fieldset>
   <fieldset id="advancedSettings">
@@ -61,6 +69,7 @@
     <label>
       자동 시작 조건(계산해야함)
       <select ng-model="AutoLaunchCond" ng-options="AutoLaunchCond.value as AutoLaunchCond.name for AutoLaunchCond in Wargame3SelectOptions.AutoLaunchCond">
+      </select>
     </label>
     <label>자동시작 필요 인원수<input type="text" ng-model="ServerSettings.NbMinPlayer"></label>
     <label>Countdown<input type="text" ng-model="ServerSettings.WarmupCountdown"></label>
