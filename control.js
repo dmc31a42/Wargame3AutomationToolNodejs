@@ -27,15 +27,14 @@ io.on('connection', function(socket) {
     socket.userid = data.userid;
 
     // 접속된 모든 클라이언트에게 메시지를 전송한다
-    io.emit('login', data.name );
+    //io.emit('login', data.name );
 
-    setInterval(function(){
-      var msg = {
-          ServerSettings: ServerSettings,
-          players: players
-            };
-      io.emit('chat',msg);
-        },1000);
+    var msg = {
+      ServerSettings: ServerSettings,
+      players: players
+    };
+    socket.emit('chat',msg);
+
   });
 
   // 클라이언트로부터의 메시지가 수신되면
@@ -57,7 +56,7 @@ io.on('connection', function(socket) {
     // socket.emit('s2c chat', msg);
 
     // 접속된 모든 클라이언트에게 메시지를 전송한다
-    io.emit('chat', msg);
+    //io.emit('chat', msg);
 
     // 특정 클라이언트에게만 메시지를 전송한다
     // io.to(id).emit('s2c chat', data);
@@ -90,6 +89,11 @@ tail.on("line", function(data) {
     var RegExpExec = RegExp(key).exec(data);
     if(RegExpExec) {
       registeredEvents[key](RegExpExec);
+	  showServerSetting();
+	  io.emit('chat',{
+        ServerSettings: ServerSettings,
+        players: players
+      });
       return;
     }
   }
@@ -133,8 +137,41 @@ function register_events(){
   register_event('Variable (.*) set to "*([^"]*)', setServerSetting);
 }
 
+var parserValue = {
+	NbMaxPlayer: function(str){return parseInt(str)},
+	NbPlayer: function(str){return parseInt(str)},
+	Seed: function(str){return parseInt(str)},
+	Private: function(str){return parseInt(str)},
+	GameState: function(str){return parseInt(str)},
+	NeedPassword: function(str){return parseInt(str)},
+	GameType: function(str){return parseInt(str)},
+	InitMoney: function(str){return parseInt(str)},
+	TimeLimit: function(str){return parseInt(str)},
+	ScoreLimit: function(str){return parseInt(str)},
+	VictoryCond: function(str){return parseInt(str)},
+	IncomeRate: function(str){return parseInt(str)},
+	WarmupCountdown: function(str){return parseInt(str)},
+	DeploiementTimeMax: function(str){return parseInt(str)},
+	DebriefingTimeMax: function(str){return parseInt(str)},
+	LoadingTimeMax: function(str){return parseInt(str)},
+	NbMinPlayer: function(str){return parseInt(str)},
+	DeltaMaxTeamSize: function(str){return parseInt(str)},
+	MaxTeamSize: function(str){return parseInt(str)},
+	NationConstraint: function(str){return parseInt(str)},
+	ThematicConstraint: function(str){return parseInt(str)},
+	DateConstraint: function(str){return parseInt(str)},
+	side: function(str){return parseInt(str)},
+	level: function(str){return parseInt(str)},
+	elo: function(str){return parseFloat(str)},
+};
 function setServerSetting(RegExpExec){
-  ServerSettings[RegExpExec[1]] = RegExpExec[2];
+	var key = RegExpExec[1];
+	var value = RegExpExec[2];
+	if(parserValue[key]){
+		ServerSettings[RegExpExec[1]] = parserValue[key](value);
+	} else {
+		ServerSettings[RegExpExec[1]] = RegExpExec[2];
+	}
 }
 
 function showServerSetting(){
@@ -159,6 +196,7 @@ function _on_player_connect(RegExpExec){
   if(!Object.keys(players).indexOf(String(playerid))>-1){
     // does not work includes. so, use indexOf
     players[playerid] = {
+	  playerid: parseInt(playerid),
       side: Side.Bluefor,
       deck: "",
       level: 0,
@@ -192,7 +230,7 @@ function on_player_deck_set(playerid, playerdeck){
 
 function _on_player_level_set(RegExpExec){
   var playerid = RegExpExec[1];
-  var playerlevel = RegExpExec[2];
+  var playerlevel = parseInt(RegExpExec[2]);
 
   players[playerid].level = playerlevel;
 
@@ -206,7 +244,7 @@ function on_player_level_set(playerid, playerlevel){
 
 function _on_player_elo_set(RegExpExec){
   var playerid = RegExpExec[1];
-  var playerelo = RegExpExec[2];
+  var playerelo = parseFloat(RegExpExec[2]);
 
   players[playerid].elo = playerelo;
 
@@ -295,4 +333,3 @@ var GameState = {
 
 /* main */
 register_events();
-setInterval(showServerSetting,1000);

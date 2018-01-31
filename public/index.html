@@ -6,11 +6,8 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
 </head>
 <body>
-  <div class="container">
-    <div id="tempServerSettingsView">{{ServerSettings}}</div>
-    <div id="tempPlayersView">{{players}}</div>
-  </div>
-  <fieldset id="gameSettings">
+  <div class="container" ng-if="ServerSettings">
+    <fieldset id="gameSettings">
     <legend>게임 설정</legend>
     <label>방 이름<input type="text" ng-model="ServerSettings.ServerName"></label>
     <label>방 비밀번호<input type="text" ng-model="ServerSettings.Password"></label>
@@ -22,9 +19,9 @@
   <fieldset id="gameDetailSettings">
     <legend>게임 상세 설정</legend>
     <label>Teams<input type="text" ng-model="ServerSettins.NbMaxPlayer"></label>
-    <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney | parseInt"></label>
-    <label>승리 점수<input type="number" step="1000" ng-model="ServerSettings.ScoreLimit | parseInt"></label>
-    <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit | parseInt"></label>
+    <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney"></label>
+    <label>승리 점수<input type="number" step="1000" ng-model="ServerSettings.ScoreLimit"></label>
+    <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit"></label>
     <label>점수 획득 속도<input type="text" ng-model="ServerSettings.IncomeRate"></label>
   </fieldset>
   <fieldset id="contraints">
@@ -47,10 +44,25 @@
     <label>팀간 최대 허용 인원수 차이(계산)<input type="text"></label>
     <label>팀당 최대 인원수(계산)<input type="text"></label>
   </fieldset>
+  </div>
+  
+
+  <div id="playersList" ui-sortable="sortableOptions" ng-model="players">
+    <div class="player" ui-sortable-selectable ng-repeat="player in players">
+      <div class="player.playerid">{{player.playerid}}</div>
+      <div class="player.name">{{player.name}}</div>
+      <div class="player.level">{{player.level}}</div>
+      <div class="player.elo">{{player.elo}}</div>
+      <div class="player.deck">{{player.deck}}</div>
+    </div>
+  </div>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
 
   <script src="/app/app.js"></script>
+  <script src="https://rawgithub.com/angular-ui/ui-sortable/master/src/sortable.js"></script>
+  <script src="https://rawgit.com/thgreasi/ui-sortable-multiselection/master/src/ui.sortable.multiselection.js"></script>
 </body>
 </html>

@@ -1,10 +1,12 @@
 'use strict';
 
 var app = angular.module('Wargame3AutomationTool', [
+  'ui.sortable',
+  'ui.sortable.multiselection',
 ]);
 
-app.run(['socket','$rootScope',
-  function(socket, $rootScope){
+app.run(['socket','$rootScope','uiSortableMultiSelectionMethods',
+  function(socket, $rootScope, uiSortableMultiSelectionMethods){
     
     socket.emit('login', {
       name: "test",
@@ -16,6 +18,20 @@ app.run(['socket','$rootScope',
       $rootScope.players = data.players;
     });
 
+    $rootScope.sortableOptions = uiSortableMultiSelectionMethods.extendOptions({
+      'multiSelectionOnClick': true,
+      stop: function(e, ui){
+        console.log($rootScope.players);
+      }
+    });
+
+    angular.element('[ui-sortable]').on('ui-sortable-selectionschanged', function(e, args){
+      var $this = $(this);
+      var selectedItemIndexes = $this.find('.ui-sortable-selected').map(function(i, element){
+        return $(this).index();
+      }).toArray();
+      console.log(selectedItemIndexes);
+    });
 
 }]);
 
