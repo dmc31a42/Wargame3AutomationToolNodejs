@@ -191,10 +191,10 @@ app.directive('convertSecToMin', function() {
     require: 'ngModel',
     link: function(scope, element, attrs, ngModel) {
       ngModel.$parsers.push(function(val) {
-        return val/60;
+        return val*60;
       });
       ngModel.$formatters.push(function(val) {
-        return val*60;
+        return val/60;
       });
     }
   };
