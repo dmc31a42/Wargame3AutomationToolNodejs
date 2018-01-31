@@ -5,8 +5,8 @@ var app = angular.module('Wargame3AutomationTool', [
   'ui.sortable.multiselection',
 ]);
 
-app.run(['socket','$rootScope','uiSortableMultiSelectionMethods',
-  function(socket, $rootScope, uiSortableMultiSelectionMethods){
+app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval',
+  function(socket, $rootScope, uiSortableMultiSelectionMethods, $interval){
     
     socket.emit('login', {
       name: "test",
@@ -32,6 +32,23 @@ app.run(['socket','$rootScope','uiSortableMultiSelectionMethods',
       }).toArray();
       console.log(selectedItemIndexes);
     });
+
+    $rootScope.Wargame3SelectOptions = {
+      ThematicConstraints:[
+        {value: -1, name: "No"},
+        {value: 0, name: "Any"},
+        {value: 1, name: "Motorised"}
+    ]};
+
+    $interval(function(){
+      if($rootScope.ServerSettings){
+        if($rootScope.ServerSettings.ThematicConstraint == 1){
+          $rootScope.ServerSettings.ThematicConstraint = 0;
+        } else {
+          $rootScope.ServerSettings.ThematicConstraint = 1;
+        }
+      }
+    },1000);
 
 }]);
 
@@ -64,4 +81,18 @@ app.filter('parseInt',function(){
   return function(input){
     return parseInt(input);
   }
+});
+
+app.directive('convertToNumber', function() {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      ngModel.$parsers.push(function(val) {
+        return parseInt(val, 10);
+      });
+      ngModel.$formatters.push(function(val) {
+        return val;
+      });
+    }
+  };
 });

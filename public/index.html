@@ -18,7 +18,7 @@
   </fieldset>
   <fieldset id="gameDetailSettings">
     <legend>게임 상세 설정</legend>
-    <label>Teams<input type="text" ng-model="ServerSettins.NbMaxPlayer"></label>
+    <label>Teams<input type="text" ng-model="ServerSettings.NbMaxPlayer"></label>
     <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney"></label>
     <label>승리 점수<input type="number" step="1000" ng-model="ServerSettings.ScoreLimit"></label>
     <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit"></label>
@@ -26,7 +26,12 @@
   </fieldset>
   <fieldset id="contraints">
     <legend>Contraints</legend>
-    <label>Thematic<input type="text" ng-model="ServerSettings.ThematicConstraint"></label>
+    <label>
+      Thematic
+      <select ng-model="ServerSettings.ThematicConstraint" ng-options="ThematicConstraint.value as ThematicConstraint.name for ThematicConstraint in Wargame3SelectOptions.ThematicConstraints">
+        <!--option ng-repeat="ThematicConstraint in Wargame3SelectOptions.ThematicConstraints" ng-value="ThematicConstraint.value">{{ThematicConstraint.name}}</option-->
+      </select>
+    </label>
     <label>Nations / Coalitions<input type="text" ng-model="ServerSettings.NationConstraint"></label>
     <label>Era<input type="text" ng-model="ServerSettings.DateConstraint"></label>
   </fieldset>
