@@ -40,16 +40,6 @@ app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval',
         {value: 1, name: "Motorised"}
     ]};
 
-    $interval(function(){
-      if($rootScope.ServerSettings){
-        if($rootScope.ServerSettings.ThematicConstraint == 1){
-          $rootScope.ServerSettings.ThematicConstraint = 0;
-        } else {
-          $rootScope.ServerSettings.ThematicConstraint = 1;
-        }
-      }
-    },1000);
-
 }]);
 
 
