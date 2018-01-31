@@ -186,15 +186,15 @@ app.filter('parseInt',function(){
   }
 });
 
-app.directive('convertToNumber', function() {
+app.directive('convertSecToMin', function() {
   return {
     require: 'ngModel',
     link: function(scope, element, attrs, ngModel) {
       ngModel.$parsers.push(function(val) {
-        return parseInt(val, 10);
+        return val/60;
       });
       ngModel.$formatters.push(function(val) {
-        return val;
+        return val*60;
       });
     }
   };

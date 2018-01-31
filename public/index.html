@@ -33,7 +33,7 @@
     </label>
     <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney"></label>
     <label>승리 점수<input type="number" step="1000" ng-model="ServerSettings.ScoreLimit"></label>
-    <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit"></label>
+    <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit" convert-sec-to-min></label>
     <label>
       점수 획득 속도
       <select ng-model="ServerSettings.IncomeRate" ng-options="IncomeRate.value as IncomeRate.name for IncomeRate in Wargame3SelectOptions.IncomeRate">
