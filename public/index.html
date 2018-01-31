@@ -12,35 +12,56 @@
     <label>방 이름<input type="text" ng-model="ServerSettings.ServerName"></label>
     <label>방 비밀번호<input type="text" ng-model="ServerSettings.Password"></label>
     <label>전장(Map)<input type="text" ng-model="ServerSettings.Map"></label>
-    <label>게임 모드<input type="text" ng-model="ServerSettings.VictoryCond"></label>
-    <label>상대<input type="text" ng-model="ServerSettings.GameType"></label>
-    <label>공개여부(의미불명)<input type="text" ng-model="ServerSettings.Private"></label>
+    <label>
+      게임 모드
+      <select ng-model="ServerSettings.VictoryCond" ng-options="VictoryCond.value as VictoryCond.name for VictoryCond in Wargame3SelectOptions.VictoryCond">
+    </label>
+    <label>
+      상대
+      <select ng-model="ServerSettings.GameType" ng-options="GameType.value as GameType.name for GameType in Wargame3SelectOptions.GameType">
+    </label>
+    <label>
+      공개여부(의미불명)
+      <select ng-model="ServerSettings.Private" ng-options="Private.value as Private.name for Private in Wargame3SelectOptions.Private">
+    </label>
   </fieldset>
   <fieldset id="gameDetailSettings">
     <legend>게임 상세 설정</legend>
-    <label>Teams<input type="text" ng-model="ServerSettings.NbMaxPlayer"></label>
+    <label>
+      Teams
+      <select ng-model="ServerSettings.NbMaxPlayer" ng-options="Teams.value as Teams.name for Teams in Wargame3SelectOptions.Teams">
+    </label>
     <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney"></label>
     <label>승리 점수<input type="number" step="1000" ng-model="ServerSettings.ScoreLimit"></label>
     <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit"></label>
-    <label>점수 획득 속도<input type="text" ng-model="ServerSettings.IncomeRate"></label>
+    <label>
+      점수 획득 속도
+      <select ng-model="ServerSettings.IncomeRate" ng-options="IncomeRate.value as IncomeRate.name for IncomeRate in Wargame3SelectOptions.IncomeRate">
+    </label>
   </fieldset>
   <fieldset id="contraints">
     <legend>Contraints</legend>
     <label>
       Thematic
-      <select ng-model="ServerSettings.ThematicConstraint" ng-options="ThematicConstraint.value as ThematicConstraint.name for ThematicConstraint in Wargame3SelectOptions.ThematicConstraints">
-        <!--option ng-repeat="ThematicConstraint in Wargame3SelectOptions.ThematicConstraints" ng-value="ThematicConstraint.value">{{ThematicConstraint.name}}</option-->
-      </select>
+      <select ng-model="ServerSettings.ThematicConstraint" ng-options="ThematicConstraint.value as ThematicConstraint.name for ThematicConstraint in Wargame3SelectOptions.ThematicConstraint">
     </label>
-    <label>Nations / Coalitions<input type="text" ng-model="ServerSettings.NationConstraint"></label>
-    <label>Era<input type="text" ng-model="ServerSettings.DateConstraint"></label>
+    <label>
+      Nations / Coalitions
+      <select ng-model="ServerSettings.NationConstraint" ng-options="NationConstraint.value as NationConstraint.name for NationConstraint in Wargame3SelectOptions.NationConstraint">
+    <label>
+      Era
+      <select ng-model="ServerSettings.DateConstraint" ng-options="DateConstraint.value as DateConstraint.name for DateConstraint in Wargame3SelectOptions.DateConstraint">
+    </label>
   </fieldset>
   <fieldset id="advancedSettings">
     <legend>고급 설정</legend>
     <label>수동 명령(/없이)<input type="text"><button>미구현</button></label>
     <button>게임을 시작하기(미구현)</button>
     <button>카운트다운 취소(미구현)</button>
-    <label>자동 시작 조건(계산해야함)<input type="text"></label>
+    <label>
+      자동 시작 조건(계산해야함)
+      <select ng-model="AutoLaunchCond" ng-options="AutoLaunchCond.value as AutoLaunchCond.name for AutoLaunchCond in Wargame3SelectOptions.AutoLaunchCond">
+    </label>
     <label>자동시작 필요 인원수<input type="text" ng-model="ServerSettings.NbMinPlayer"></label>
     <label>Countdown<input type="text" ng-model="ServerSettings.WarmupCountdown"></label>
     <label>전개 시간<input type="text" ng-model="ServerSettings.DeploiementTimeMax"></label>
