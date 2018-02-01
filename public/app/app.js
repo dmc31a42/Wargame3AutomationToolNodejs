@@ -136,22 +136,36 @@ app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval',
     socket.on('chat', function(data){
       $rootScope.ServerSettings = data.ServerSettings;
       $rootScope.players = data.players;
-      if(!$rootScope.AutoLaunchCond){
+      if(!$rootScope.AutoLaunchCond && $rootScope.ServerSettings.NbMinPlayer){
         $rootScope.AutoLaunchCond = $rootScope.ServerSettings.NbMinPlayer - $rootScope.ServerSettings.NbMaxPlayer;  
       }
     });
 
 
     $rootScope.$watch('ServerSettings.NbMaxPlayer', function(){
-      $rootScope.ServerSettings.NbMinPlayer = $rootScope.ServerSettings.NbMaxPlayer + $rootScope.AutoLaunchCond;
-      socket.emit('SendServerSetting', {
-        Property: 'NbMinPlayer',
-        value: $rootScope.ServerSettings.NbMinPlayer
-      });
+      if($rootScope.ServerSettings && $rootScope.ServerSettings.hasOwnProperty('NbMaxPlayer') && !isNaN($rootScope.AutoLaunchCond)){
+        $rootScope.ServerSettings.NbMinPlayer = $rootScope.ServerSettings.NbMaxPlayer + $rootScope.AutoLaunchCond;
+        socket.emit('SendServerSetting', {
+          Property: 'NbMinPlayer',
+          value: $rootScope.ServerSettings.NbMinPlayer
+        });
+      }
     });
 
     $rootScope.$watch('ServerSettings.NbMinPlayer', function(){
-      $rootScope.AutoLaunchCond = $rootScope.ServerSettings.NbMinPlayer - $rootScope.ServerSettings.NbMaxPlayer;
+      if($rootScope.ServerSettings && $rootScope.ServerSettings.hasOwnProperty('NbMaxPlayer')) {
+        $rootScope.AutoLaunchCond = $rootScope.ServerSettings.NbMinPlayer - $rootScope.ServerSettings.NbMaxPlayer;
+      }
+    });
+
+    $rootScope.$watch('ServerSettings.VictoryCond', function(){
+      if($rootScope.ServerSettings && $rootScope.ServerSettings.hasOwnProperty('VictoryCond')) {
+        var VictoryCond = $rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $rootScope.ServerSettings.VictoryCond);
+        if(!VictoryCond) {
+          VictoryCond = $rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == 1);
+          $rootScope.ServerSettings.VictoryCond = VictoryCond.mapKey + '_' + val; 
+        }
+      }
     });
 
     $rootScope.sortableOptions = uiSortableMultiSelectionMethods.extendOptions({
@@ -239,7 +253,11 @@ app.directive('convertMap', function($rootScope) {
       });
       ngModel.$formatters.push(function(val) {
         val = val + '';
-        return val.replace($rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $rootScope.ServerSettings.VictoryCond).mapKey + '_', '');
+        if($rootScope.ServerSettings && $rootScope.ServerSettings.hasOwnProperty('VictoryCond')) {
+          return val.replace($rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $rootScope.ServerSettings.VictoryCond).mapKey + '_', '');
+        } else {
+          return '';
+        }
       })
     }
   };
