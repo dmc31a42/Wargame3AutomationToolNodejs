@@ -205,11 +205,11 @@ app.directive('convertMap', function($rootScope) {
     require: 'ngModel',
     link: function(scope, element, attrs, ngModel) {
       ngModel.$parsers.push(function(val){
-        return $rootScope.Wargame3SelectOptions.VictoryCond[$rootScope.ServerSettings.VictoryCond] + '_' + val;
+        return $rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $rootScope.ServerSettings.VictoryCond).mapKey + '_' + val;
       });
       ngModel.$formatters.push(function(val) {
         val = val + '';
-        return val.replace($rootScope.Wargame3SelectOptions.VictoryCond[$rootScope.ServerSettings.VictoryCond] + '_', '');
+        return val.replace($rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $rootScope.ServerSettings.VictoryCond).mapKey + '_', '');
       })
     }
   };
