@@ -93,6 +93,13 @@ io.on('connection', function(socket) {
 	  console.log('SendServerSetting :  setsvar ' + data.Property + ' ' + data.value);
 	  executeRCON('setsvar ' + data.Property + ' ' + data.value);
   });
+  
+  socket.on('requestServerSetting', function() {
+	socket.emit('chat',{
+      ServerSettings: ServerSettings,
+      players: players
+    });
+  });
 });
 
 server.listen(3000, function() {

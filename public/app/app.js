@@ -5,8 +5,8 @@ var app = angular.module('Wargame3AutomationTool', [
   'ui.sortable.multiselection',
 ]);
 
-app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval',
-  function(socket, $rootScope, uiSortableMultiSelectionMethods, $interval){
+app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval','$timeout',
+  function(socket, $rootScope, uiSortableMultiSelectionMethods, $interval, $timeout){
     
     $rootScope.Wargame3SelectOptions = {
       ThematicConstraint:[
@@ -134,6 +134,9 @@ app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval',
     });
 
     socket.on('chat', function(data){
+      if(loadFromServer){
+        $timeout.cancel(loadFromServer);
+      }
       $rootScope.ServerSettings = data.ServerSettings;
       $rootScope.players = data.players;
       if(!$rootScope.AutoLaunchCond && $rootScope.ServerSettings.NbMinPlayer){
@@ -183,7 +186,15 @@ app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval',
       console.log(selectedItemIndexes);
     });
 
-    $rootScope.SendServerSetting = function(Property, value){     
+    var loadFromServer;
+    
+    $rootScope.SendServerSetting = function(Property, value){
+      if(loadFromServer){
+        $timeout.cancel(loadFromServer);
+      }
+      loadFromServer = $timeout(function(){
+        socket.emit('requestServerSetting');
+      },500);
       socket.emit('SendServerSetting', {
         Property: Property,
         value: value
