@@ -13,7 +13,7 @@
     <label>방 비밀번호<input type="text" ng-model="ServerSettings.Password"></label>
     <label>
       전장(Map)
-      <select ng-model="ServerSettings.Map" ng-options="Map.value as Map.name for Map in Wargame3SelectOptions.Map">
+      <select ng-model="ServerSettings.Map" ng-options="Map.value as Map.name for Map in Wargame3SelectOptions.Map" convert-map>
     <label>
       게임 모드
       <select ng-model="ServerSettings.VictoryCond" ng-options="VictoryCond.value as VictoryCond.name for VictoryCond in Wargame3SelectOptions.VictoryCond">
