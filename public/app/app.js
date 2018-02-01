@@ -126,8 +126,8 @@ app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval',
       ],
       VictoryCond:[
         {value: 1, name: "격멸전", mapKey: "Destruction"},
-        {value: 2, name: "경제전", mapKey: "Destruction"},
-        {value: 3, name: "정복전", mapKey: "Conquete"}
+        {value: 3, name: "경제전", mapKey: "Destruction"},
+        {value: 4, name: "정복전", mapKey: "Conquete"}
       ],
       GameType:[
         {value: 0, name: "대립"},
