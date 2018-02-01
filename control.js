@@ -20,7 +20,7 @@ function executeRCON(command) {
 	var execution_string = RCONConfig.rconPath + 
 	    ' -H ' + RCONConfig.rconRemoteHost + 
 	    ' -P ' + RCONConfig.rconRemotePort +
-        ' -p ' + RCONConfig.rconPassword + 
+        " -p '" + RCONConfig.rconPassword + "'" +
 		' "' + command + '"';
 	
 	var child = exec(execution_string, function (error, stdout, stderr) {
