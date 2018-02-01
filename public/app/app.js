@@ -208,6 +208,7 @@ app.directive('convertMap', function($rootScope) {
         return $rootScope.Wargame3SelectOptions.VictoryCond[$rootScope.ServerSettings.VictoryCond] + '_' + val;
       });
       ngModel.$formatters.push(function(val) {
+        val = val + '';
         return val.replace($rootScope.Wargame3SelectOptions.VictoryCond[$rootScope.ServerSettings.VictoryCond] + '_', '');
       })
     }
