@@ -9,7 +9,7 @@
   <div class="container" ng-if="ServerSettings">
     <fieldset id="gameSettings">
     <legend>게임 설정</legend>
-    <label>방 이름<input type="text" ng-model="ServerSettings.ServerName"></label>
+    <label>방 이름<input type="text" ng-model="ServerSettings.ServerName" ng-change="SendServerSetting('ServerName',ServerSettings.ServerName)" ng-value="ServerName" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" ></label>
     <label>방 비밀번호<input type="text" ng-model="ServerSettings.Password"></label>
     <label>
       전장(Map)

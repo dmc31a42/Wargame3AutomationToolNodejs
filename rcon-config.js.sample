@@ -1,0 +1,8 @@
+var RCONConfig = {
+	rconPath: 'mcrcon',
+	rconRemoteHost: 'localhost',
+	rconRemotePort: 'PortNumber',
+	rconPassword: 'Password'
+};
+
+module.exports = RCONConfig;

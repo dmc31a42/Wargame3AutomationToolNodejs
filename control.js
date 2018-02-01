@@ -1,6 +1,8 @@
 /* Server Global variable */
 var players = {};
 var infoRun = true;
+var RCONConfig = require('./rcon-config');
+var exec = require('child_process').exec;
 
 var app = require('express')();
 var express = require('express');
@@ -13,6 +15,22 @@ app.use(express.static('public'));
 //app.get('/', function(req, res) {
 //  res.sendFile(__dirname + '/index.html');
 //});
+
+function executeRCON(command) {
+	var execution_string = RCONConfig.rconPath + 
+	    ' -H ' + RCONConfig.rconRemoteHost + 
+	    ' -P ' + RCONConfig.rconRemotePort +
+        ' -p ' + RCONConfig.rconPassword + 
+		' "' + command + '"';
+	
+	var child = exec(execution_string, function (error, stdout, stderr) {
+		console.log('stdout: ' + stdout);
+		console.log('stderr: ' + stderr);
+		if (error !== null) {
+			console.log('exec error: ' + error);
+		}
+	});
+}
 
 // connection event handler
 // connection이 수립되면 event handler function의 인자로 socket인 들어온다
@@ -69,6 +87,11 @@ io.on('connection', function(socket) {
 
   socket.on('disconnect', function() {
     console.log('user disconnected: ' + socket.name);
+  });
+  
+  socket.on('SendServerSetting', function(data) {
+	  console.log('SendServerSetting :  setsvar ' + data.Property + ' ' + data.value);
+	  executeRCON('setsvar ' + data.Property + ' ' + data.value);
   });
 });
 

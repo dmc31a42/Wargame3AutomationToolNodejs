@@ -33,6 +33,13 @@ app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval',
       console.log(selectedItemIndexes);
     });
 
+    $rootScope.SendServerSetting = function(Property, value){     
+      socket.emit('SendServerSetting', {
+        Property: Property,
+        value: value
+      });
+    }
+
     $rootScope.Wargame3SelectOptions = {
       ThematicConstraint:[
         {value: -1, name: "No"},
