@@ -8,38 +8,6 @@ var app = angular.module('Wargame3AutomationTool', [
 app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval',
   function(socket, $rootScope, uiSortableMultiSelectionMethods, $interval){
     
-    socket.emit('login', {
-      name: "test",
-      userid: "test@test.com"
-    });
-
-    socket.on('chat', function(data){
-      $rootScope.ServerSettings = data.ServerSettings;
-      $rootScope.players = data.players;
-    });
-
-    $rootScope.sortableOptions = uiSortableMultiSelectionMethods.extendOptions({
-      'multiSelectionOnClick': true,
-      stop: function(e, ui){
-        console.log($rootScope.players);
-      }
-    });
-
-    angular.element('[ui-sortable]').on('ui-sortable-selectionschanged', function(e, args){
-      var $this = $(this);
-      var selectedItemIndexes = $this.find('.ui-sortable-selected').map(function(i, element){
-        return $(this).index();
-      }).toArray();
-      console.log(selectedItemIndexes);
-    });
-
-    $rootScope.SendServerSetting = function(Property, value){     
-      socket.emit('SendServerSetting', {
-        Property: Property,
-        value: value
-      });
-    }
-
     $rootScope.Wargame3SelectOptions = {
       ThematicConstraint:[
         {value: -1, name: "No"},
@@ -156,9 +124,60 @@ app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval',
       AutoLaunchCond:[
         {value: 0, name: "자동(풀방)"},
         {value: 1, name: "수동"},
-        {value: 2, name: "최대인원-1"},
+        {value: -1, name: "최대인원-1"},
       ]
       };
+
+    socket.emit('login', {
+      name: "test",
+      userid: "test@test.com"
+    });
+
+    socket.on('chat', function(data){
+      $rootScope.ServerSettings = data.ServerSettings;
+      $rootScope.players = data.players;
+      if(!$rootScope.AutoLaunchCond){
+        $rootScope.AutoLaunchCond = $rootScope.ServerSettings.NbMinPlayer - $rootScope.ServerSettings.NbMaxPlayer;  
+      }
+    });
+
+
+    $rootScope.$watch('ServerSettings.NbMaxPlayer', function(){
+      $rootScope.ServerSettings.NbMinPlayer = $rootScope.ServerSettings.NbMaxPlayer + $rootScope.AutoLaunchCond;
+      socket.emit('SendServerSetting', {
+        Property: 'NbMinPlayer',
+        value: $rootScope.ServerSettings.NbMinPlayer
+      });
+    });
+
+    $rootScope.$watch('ServerSettings.NbMinPlayer', function(){
+      $rootScope.AutoLaunchCond = $rootScope.ServerSettings.NbMinPlayer - $rootScope.ServerSettings.NbMaxPlayer;
+    });
+
+    $rootScope.sortableOptions = uiSortableMultiSelectionMethods.extendOptions({
+      'multiSelectionOnClick': true,
+      stop: function(e, ui){
+        console.log($rootScope.players);
+      }
+    });
+
+    angular.element('[ui-sortable]').on('ui-sortable-selectionschanged', function(e, args){
+      var $this = $(this);
+      var selectedItemIndexes = $this.find('.ui-sortable-selected').map(function(i, element){
+        return $(this).index();
+      }).toArray();
+      console.log(selectedItemIndexes);
+    });
+
+    $rootScope.SendServerSetting = function(Property, value){     
+      socket.emit('SendServerSetting', {
+        Property: Property,
+        value: value
+      });
+    }
+  
+
+    
 
 }]);
 
@@ -212,7 +231,11 @@ app.directive('convertMap', function($rootScope) {
     require: 'ngModel',
     link: function(scope, element, attrs, ngModel) {
       ngModel.$parsers.push(function(val){
-        return $rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $rootScope.ServerSettings.VictoryCond).mapKey + '_' + val;
+        var VictoryCond = $rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $rootScope.ServerSettings.VictoryCond);
+        if(!VictoryCond) {
+          VictoryCond = $rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == 1);
+        }
+        return VictoryCond.mapKey + '_' + val;          
       });
       ngModel.$formatters.push(function(val) {
         val = val + '';
@@ -221,3 +244,31 @@ app.directive('convertMap', function($rootScope) {
     }
   };
 });
+
+app.directive('autoLaunchgCond', function($rootScope) {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel) {
+      ngModel.$parsers.push(function(val){
+        $rootScope.AutoLaunchCond = val;
+        return $rootScope.ServerSettings.NbMaxPlayer + val;
+      });
+      ngModel.$formatters.push(function(val){
+        $rootScope.AutoLaunchCond = val-$rootScope.ServerSettings.NbMaxPlayer;
+        return $rootScope.AutoLaunchCond;
+      })
+    }
+  }
+});
+
+/*app.directive('autoLaunchCondSetter', function($rootScope) {
+  return {
+    require: 'ngModel',
+    link: function(scope, element, attrs, ngModel){
+      ngModel.$parsers.push(function(val){
+        $rootScope.ServerSettings.NbMinPlayer = val + 
+        return 
+      })
+    }
+  }
+})*/
