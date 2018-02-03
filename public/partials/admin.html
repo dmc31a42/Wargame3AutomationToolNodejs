@@ -91,8 +91,8 @@
       <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
       <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
       <div class="side">{{player.side | WargameSide:this}}</div>
-      <button ng-show="player.side == 0" ng-click="changeSide(player, 0)">1팀으로</button>
-      <button ng-show="player.side == 1" ng-click="changeSide(player, 1)">2팀으로</button>
+      <button ng-show="player.side == 1" ng-click="changeSide(player, 0)">1팀으로</button>
+      <button ng-show="player.side == 0" ng-click="changeSide(player, 1)">2팀으로</button>
       <div class="name">{{player.name}}</div>
       <!--div class="player.deck">{{player.deck}}</div-->
     </div>
