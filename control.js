@@ -127,13 +127,13 @@ io.on('connection', function(socket) {
 
           for(var i=0; i<length; i++){
             if(i<Team1Length){
-              console.log('Admin:setpvar :  setpvar ' + customModSettings.SelectTeam.Team1Selected[i] + ' ' + 'side' + ' ' + 0);
-              executeRCON('setpvar ' + customModSettings.SelectTeam.Team1Selected[i] + ' ' + 'side' + ' ' + 0);
+              console.log('Admin:setpvar :  setpvar ' + customModSettings.SelectTeam.Team1Selected[i] + ' ' + 'PlayerAlliance' + ' ' + 0);
+              executeRCON('setpvar ' + customModSettings.SelectTeam.Team1Selected[i] + ' ' + 'PlayerAlliance' + ' ' + 0);
               emitAdminInfo();
             }
             if(i<Team2Length){
-              console.log('Admin:setpvar :  setpvar ' + customModSettings.SelectTeam.Team2Selected[i] + ' ' + 'side' + ' ' + 1);
-              executeRCON('setpvar ' + customModSettings.SelectTeam.Team2Selected[i] + ' ' + 'side' + ' ' + 1);
+              console.log('Admin:setpvar :  setpvar ' + customModSettings.SelectTeam.Team2Selected[i] + ' ' + 'PlayerAlliance' + ' ' + 1);
+              executeRCON('setpvar ' + customModSettings.SelectTeam.Team2Selected[i] + ' ' + 'PlayerAlliance' + ' ' + 1);
               emitAdminInfo();
             }
           }

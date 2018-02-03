@@ -111,7 +111,7 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$roo
     $scope.changeSide = function(player, side){
       socket.emit('Admin:setpvar', {
         playerid: player.playerid, 
-        Property: 'side',
+        Property: 'PlayerAlliance',
         value: side
       });
     };
@@ -232,7 +232,7 @@ controller.directive('convertMap', function($rootScope ) {
   };
 });
 
-controller.directive('autoLaunchgCond', function($rootScope) {
+controller.directive('autoLaunchCond', function($rootScope) {
   return {
     require: 'ngModel',
     link: function(scope, element, attrs, ngModel) {

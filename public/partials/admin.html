@@ -63,7 +63,7 @@
     <button>카운트다운 취소(미구현)</button>
     <label>
       자동 시작 조건(계산해야함)
-      <select ng-model="ServerSettings.NbMinPlayer" ng-change="SendServerSetting('NbMinPlayer',ServerSettings.NbMinPlayer)" ng-options="AutoLaunchCond.value as AutoLaunchCond.name for AutoLaunchCond in Wargame3SelectOptions.AutoLaunchCond" auto-launchg-cond>
+      <select ng-model="ServerSettings.NbMinPlayer" ng-change="SendServerSetting('NbMinPlayer',ServerSettings.NbMinPlayer)" ng-options="AutoLaunchCond.value as AutoLaunchCond.name for AutoLaunchCond in Wargame3SelectOptions.AutoLaunchCond" auto-launch-cond>
       </select>
     </label>
     <label>자동시작 필요 인원수<input type="text" ng-model="ServerSettings.NbMinPlayer" readonly></label>
