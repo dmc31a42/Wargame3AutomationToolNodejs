@@ -1,0 +1,197 @@
+<div class="container" ng-if="ServerSettings">
+  <fieldset id="gameSettings">
+    <legend>게임 설정</legend>
+    <label>방 이름<input type="text" ng-model="ServerSettings.ServerName" ng-change="SendServerSetting('ServerName',ServerSettings.ServerName)" ng-value="ServerName" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" ></label>
+    <label>방 비밀번호<input type="text" ng-model="ServerSettings.Password" ng-change="SendServerSetting('Password',ServerSettings.Password)" ></label>
+    <label>
+      전장(Map)
+      <select ng-model="ServerSettings.Map" ng-change="SendServerSetting('Map',ServerSettings.Map)" ng-options="Map.value as Map.name for Map in Wargame3SelectOptions.Map" convert-map>
+      </select>
+    <label>
+      게임 모드
+      <select ng-model="ServerSettings.VictoryCond" ng-change="SendServerSetting('VictoryCond',ServerSettings.VictoryCond)" ng-options="VictoryCond.value as VictoryCond.name for VictoryCond in Wargame3SelectOptions.VictoryCond">
+      </select>
+    </label>
+    <label>
+      상대
+      <select ng-model="ServerSettings.GameType" ng-change="SendServerSetting('GameType',ServerSettings.GameType)" ng-options="GameType.value as GameType.name for GameType in Wargame3SelectOptions.GameType">
+      </select>
+    </label>
+    <label>
+      공개여부(의미불명)
+      <select ng-model="ServerSettings.Private" ng-change="SendServerSetting('Private',ServerSettings.Private)" ng-options="Private.value as Private.name for Private in Wargame3SelectOptions.Private">
+      </select>
+    </label>
+  </fieldset>
+  <fieldset id="gameDetailSettings">
+    <legend>게임 상세 설정</legend>
+    <label>
+      Teams
+      <select ng-model="ServerSettings.NbMaxPlayer" ng-change="SendServerSetting('NbMaxPlayer',ServerSettings.NbMaxPlayer)" ng-options="Teams.value as Teams.name for Teams in Wargame3SelectOptions.Teams">
+      </select>
+    </label>
+    <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney" ng-change="SendServerSetting('InitMoney',ServerSettings.InitMoney)"></label>
+    <label>승리 점수<input type="number" step="1000" ng-model="ServerSettings.ScoreLimit" ng-change="SendServerSetting('ScoreLimit',ServerSettings.ScoreLimit)"></label>
+    <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit" ng-change="SendServerSetting('TimeLimit',ServerSettings.TimeLimit)" convert-sec-to-min></label>
+    <label>
+      점수 획득 속도
+      <select ng-model="ServerSettings.IncomeRate" ng-change="SendServerSetting('IncomeRate',ServerSettings.IncomeRate)" ng-options="IncomeRate.value as IncomeRate.name for IncomeRate in Wargame3SelectOptions.IncomeRate">
+      </select>
+    </label>
+  </fieldset>
+  <fieldset id="contraints">
+    <legend>Contraints</legend>
+    <label>
+      Thematic
+      <select ng-model="ServerSettings.ThematicConstraint" ng-change="SendServerSetting('ThematicConstraint',ServerSettings.ThematicConstraint)" ng-options="ThematicConstraint.value as ThematicConstraint.name for ThematicConstraint in Wargame3SelectOptions.ThematicConstraint">
+      </select>
+    </label>
+    <label>
+      Nations / Coalitions
+      <select ng-model="ServerSettings.NationConstraint" ng-change="SendServerSetting('NationConstraint',ServerSettings.NationConstraint)" ng-options="NationConstraint.value as NationConstraint.name for NationConstraint in Wargame3SelectOptions.NationConstraint">
+      </select>
+    <label>
+      Era
+      <select ng-model="ServerSettings.DateConstraint" ng-change="SendServerSetting('DateConstraint',ServerSettings.DateConstraint)" ng-options="DateConstraint.value as DateConstraint.name for DateConstraint in Wargame3SelectOptions.DateConstraint">
+      </select>
+    </label>
+  </fieldset>
+  <fieldset id="advancedSettings">
+    <legend>고급 설정</legend>
+    <label>수동 명령(/없이)<input type="text"><button>미구현</button></label>
+    <button>게임을 시작하기(미구현)</button>
+    <button>카운트다운 취소(미구현)</button>
+    <label>
+      자동 시작 조건(계산해야함)
+      <select ng-model="ServerSettings.NbMinPlayer" ng-change="SendServerSetting('NbMinPlayer',ServerSettings.NbMinPlayer)" ng-options="AutoLaunchCond.value as AutoLaunchCond.name for AutoLaunchCond in Wargame3SelectOptions.AutoLaunchCond" auto-launchg-cond>
+      </select>
+    </label>
+    <label>자동시작 필요 인원수<input type="text" ng-model="ServerSettings.NbMinPlayer" readonly></label>
+    <label>Countdown<input type="text" ng-model="ServerSettings.WarmupCountdown" ng-change="SendServerSetting('WarmupCountdown',ServerSettings.WarmupCountdown)"></label>
+    <label>전개 시간<input type="text" ng-model="ServerSettings.DeploiementTimeMax" ng-change="SendServerSetting('DeploiementTimeMax',ServerSettings.DeploiementTimeMax)"></label>
+    <label>최대 허용 불러오는 시간<input type="text" ng-model="ServerSettings.LoadingTimeMax" ng-change="SendServerSetting('LoadingTimeMax',ServerSettings.LoadingTimeMax)"></label>
+    <label>디브리핑 시간<input type="text" ng-model="ServerSettings.DebriefingTimeMax" ng-change="SendServerSetting('DebriefingTimeMax',ServerSettings.DebriefingTimeMax)"></label>
+    <label>팀간 최대 허용 인원수 차이(계산)<input type="text"></label>
+    <label>팀당 최대 인원수(계산)<input type="text"></label>
+  </fieldset>
+</div>
+<fieldset>
+<legend>플레이어 목록</legend>
+  <div class="player top">
+      <div class="playerid">Playerid</div>
+      <div class="level">level</div>
+      <div class="elo">elo </div>
+      <div class="side">side</div>
+      <div class="name">Name</div>
+      <!--div class="player.deck">{{player.deck}}</div-->
+  </div>
+  <div id="playersList" ng-model="players">
+    <div class="player" ng-repeat="player in players">
+      <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
+      <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
+      <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
+      <div class="side">{{player.side | WargameSide:this}}</div>
+      <button ng-show="player.side == 0" ng-click="changeSide(player, 0)">1팀으로</button>
+      <button ng-show="player.side == 1" ng-click="changeSide(player, 1)">2팀으로</button>
+      <div class="name">{{player.name}}</div>
+      <!--div class="player.deck">{{player.deck}}</div-->
+    </div>
+  </div>
+</fieldset>
+<fieldset id='customMod'>
+  <legend>커스텀 모드</legend>
+  <fieldset id='SelectTeam'>
+    <legend>팀 선택 모드</legend>
+      <label>누가 선택할 차례? :
+        <input type="radio" ng-model="customModSettings.SelectTeam.whoisSelectTeam" value="0" ng-change="changewhoisSelectTeam(0)">1팀</input>
+        <input type="radio" ng-model="customModSettings.SelectTeam.whoisSelectTeam" value="1" ng-change="changewhoisSelectTeam(1)">2팀</input>
+      </label>
+      <label style="display:block;">
+        팀1 팀장 접속 코드 : 
+        <input type="text" ng-model="customModSettingsAdmin.SelectTeam.Team1SelectorCode" ng-change="SetSelectTeamAccessCode(0,customModSettingsAdmin.SelectTeam.Team1SelectorCode)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" >
+      </label>
+      <label>
+        팀2 팀장 접속 코드 : 
+        <input type="text" ng-model="customModSettingsAdmin.SelectTeam.Team2SelectorCode" ng-change="SetSelectTeamAccessCode(1,customModSettingsAdmin.SelectTeam.Team2SelectorCode)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" >
+      </label>
+      <div>
+        팀1 접속 주소 : <a ng-href="{{origin}}/#/SelectTeam/{{customModSettingsAdmin.SelectTeam.Team1SelectorCode}}" target="_blank">{{origin}}/#/SelectTeam/{{customModSettingsAdmin.SelectTeam.Team1SelectorCode}}</a>
+      </div>
+      <div>
+        팀2 접속 주소 : <a ng-href="{{origin}}/#/SelectTeam/{{customModSettingsAdmin.SelectTeam.Team2SelectorCode}}" target="_blank">{{origin}}/#/SelectTeam/{{customModSettingsAdmin.SelectTeam.Team2SelectorCode}}</a>
+      </div>
+      <button ng-click="resetSelectTeam()">팀 선택 설정 초기화</button>
+  </fieldset>
+<div id="Selected">
+  <fieldset id="Team1">
+  <legend>팀 1 플레이어 목록</legend>
+    <div class="player top">
+        <div class="playerid">Playerid</div>
+        <div class="level">level</div>
+        <div class="elo">elo </div>
+        <div class="side">side</div>
+        <div class="name">Name</div>
+        <!--div class="player.deck">{{player.deck}}</div-->
+    </div>
+    <div id="playersList" ng-model="Team1">
+      <div class="player" ng-repeat="player in Team1">
+        <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
+        <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
+        <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
+        <div class="side">{{player.side}}</div>
+        <div class="name">{{player.name}}</div>
+        <!--div class="player.deck">{{player.deck}}</div-->
+        <button ng-click="setSideInList(player,1)">2팀으로</button>
+        <button ng-click="setSideInList(player,-1)">선택해제</button>
+      </div>
+    </div>
+  </fieldset>
+  <fieldset id="Team2">
+  <legend>팀 2 플레이어 목록</legend>
+    <div class="player top">
+        <div class="playerid">Playerid</div>
+        <div class="level">level</div>
+        <div class="elo">elo </div>
+        <div class="side">side</div>
+        <div class="name">Name</div>
+        <!--div class="player.deck">{{player.deck}}</div-->
+    </div>
+    <div id="playersList" ng-model="Team2">
+      <div class="player" ng-repeat="player in Team2">
+        <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
+        <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
+        <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
+        <div class="side">{{player.side}}</div>
+        <div class="name">{{player.name}}</div>
+        <!--div class="player.deck">{{player.deck}}</div-->
+        <button ng-click="setSideInList(player,0)">1팀으로</button>
+        <button ng-click="setSideInList(player,-1)">선택해제</button>
+      </div>
+    </div>
+  </fieldset>
+</div>
+<fieldset>
+  <legend>선택되지 않은 플레이어 목록</legend>
+  <div class="player top">
+      <div class="playerid">Playerid</div>
+      <div class="level">level</div>
+      <div class="elo">elo </div>
+      <div class="side">side</div>
+      <div class="name">Name</div>
+      <!--div class="player.deck">{{player.deck}}</div-->
+  </div>
+  <div id="playersList" ui-sortable="sortableOptions" ng-model="Left">
+    <div class="player" ui-sortable-selectable ng-repeat="player in Left">
+      <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
+      <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
+      <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
+      <div class="side">{{player.side}}</div>
+      <div class="name">{{player.name}}</div>
+      <!--div class="player.deck">{{player.deck}}</div-->
+    </div>
+  </div>
+</fieldset>
+<!--button ng-click="changeSelectedSide()">선택한 플레이어의 팀을 상대편으로 변경하기</button-->
+<!--button ng-click="unSelectSide()">선택한 플레이어의 팀을 선택 해제하기</button-->
+<button ng-click="setSelectedSide(0)">선택한 플레이어의 팀을 1팀으로 정하기</button>
+<button ng-click="setSelectedSide(1)">선택한 플레이어의 팀을 2팀으로 정하기</button>

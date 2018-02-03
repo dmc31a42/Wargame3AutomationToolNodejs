@@ -1,9 +1,13 @@
 /* Server Global variable */
 var players = {};
-var infoRun = true;
+var infoRun = false;
 var RCONConfig = require('./rcon-config');
 var exec = require('child_process').exec;
+var AdminCode = 'wargame3_nakwonelec';
+var Team1SelectorSocketId = '';
+var Team2SelectorSocketId = '';
 
+const delay = require('delay');
 var app = require('express')();
 var express = require('express');
 var server = require('http').createServer(app);
@@ -54,6 +58,126 @@ io.on('connection', function(socket) {
     socket.emit('chat',msg);
 
   });
+  
+  socket.on('login:admin', function(data){
+    if(data.Code == AdminCode){
+      socket.join('Admin');
+      socket.emit('login:admin',{
+        result: 'OK'
+      });
+    }
+  });
+
+  socket.on('login:SelectTeam',function(data){
+    if(data.Code == customModSettingsAdmin.SelectTeam.Team1SelectorCode){
+      socket.join('SelectTeam');
+      Team1SelectorSocketId = socket.id;
+      socket.emit('login:SelectTeam',{
+        result: 'OK'
+      });
+      emitAdminInfo();
+      socket.emit('SelectTeam:yourTeam',{
+        yourTeam: 0
+      });
+    } else if(data.Code == customModSettingsAdmin.SelectTeam.Team2SelectorCode){
+      socket.join('SelectTeam');
+      Team2SelectorSocketId = socket.id;
+      socket.emit('login:SelectTeam',{
+        result: 'OK'
+      });
+      emitAdminInfo();
+      socket.emit('SelectTeam:yourTeam',{
+        yourTeam: 1
+      });
+    } else {
+      socket.emit('login:SelectTeam',{
+        result: 'You have no access prilv'
+      });
+    }
+  });
+
+  socket.on('SelectTeam:SelectPlayer', function(data){
+    var rooms = io.sockets.adapter.rooms['SelectTeam'];
+    if(rooms && rooms.sockets[socket.id] == true){
+		  if(socket.id == Team1SelectorSocketId && customModSettings.SelectTeam.whoisSelectTeam == 0){
+        data.playerid.forEach(function(value, index, array){
+          customModSettings.SelectTeam.Team1Selected.push(parseInt(value));
+          if(customModSettings.SelectTeam.NotSelected.indexOf(parseInt(value))>-1){
+            customModSettings.SelectTeam.NotSelected.splice(customModSettings.SelectTeam.NotSelected.indexOf(parseInt(value)), 1);
+          }
+        });
+        customModSettings.SelectTeam.whoisSelectTeam = 1;
+      } else if(socket.id == Team2SelectorSocketId && customModSettings.SelectTeam.whoisSelectTeam == 1) {
+        data.playerid.forEach(function(value, index, array){
+          customModSettings.SelectTeam.Team2Selected.push(parseInt(value));
+          if(customModSettings.SelectTeam.NotSelected.indexOf(parseInt(value))>-1){
+            customModSettings.SelectTeam.NotSelected.splice(customModSettings.SelectTeam.NotSelected.indexOf(parseInt(value)), 1);
+          }
+        });
+        customModSettings.SelectTeam.whoisSelectTeam = 0;
+      }
+      emitAdminInfo();
+      console.log('customModSettings.SelectTeam.NotSelected.length : ' + customModSettings.SelectTeam.NotSelected.length);
+      if(customModSettings.SelectTeam.NotSelected.length == 0){
+        //delay(1000).then( function(){
+          var Team2Length = customModSettings.SelectTeam.Team2Selected.length;
+          var Team1Length = customModSettings.SelectTeam.Team1Selected.length;
+
+          var length = Team1Length>=Team2Length ? Team1Length : Team2Length;
+
+          for(var i=0; i<length; i++){
+            if(i<Team1Length){
+              console.log('Admin:setpvar :  setpvar ' + customModSettings.SelectTeam.Team1Selected[i] + ' ' + 'side' + ' ' + 0);
+              executeRCON('setpvar ' + customModSettings.SelectTeam.Team1Selected[i] + ' ' + 'side' + ' ' + 0);
+              emitAdminInfo();
+            }
+            if(i<Team2Length){
+              console.log('Admin:setpvar :  setpvar ' + customModSettings.SelectTeam.Team2Selected[i] + ' ' + 'side' + ' ' + 1);
+              executeRCON('setpvar ' + customModSettings.SelectTeam.Team2Selected[i] + ' ' + 'side' + ' ' + 1);
+              emitAdminInfo();
+            }
+          }
+        //});
+      }
+	  }
+  });
+
+  socket.on('Admin:resetSelectTeam',function(){
+    var rooms = io.sockets.adapter.rooms['Admin'];
+    if(rooms && rooms.sockets[socket.id] == true){
+      customModSettings.SelectTeam.NotSelected = Object.keys(players).map(item=>parseInt(item));
+      customModSettings.SelectTeam.Team1Selected = [];
+      customModSettings.SelectTeam.Team2Selected = [];
+      customModSettings.SelectTeam.whoisSelectTeam = 0;
+    }
+    emitAdminInfo();
+  });
+
+  socket.on('Admin:setTeam', function(data){
+    var rooms = io.sockets.adapter.rooms['Admin'];
+    function setTeam(playerid, side){
+      if(side == -1){
+        customModSettings.SelectTeam.NotSelected.push(parseInt(playerid));
+      } else if(side == 0){
+        customModSettings.SelectTeam.Team1Selected.push(parseInt(playerid));
+      } else if(side == 1){
+        customModSettings.SelectTeam.Team2Selected.push(parseInt(playerid));
+      }
+    }
+    if(rooms && rooms.sockets[socket.id] == true){
+      if(customModSettings.SelectTeam.NotSelected.indexOf(parseInt(data.playerid))>-1){
+        customModSettings.SelectTeam.NotSelected.splice(customModSettings.SelectTeam.NotSelected.indexOf(parseInt(data.playerid)), 1);
+        setTeam(data.playerid,data.side);
+      } else if(customModSettings.SelectTeam.Team1Selected.indexOf(parseInt(data.playerid))>-1){
+        customModSettings.SelectTeam.Team1Selected.splice(customModSettings.SelectTeam.Team1Selected.indexOf(parseInt(data.playerid)), 1);
+        setTeam(data.playerid,data.side);
+      } else if(customModSettings.SelectTeam.Team2Selected.indexOf(parseInt(data.playerid))>-1){
+        customModSettings.SelectTeam.Team2Selected.splice(customModSettings.SelectTeam.Team2Selected.indexOf(parseInt(data.playerid)), 1);
+        setTeam(data.playerid,data.side);
+      }
+    }
+    emitAdminInfo();
+  });
 
   // 클라이언트로부터의 메시지가 수신되면
   socket.on('chat', function(data) {
@@ -89,17 +213,56 @@ io.on('connection', function(socket) {
     console.log('user disconnected: ' + socket.name);
   });
   
-  socket.on('SendServerSetting', function(data) {
-	  console.log('SendServerSetting :  setsvar ' + data.Property + ' ' + data.value);
-	  executeRCON('setsvar ' + data.Property + ' ' + data.value);
+  socket.on('Admin:SendServerSetting', function(data) {
+    var rooms = io.sockets.adapter.rooms['Admin'];
+    if(rooms && rooms.sockets[socket.id] == true){
+		  console.log('SendServerSetting :  setsvar ' + data.Property + ' ' + data.value);
+		  executeRCON('setsvar ' + data.Property + ' ' + data.value);
+	  }
   });
   
-  socket.on('requestServerSetting', function() {
-	socket.emit('chat',{
-      ServerSettings: ServerSettings,
-      players: players
-    });
+  socket.on('Admin:requestServerSetting', function() {
+    var rooms = io.sockets.adapter.rooms['Admin'];
+    if(rooms && rooms.sockets[socket.id] == true){
+		  emitAdminInfo();
+	  }
   });
+
+  socket.on('Admin:setpvar', function(data) {
+    var rooms = io.sockets.adapter.rooms['Admin'];
+    if(rooms && rooms.sockets[socket.id] == true){
+      console.log('Admin:setpvar :  setpvar ' + data.playerid + ' ' + data.Property + ' ' + data.value);
+		  executeRCON('setpvar ' + data.playerid + ' ' + data.Property + ' ' + data.value);
+	  }
+  });
+
+  socket.on('Admin:changewhoisSelectTeam', function(data){
+    var rooms = io.sockets.adapter.rooms['Admin'];
+    if(rooms && rooms.sockets[socket.id] == true){
+      customModSettings.SelectTeam.whoisSelectTeam =  data.whoisSelectTeam;
+      console.log('Admin:changewhoisSelectTeam : ' + customModSettings.SelectTeam.whoisSelectTeam);
+      emitAdminInfo();
+    }
+  });
+
+  socket.on('Admin:SetSelectTeamAccessCode', function(data){
+    var rooms = io.sockets.adapter.rooms['Admin'];
+    if(rooms && rooms.sockets[socket.id] == true){
+      if(data.key == 0){
+        customModSettingsAdmin.SelectTeam.Team1SelectorCode = data.value;
+      }
+      if(data.key == 1){
+        customModSettingsAdmin.SelectTeam.Team2SelectorCode = data.value;
+      }
+      console.log('Admin:SetSelectTeamAccessCode : ' + customModSettingsAdmin.SelectTeam.Team1SelectorCode + ' / ' + customModSettingsAdmin.SelectTeam.Team2SelectorCode);
+      emitAdminInfo();
+    }
+  });
+
+  socket.on('SelectTeam:requestServerSetting', function(){
+    emitAdminInfo();
+  })
+
 });
 
 server.listen(3000, function() {
@@ -120,11 +283,8 @@ tail.on("line", function(data) {
     if(RegExpExec) {
       registeredEvents[key](RegExpExec);
 	  showServerSetting();
-	  io.emit('chat',{
-        ServerSettings: ServerSettings,
-        players: players
-      });
-      return;
+	  emitAdminInfo();
+    return;
     }
   }
 });
@@ -146,7 +306,24 @@ function event_receive(regExpExec){
   console.log("event_receive : " + regExpExec);
 }
 
-var ServerSettings = {};
+var ServerSettings = {
+};
+var customModSettingsAdmin = {
+  SelectTeam: {
+    Team1SelectorCode: '',
+    Team2SelectorCode: ''
+  }
+};
+var customModSettings = {
+  currentMod : 'SelectTeam',
+  SelectTeam : {
+    whoisSelectTeam : 0,
+    Team1Selected: [],
+    Team2Selected: [],
+    NotSelected: [],
+    HowManySelect : 1,
+  },  
+};
 
 function register_events(){
 /* Client Status */
@@ -209,6 +386,18 @@ function showServerSetting(){
   console.log(players);
 }
 
+function emitAdminInfo(){
+  io.sockets.in('Admin').emit('Admin',{
+    ServerSettings: ServerSettings,
+    players: players,
+    customModSettings : customModSettings,
+    customModSettingsAdmin : customModSettingsAdmin
+  });
+  io.sockets.in('SelectTeam').emit('SelectTeam',{
+    players: players,
+    customModSettings : customModSettings
+  });
+}
 
 
 /*----------------------------------------------------------------------------------------------------------------------
@@ -233,15 +422,20 @@ function _on_player_connect(RegExpExec){
       elo: 0.0,
       name: "",
     };
+    emitAdminInfo();
   }
 
   if(!infoRun) {
-    on_player_connection(playerid);
+    on_player_connection(parseInt(playerid));
   }
 }
 
 function on_player_connection(playerid){
-// important : typeof playerid == "String"
+  CustomModSelectTeamAddPlayer(playerid);
+}
+
+function CustomModSelectTeamAddPlayer(playerid){
+  customModSettings.SelectTeam.NotSelected.push(parseInt(playerid));
 }
 
 function _on_player_deck_set(RegExpExec){
@@ -253,6 +447,7 @@ function _on_player_deck_set(RegExpExec){
   if(!infoRun){
     on_player_deck_set(playerid, playerdeck);
   }
+  emitAdminInfo();
 }
 
 function on_player_deck_set(playerid, playerdeck){
@@ -267,6 +462,7 @@ function _on_player_level_set(RegExpExec){
   if(!infoRun){
     on_player_level_set(playerid, playerlevel);
   }
+  emitAdminInfo();
 }
 
 function on_player_level_set(playerid, playerlevel){
@@ -281,6 +477,7 @@ function _on_player_elo_set(RegExpExec){
   if(!infoRun){
     on_player_elo_set(playerid, playerelo);
   }
+  emitAdminInfo();
 }
 
 function on_player_elo_set(playerid, playerelo){
@@ -290,12 +487,20 @@ function _on_player_disconnect(RegExpExec){
   var playerid = RegExpExec[1];
 
   if(!infoRun){
-    on_player_disconnect(playerid);
+    on_player_disconnect(parseInt(playerid));
   }
   delete players[playerid];
+  emitAdminInfo();
 }
 
 function on_player_disconnect(playerid){
+  if(customModSettings.SelectTeam.NotSelected.indexOf(playerid)>-1){
+    customModSettings.SelectTeam.NotSelected.splice(customModSettings.SelectTeam.NotSelected.indexOf(playerid), 1);
+  } else if(customModSettings.SelectTeam.Team1Selected.indexOf(playerid)>-1){
+    customModSettings.SelectTeam.Team1Selected.splice(customModSettings.SelectTeam.Team1Selected.indexOf(playerid), 1);
+  } else if(customModSettings.SelectTeam.Team2Selected.indexOf(playerid)>-1){
+    customModSettings.SelectTeam.Team2Selected.splice(customModSettings.SelectTeam.Team2Selected.indexOf(playerid), 1);
+  }
 }
 
 function _on_player_side_change(RegExpExec){
@@ -306,6 +511,7 @@ function _on_player_side_change(RegExpExec){
   if(!infoRun){
     on_player_side_change(playerid, playerside);
   }
+  emitAdminInfo();
 }
 
 function on_player_side_change(playerid, playerside){
@@ -319,6 +525,7 @@ function _on_player_name_change(RegExpExec){
   if(!infoRun){
     on_player_name_change(playerid, playername);
   }
+  emitAdminInfo();
 }
 
 function on_player_name_change(playerid, playername){
@@ -330,6 +537,7 @@ function _on_switch_to_launch(RegExpExec){
   if(!infoRun){
     on_switch_to_launch();
   }
+  emitAdminInfo();
 }
 
 function on_switch_to_launch(){
@@ -341,6 +549,7 @@ function _on_switch_to_cancel_launch(RegExpExec){
   if(!infoRun){
     on_switch_to_cancel_launch();
   }
+  emitAdminInfo();
 }
 
 function on_switch_to_cancel_launch(){

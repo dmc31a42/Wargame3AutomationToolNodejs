@@ -1,0 +1,14 @@
+<div id="AdminLogin">
+    <label>
+        관리자 페이지 로그인 : 
+        <input type="text" ng-model="$root.AdminCode" ng-keypress="($event.which === 13)?loginAdmin():0"/>
+        <button ng-click="loginAdmin()">로그인</button>
+    </label>
+</div>
+<div id="SelectTeamLogin">
+    <lable>
+        팀 선택 페이지 로그인 :
+        <input type="text" ng-model="$root.SelectTeamCode" ng-keypress="($event.which === 13)?loginAdmin():0"/>
+        <button ng-click="loginSelectTeam()">로그인</button>
+    </label>
+</div>
