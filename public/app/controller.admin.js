@@ -151,6 +151,12 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$roo
         $scope.selectedItems = selectedItems;
     });
 
+    $scope.command = function(_command){
+      socket.emit('Admin:command', {
+        command: _command
+      });
+    }
+
     /*$scope.changeSelectedSide = function(){
       if($scope.selectedItems.length == 1){
         if($scope.Team1[parseInt($scope.selectedItems[0])]){

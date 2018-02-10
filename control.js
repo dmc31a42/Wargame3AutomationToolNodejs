@@ -1,9 +1,11 @@
+"use strinct";
+
 /* Server Global variable */
 var players = {};
 var infoRun = false;
-var RCONConfig = require('./rcon-config');
+var NodeConfig = require('./node-config');
 var exec = require('child_process').exec;
-var AdminCode = 'wargame3_nakwonelec';
+var AdminCode = NodeConfig.AdminCode;
 var Team1SelectorSocketId = '';
 var Team2SelectorSocketId = '';
 
@@ -21,10 +23,10 @@ app.use(express.static('public'));
 //});
 
 function executeRCON(command) {
-	var execution_string = RCONConfig.rconPath + 
-	    ' -H ' + RCONConfig.rconRemoteHost + 
-	    ' -P ' + RCONConfig.rconRemotePort +
-        " -p '" + RCONConfig.rconPassword + "'" +
+	var execution_string = NodeConfig.rconPath + 
+	    ' -H ' + NodeConfig.rconRemoteHost + 
+	    ' -P ' + NodeConfig.rconRemotePort +
+        " -p '" + NodeConfig.rconPassword + "'" +
 		' "' + command + '"';
 	
 	var child = exec(execution_string, function (error, stdout, stderr) {
@@ -179,6 +181,13 @@ io.on('connection', function(socket) {
     emitAdminInfo();
   });
 
+  socket.on('Admin:command', function(data){
+    var rooms = io.sockets.adapter.rooms['Admin'];
+    if(rooms && rooms.sockets[socket.id] == true){
+      executeRCON(data.command);
+    }
+  })
+
   // 클라이언트로부터의 메시지가 수신되면
   socket.on('chat', function(data) {
     console.log('Message from %s: %s', socket.name, data.msg);
@@ -265,8 +274,8 @@ io.on('connection', function(socket) {
 
 });
 
-server.listen(3000, function() {
-  console.log('Socket IO server listening on port 3000');
+server.listen(NodeConfig.ServicePort, function() {
+  console.log('Socket IO server listening on port ' + NodeConfig.ServicePort);
 });
 
 Tail = require('tail').Tail;

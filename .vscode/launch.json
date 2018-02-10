@@ -9,6 +9,15 @@
             "request": "launch",
             "name": "Launch Program",
             "program": "${workspaceFolder}\\control.js"
-        }
+        },
+        {
+            "name": "Launch localhost",
+            "type": "chrome",
+            "request": "launch",
+            //"userDataDir": "C:\\Users\\nakwonelec\\AppData\\Local\\Google\\Chrome\\User Data",
+            "url": "https://localhost:3000",
+            "webRoot": "${workspaceFolder}/public",
+            "skipFiles": ["*.min.js"]
+        },
     ]
 }
