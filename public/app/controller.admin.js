@@ -108,7 +108,9 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$roo
       if(Property == 'VictoryCond'){
         if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('VictoryCond')) {
           var val = $scope.ServerSettings.Map;
-          var OnlyMap = val.replace($rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $scope.ServerSettings.VictoryCond).mapKey + '_', '');
+          $rootScope.Wargame3SelectOptions.VictoryCond.forEach(function (value, index, array){
+            val = val.replace(value.mapKey + '_', '');
+          })
           var VictoryCond = $rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $scope.ServerSettings.VictoryCond);
           if(!VictoryCond) {
             VictoryCond = $rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == 1);
