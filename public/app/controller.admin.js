@@ -105,6 +105,21 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$roo
         Property: Property,
         value: value
       });
+      if(Property == 'Map'){
+        if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('VictoryCond')) {
+          var val = $scope.ServerSettings.Map;
+          var OnlyMap = val.replace($rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $scope.ServerSettings.VictoryCond).mapKey + '_', '');
+          var VictoryCond = $rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $scope.ServerSettings.VictoryCond);
+          if(!VictoryCond) {
+            VictoryCond = $rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == 1);
+          }
+          var value2 = VictoryCond.mapKey + '_' + val;
+          socket.emit('Admin:SendServerSetting', {
+            Property: 'Map',
+            value: value2
+          });
+        }
+      }
     }
     socket.emit('Admin:requestServerSetting');
 
