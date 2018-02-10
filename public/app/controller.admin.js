@@ -105,7 +105,7 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$roo
         Property: Property,
         value: value
       });
-      if(Property == 'Map'){
+      if(Property == 'VictoryCond'){
         if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('VictoryCond')) {
           var val = $scope.ServerSettings.Map;
           var OnlyMap = val.replace($rootScope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $scope.ServerSettings.VictoryCond).mapKey + '_', '');
