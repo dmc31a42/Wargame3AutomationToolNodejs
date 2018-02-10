@@ -58,7 +58,7 @@
   </fieldset>
   <fieldset id="advancedSettings">
     <legend>고급 설정</legend>
-    <label>수동 명령(/없이)<input type="text" ng-model="manualCommand"><button ng-click="command({{manualCommand}})">실행</button></label>
+    <label>수동 명령(/없이)<input type="text" ng-model="manualCommand"><button ng-click="command(manualCommand)">실행</button></label>
     <button ng-click="command('launch')">게임을 시작하기</button>
     <button ng-click="command('cancel-launch')">카운트다운 취소</button>
     <label>
