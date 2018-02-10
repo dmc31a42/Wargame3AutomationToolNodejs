@@ -2,7 +2,7 @@
   <fieldset id="gameSettings">
     <legend>게임 설정</legend>
     <label>방 이름<input type="text" ng-model="ServerSettings.ServerName" ng-change="SendServerSetting('ServerName',ServerSettings.ServerName)" ng-value="ServerName" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" ></label>
-    <label>방 비밀번호<input type="text" ng-model="ServerSettings.Password" ng-change="SendServerSetting('Password',ServerSettings.Password)" ></label>
+    <label>방 비밀번호<input type="text" ng-model="ServerSettings.Password" ng-change="SendServerSetting('Password',ServerSettings.Password)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
     <label>
       전장(Map)
       <select ng-model="ServerSettings.Map" ng-change="SendServerSetting('Map',ServerSettings.Map)" ng-options="Map.value as Map.name for Map in Wargame3SelectOptions.Map" convert-map>
@@ -30,9 +30,9 @@
       <select ng-model="ServerSettings.NbMaxPlayer" ng-change="SendServerSetting('NbMaxPlayer',ServerSettings.NbMaxPlayer)" ng-options="Teams.value as Teams.name for Teams in Wargame3SelectOptions.Teams">
       </select>
     </label>
-    <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney" ng-change="SendServerSetting('InitMoney',ServerSettings.InitMoney)"></label>
-    <label>승리 점수<input type="number" step="1000" ng-model="ServerSettings.ScoreLimit" ng-change="SendServerSetting('ScoreLimit',ServerSettings.ScoreLimit)"></label>
-    <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit" ng-change="SendServerSetting('TimeLimit',ServerSettings.TimeLimit)" convert-sec-to-min></label>
+    <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney" ng-change="SendServerSetting('InitMoney',ServerSettings.InitMoney)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>승리 점수<input type="number" step="1000" ng-model="ServerSettings.ScoreLimit" ng-change="SendServerSetting('ScoreLimit',ServerSettings.ScoreLimit)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>제한 시간(분)<input type="number" step="5" ng-model="ServerSettings.TimeLimit" ng-change="SendServerSetting('TimeLimit',ServerSettings.TimeLimit)" convert-sec-to-min ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
     <label>
       점수 획득 속도
       <select ng-model="ServerSettings.IncomeRate" ng-change="SendServerSetting('IncomeRate',ServerSettings.IncomeRate)" ng-options="IncomeRate.value as IncomeRate.name for IncomeRate in Wargame3SelectOptions.IncomeRate">
@@ -67,11 +67,10 @@
       </select>
     </label>
     <label>자동시작 필요 인원수<input type="text" ng-model="ServerSettings.NbMinPlayer" readonly></label>
-    <label>Countdown<input type="text" ng-model="ServerSettings.WarmupCountdown" ng-change="SendServerSetting('WarmupCountdown',ServerSettings.WarmupCountdown)"></label>
-    <label>전개 시간<input type="text" ng-model="ServerSettings.DeploiementTimeMax" ng-change="SendServerSetting('DeploiementTimeMax',ServerSettings.DeploiementTimeMax)"></label>
-    <label>최대 허용 불러오는 시간<input type="text" ng-model="ServerSettings.LoadingTimeMax" ng-change="SendServerSetting('LoadingTimeMax',ServerSettings.LoadingTimeMax)"></label>
-    <label>디브리핑 시간<input type="text" ng-model="ServerSettings.DebriefingTimeMax" ng-change="SendServerSetting('DebriefingTimeMax',ServerSettings.DebriefingTimeMax)"></label>
-    <label>팀간 최대 허용 인원수 차이(계산)<input type="text"></label>
+    <label>Countdown<input type="text" ng-model="ServerSettings.WarmupCountdown" ng-change="SendServerSetting('WarmupCountdown',ServerSettings.WarmupCountdown)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>전개 시간<input type="text" ng-model="ServerSettings.DeploiementTimeMax" ng-change="SendServerSetting('DeploiementTimeMax',ServerSettings.DeploiementTimeMax)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>최대 허용 불러오는 시간<input type="text" ng-model="ServerSettings.LoadingTimeMax" ng-change="SendServerSetting('LoadingTimeMax',ServerSettings.LoadingTimeMax)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>디브리핑 시간<input type="text" ng-model="ServerSettings.DebriefingTimeMax" ng-change="SendServerSetting('DebriefingTimeMax',ServerSettings.DebriefingTimeMax)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
     <label>팀당 최대 인원수(계산)<input type="text"></label>
   </fieldset>
 </div>

@@ -98,7 +98,8 @@ app.run(['socket','$rootScope','uiSortableMultiSelectionMethods','$interval','$t
       {value: "5x3_Marine_1_Alt", name: "5x3_Marine_1_Alt"},
       {value: "5x3_Marine_1_small", name: "5x3_Marine_1_small"},
       {value: "5x3_Marine_1_small_Terrestre", name: "5x3_Marine_1_small_Terrestre"},
-      {value: "5x3_Marine_1_Terrestre", name: "5x3_Marine_1_Terrestre"}],
+      {value: "5x3_Marine_1_Terrestre", name: "5x3_Marine_1_Terrestre"},
+      {value: "5x3_Asgard_10v10", name: "5x3_Asgard_10v10"}],
     VictoryCond:[
       {value: 1, name: "격멸전", mapKey: "Destruction"},
       {value: 3, name: "경제전", mapKey: "Destruction"},

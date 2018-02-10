@@ -185,6 +185,7 @@ io.on('connection', function(socket) {
     var rooms = io.sockets.adapter.rooms['Admin'];
     if(rooms && rooms.sockets[socket.id] == true){
       executeRCON(data.command);
+      console.log(data.command);
     }
   })
 
