@@ -3,6 +3,7 @@
 var MMS_LOCAL_PORT = 10002;
 var MMS_REMOTE_PORT = 10002;
 var MMS_REMOTE_ADDR = "178.32.126.73";
+var net = require('net');
 
 var server = net.createServer(function (socket) {
     socket.on('data', function (msg) {
