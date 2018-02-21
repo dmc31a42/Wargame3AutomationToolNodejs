@@ -1,8 +1,8 @@
 "use strinct";
 
-var MMS_LOCAL_PORT = 10002;
-var MMS_REMOTE_PORT = 10002;
-var MMS_REMOTE_ADDR = "178.32.126.73";
+var MMS_MMS_LOCAL_PORT = 10002;
+var MMS_MMS_REMOTE_PORT = 10002;
+var MMS_MMS_REMOTE_ADDR = "178.32.126.73";
 var net = require('net');
 
 var server = net.createServer(function (socket) {
@@ -10,7 +10,7 @@ var server = net.createServer(function (socket) {
         console.log('  ** START **');
         console.log('<< From client to proxy ', msg.toString());
         var serviceSocket = new net.Socket();
-        serviceSocket.connect(parseInt(REMOTE_PORT), REMOTE_ADDR, function () {
+        serviceSocket.connect(parseInt(MMS_REMOTE_PORT), MMS_REMOTE_ADDR, function () {
             console.log('>> From proxy to remote', msg.toString());
             serviceSocket.write(msg);
         });
@@ -22,5 +22,5 @@ var server = net.createServer(function (socket) {
     });
 });
  
-server.listen(LOCAL_PORT);
-console.log("TCP server accepting connection on port: " + LOCAL_PORT);
+server.listen(MMS_LOCAL_PORT);
+console.log("TCP server accepting connection on port: " + MMS_LOCAL_PORT);
