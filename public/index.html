@@ -18,25 +18,7 @@
 </head>
 <body>
   
-  <div ui-view></div>
-
-  <div>
-    패치노트
-    <ul>
-      <li>
-        2018-03-08
-        <ul>
-          <li>팀 선택기를 여러명이서 접속할 수 있게 수정(기존에는 두 명 이상이 접속하면 한 사람의 연결이 끊김)</li>
-          <li>자동 시작 조건이 보이지 않는 버그 수정(최소 시작 플레이어수와 최대 플레이어 수의 차이가 1보다 크거나 -1보다 작을 때 발생)</li>
-          <li>킥/밴 기능 추가</li>
-          <li>게임이 시작되었을 때 SelectTeam에 설정된 값 초기화</li>
-          <li>팀 선택시 팀원을 고르면 게임에 즉시 반영되는 옵션 추가</li>
-        </ul>
-      </li>
-    </ul>
-  </div>
-
-  
+  <div ui-view></div>  
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
   <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
   <script src="/socket.io/socket.io.js"></script>
