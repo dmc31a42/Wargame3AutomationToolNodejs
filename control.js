@@ -157,12 +157,7 @@ io.on('connection', function(socket) {
 	  }
   });
 
-  function resetSelectTeam() {
-    customModSettings.SelectTeam.NotSelected = Object.keys(players).map(item=>parseInt(item));
-    customModSettings.SelectTeam.Team1Selected = [];
-    customModSettings.SelectTeam.Team2Selected = [];
-    customModSettings.SelectTeam.whoisSelectTeam = 0;
-  }
+  
   socket.on('Admin:resetSelectTeam',function(){
     var rooms = io.sockets.adapter.rooms['Admin'];
     if(rooms && rooms.sockets[socket.id] == true){
@@ -597,6 +592,13 @@ function _on_switch_to_cancel_launch(RegExpExec){
 }
 
 function on_switch_to_cancel_launch(){
+}
+
+function resetSelectTeam() {
+  customModSettings.SelectTeam.NotSelected = Object.keys(players).map(item=>parseInt(item));
+  customModSettings.SelectTeam.Team1Selected = [];
+  customModSettings.SelectTeam.Team2Selected = [];
+  customModSettings.SelectTeam.whoisSelectTeam = 0;
 }
 
 /* System Enum */
