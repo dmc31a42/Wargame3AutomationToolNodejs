@@ -288,7 +288,7 @@ io.on('connection', function(socket) {
   socket.on('Admin:SetSelectTeamSetting', function(data){
     var rooms = io.sockets.adapter.rooms['Admin'];
     if(rooms && rooms.sockets[socket.id] == true){
-      customModSettingsAdmin.SelectTeam[data.property] = data.value;
+      customModSettings.SelectTeam[data.property] = data.value;
       emitAdminInfo();
     }
   })
