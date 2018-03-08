@@ -73,7 +73,8 @@ io.on('connection', function(socket) {
   socket.on('login:SelectTeam',function(data){
     if(data.Code == customModSettingsAdmin.SelectTeam.Team1SelectorCode){
       socket.join('SelectTeam');
-      Team1SelectorSocketId = socket.id;
+      //Team1SelectorSocketId = socket.id;
+      socket.WitchSide = Side.Bluefor;
       socket.emit('login:SelectTeam',{
         result: 'OK'
       });
@@ -83,7 +84,8 @@ io.on('connection', function(socket) {
       });
     } else if(data.Code == customModSettingsAdmin.SelectTeam.Team2SelectorCode){
       socket.join('SelectTeam');
-      Team2SelectorSocketId = socket.id;
+      //Team2SelectorSocketId = socket.id;
+      socket.WitchSide = Side.Redfor;
       socket.emit('login:SelectTeam',{
         result: 'OK'
       });
@@ -101,19 +103,27 @@ io.on('connection', function(socket) {
   socket.on('SelectTeam:SelectPlayer', function(data){
     var rooms = io.sockets.adapter.rooms['SelectTeam'];
     if(rooms && rooms.sockets[socket.id] == true){
-		  if(socket.id == Team1SelectorSocketId && customModSettings.SelectTeam.whoisSelectTeam == 0){
+		  //if(socket.id == Team1SelectorSocketId && customModSettings.SelectTeam.whoisSelectTeam == 0){
+      if(socket.WitchSide == Side.Bluefor && customModSettings.SelectTeam.whoisSelectTeam == 0){
         data.playerid.forEach(function(value, index, array){
           customModSettings.SelectTeam.Team1Selected.push(parseInt(value));
           if(customModSettings.SelectTeam.NotSelected.indexOf(parseInt(value))>-1){
             customModSettings.SelectTeam.NotSelected.splice(customModSettings.SelectTeam.NotSelected.indexOf(parseInt(value)), 1);
           }
+          if(customModSettings.SelectTeam.ApplyImmediately == 1){
+            setSelectTeam2Player();
+          }
         });
         customModSettings.SelectTeam.whoisSelectTeam = 1;
-      } else if(socket.id == Team2SelectorSocketId && customModSettings.SelectTeam.whoisSelectTeam == 1) {
+      //} else if(socket.id == Team2SelectorSocketId && customModSettings.SelectTeam.whoisSelectTeam == 1) {
+      } else if(socket.WitchSide == Side.Redfor && customModSettings.SelectTeam.whoisSelectTeam == 1) {
         data.playerid.forEach(function(value, index, array){
           customModSettings.SelectTeam.Team2Selected.push(parseInt(value));
           if(customModSettings.SelectTeam.NotSelected.indexOf(parseInt(value))>-1){
             customModSettings.SelectTeam.NotSelected.splice(customModSettings.SelectTeam.NotSelected.indexOf(parseInt(value)), 1);
+          }
+          if(customModSettings.SelectTeam.ApplyImmediately == 1){
+            setSelectTeam2Player();
           }
         });
         customModSettings.SelectTeam.whoisSelectTeam = 0;
@@ -122,6 +132,7 @@ io.on('connection', function(socket) {
       console.log('customModSettings.SelectTeam.NotSelected.length : ' + customModSettings.SelectTeam.NotSelected.length);
       if(customModSettings.SelectTeam.NotSelected.length == 0){
         //delay(1000).then( function(){
+        function setSelectTeam2Player() {
           var Team2Length = customModSettings.SelectTeam.Team2Selected.length;
           var Team1Length = customModSettings.SelectTeam.Team1Selected.length;
 
@@ -139,18 +150,23 @@ io.on('connection', function(socket) {
               emitAdminInfo();
             }
           }
+        }
+        setSelectTeam2Player();
         //});
       }
 	  }
   });
 
+  function resetSelectTeam() {
+    customModSettings.SelectTeam.NotSelected = Object.keys(players).map(item=>parseInt(item));
+    customModSettings.SelectTeam.Team1Selected = [];
+    customModSettings.SelectTeam.Team2Selected = [];
+    customModSettings.SelectTeam.whoisSelectTeam = 0;
+  }
   socket.on('Admin:resetSelectTeam',function(){
     var rooms = io.sockets.adapter.rooms['Admin'];
     if(rooms && rooms.sockets[socket.id] == true){
-      customModSettings.SelectTeam.NotSelected = Object.keys(players).map(item=>parseInt(item));
-      customModSettings.SelectTeam.Team1Selected = [];
-      customModSettings.SelectTeam.Team2Selected = [];
-      customModSettings.SelectTeam.whoisSelectTeam = 0;
+      resetSelectTeam();
     }
     emitAdminInfo();
   });
@@ -269,6 +285,14 @@ io.on('connection', function(socket) {
     }
   });
 
+  socket.on('Admin:SetSelectTeamSetting', function(data){
+    var rooms = io.sockets.adapter.rooms['Admin'];
+    if(rooms && rooms.sockets[socket.id] == true){
+      customModSettingsAdmin.SelectTeam[data.property] = data.value;
+      emitAdminInfo();
+    }
+  })
+
   socket.on('SelectTeam:requestServerSetting', function(){
     emitAdminInfo();
   })
@@ -351,7 +375,7 @@ function register_events(){
   register_event('Launch game', _on_switch_to_launch);
   register_event('Canceling launch game', _on_switch_to_cancel_launch);
 /* Server Status */
-  register_event('Variable (.*) set to "*([^"]*)', setServerSetting);
+  register_event('Variable (.*) set to "*([^"]*)', _setServerSetting);
 }
 
 var parserValue = {
@@ -381,14 +405,24 @@ var parserValue = {
 	level: function(str){return parseInt(str)},
 	elo: function(str){return parseFloat(str)},
 };
-function setServerSetting(RegExpExec){
+function _setServerSetting(RegExpExec){
 	var key = RegExpExec[1];
 	var value = RegExpExec[2];
 	if(parserValue[key]){
-		ServerSettings[RegExpExec[1]] = parserValue[key](value);
+    ServerSettings[RegExpExec[1]] = parserValue[key](value);
+    setServerSetting(RegExpExec[1], parserValue[key](value));
 	} else {
-		ServerSettings[RegExpExec[1]] = RegExpExec[2];
+    ServerSettings[RegExpExec[1]] = value;
+    setServerSetting(RegExpExec[1], value);
 	}
+}
+
+function setServerSetting(property, value){
+  if(property == 'GameState') {
+    if(value == GameState.Loading) {
+      resetSelectTeam();
+    }
+  }
 }
 
 function showServerSetting(){

@@ -63,8 +63,10 @@ controller.controller('Wargame3AutomationTool.controller.SelectTeam', ['$rootSco
                     playerid: $scope.selectedItems
                 });
                 $scope.selectedItems = [];
-            } else {
-                $scope.err = '선택할 수 있는 인원보다 많거나 적은 플레이어를 선택하였습니다.<br/>선택할 수 있는 인원 : ' + $scope.customModSettings.SelectTeam.HowManySelect + ', 선택한 인원 : ' + $scope.selectedItems.length;    
+            } else if($scope.selectedItems.length == $scope.customModSettings.SelectTeam.HowManySelect){
+                $scope.err = '자신의 차례가 아닙니다.'
+            } else if($scope.yourTeam == $scope.customModSettings.SelectTeam.whoisSelectTeam) {
+                $scope.err = '선택할 수 있는 인원보다 많거나 적은 플레이어를 선택하였습니다.\n선택할 수 있는 인원 : ' + $scope.customModSettings.SelectTeam.HowManySelect + ', 선택한 인원 : ' + $scope.selectedItems.length;    
             }
         };
 

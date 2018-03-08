@@ -229,6 +229,13 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$roo
         }
       }
     };
+
+    $scope.setApplyImmediately = function(value) {
+      socket.emit('Admin:SetSelectTeamSetting', {
+        'property': 'ApplyImmediately',
+        'value': value
+      });
+    };
   }
 ]);
 
@@ -265,6 +272,13 @@ controller.directive('autoLaunchCond', function($rootScope) {
       });
       ngModel.$formatters.push(function(val){
         scope.AutoLaunchCond = val-scope.ServerSettings.NbMaxPlayer;
+        if(scope.AutoLaunchCond>1) {
+          scope.SendServerSetting('NbMinPlayer', scope.ServerSettings.NbMaxPlayer + 1)
+          return 1;
+        } else if(scope.AutoLaunchCond <-1){
+          scope.SendServerSetting('NbMinPlayer', scope.ServerSettings.NbMaxPlayer - 1)
+          return -1;
+        }
         return scope.AutoLaunchCond;
       })
     }

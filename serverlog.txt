@@ -9164,3 +9164,4 @@ Variable NbPlayer set to "1"
 Client added in session (EugNetId : 621079, UserSessionId : 1, socket : 27, IP : 176.119.124.50:59034)
 Client 621079 variable PlayerName set to "Mr. Odessit"
 Client 621079 variable PlayerLeveClient 621079 variable PlayerLevel set to "27"
+
