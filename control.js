@@ -550,7 +550,7 @@ function on_player_disconnect(playerid){
 function _on_player_side_change(RegExpExec){
   var playerid = RegExpExec[1];
   var playerside = parserValue['side'](RegExpExec[2]);
-  players[playerid].side = playerside == 1 ? Side.Redfor : Side.Redfor;
+  players[playerid].side = playerside == 0 ? Side.Bluefor : Side.Redfor;
 
   if(!infoRun){
     on_player_side_change(playerid, playerside);
