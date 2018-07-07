@@ -1,4 +1,5 @@
 "use strinct";
+var http = require('http');
 
 /* Server Global variable */
 var players = {};
@@ -356,7 +357,7 @@ var customModSettings = {
 
 function register_events(){
 /* Client Status */
-  register_event("Client added in session \\(EugNetId : ([0-9]+)", _on_player_connect);
+  register_event("Client added in session \\(EugNetId : ([0-9]+), UserSessionId : ([0-9]+), socket : ([0-9]+), IP : (.*):([0-9]+)\\)", _on_player_connect);
   register_event('Client ([0-9]+) variable PlayerDeckContent set to "(.*)"', _on_player_deck_set);
   register_event('Client ([0-9]+) variable PlayerLevel set to "(.*)"', _on_player_level_set);
   register_event('Client ([0-9]+) variable PlayerElo set to "(.*)"', _on_player_elo_set);
@@ -454,12 +455,16 @@ function _on_player_connect(RegExpExec){
   if(!Object.keys(players).indexOf(String(playerid))>-1){
     // does not work includes. so, use indexOf
     players[playerid] = {
-	  playerid: parseInt(playerid),
+	    playerid: parseInt(playerid),
       side: Side.Bluefor,
       deck: "",
       level: 0,
       elo: 0.0,
       name: "",
+      UserSessionId: RegExpExec[2],
+      socket: RegExpExec[3],
+      IP: RegExpExec[4],
+      Port: RegExpExec[5],
     };
     emitAdminInfo();
   }
@@ -471,6 +476,41 @@ function _on_player_connect(RegExpExec){
 
 function on_player_connection(playerid){
   CustomModSelectTeamAddPlayer(playerid);
+  if(NodeConfig.ipstack_API_KEY != '') {
+    var option = {
+      hostname: 'api.ipstack.com',
+      port: 80,
+      path: '/'+ players[playerid].IP + '?access_key=' + NodeConfig.ipstack_API_KEY,
+      method: 'GET'
+    };
+    var req = http.request(option, function(res) {
+      //console.log(res);
+      var responseData = '';
+      res.on('data', function(chunk){
+        responseData = responseData + chunk;
+      });
+      res.on('end', function(){
+        IP_request_Callback(responseData, playerid);
+      })
+    })
+  }
+  req.on('error', (e) => {
+    console.error(e);
+  });
+  req.end();
+  emitAdminInfo();
+}
+
+function IP_request_Callback(responseData, playerid){
+  var JSONData = JSON.parse(responseData.toString())
+  if(players[playerid] && JSONData.country_code && JSONData.country_code != '') {
+    players[playerid].country_code = JSONData.country_code;
+    players[playerid].country_name = JSONData.country_name;
+    emitAdminInfo();
+  } else {
+    // players[playerid].country_code = 'XX';
+    // players[playerid].country_name = JSONData.country_name;
+  }
 }
 
 function CustomModSelectTeamAddPlayer(playerid){
