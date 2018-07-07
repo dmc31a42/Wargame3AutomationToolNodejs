@@ -465,6 +465,8 @@ function _on_player_connect(RegExpExec){
       socket: RegExpExec[3],
       IP: RegExpExec[4],
       Port: RegExpExec[5],
+      country_code: 'XX',
+      country_name: 'Unknwon'
     };
     emitAdminInfo();
   }

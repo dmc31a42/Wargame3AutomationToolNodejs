@@ -91,7 +91,7 @@
       <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
       <div class="side">{{player.side | WargameSide:this}}</div>
       <div class="name">{{player.name}}</div>
-      <img class="country_flags" src="/flags/{{player.country_code}}.png" alt="{{player.country_name}}" title="{{player.country_name}}"/>
+      <img class="country_flags" src="/flags/{{player.country_code | lowercase}}.png" alt="{{player.country_name}}" title="{{player.country_name}}"/>
       <button ng-show="player.side == 1" ng-click="changeSide(player, 0)">1팀으로</button>
       <button ng-show="player.side == 0" ng-click="changeSide(player, 1)">2팀으로</button>
       <button ng-click="command('kick ' + player.playerid)" >킥</button>
