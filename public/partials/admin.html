@@ -9,7 +9,7 @@
       </select>
     <label>
       게임 모드
-      <select ng-model="ServerSettings.VictoryCond" ng-change="SendServerSetting('VictoryCond',ServerSettings.VictoryCond)" ng-options="VictoryCond.value as VictoryCond.name for VictoryCond in Wargame3SelectOptions.VictoryCond">
+      <select ng-model="ServerSettings.VictoryCond" ng-change="changeVictoryCond(ServerSettings.VictoryCond)" ng-options="VictoryCond.value as VictoryCond.name for VictoryCond in Wargame3SelectOptions.VictoryCond">
       </select>
     </label>
     <label>

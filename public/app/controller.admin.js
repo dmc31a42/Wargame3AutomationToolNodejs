@@ -274,6 +274,14 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$roo
       $scope.SendServerSetting('InitMoney',InitMoney);
       $scope.SendServerSetting('ScoreLimit',ScoreLimit);
     }
+
+    $scope.changeVictoryCond = function(VictoryCond){
+      var InitMoney = $scope.NbMaxPlayer/2*1000;
+      var ScoreLimit = VictoryCond === 4 ? 500 : InitMoney*2;
+      $scope.SendServerSetting('VictoryCond',VictoryCond);
+      $scope.SendServerSetting('InitMoney',InitMoney);
+      $scope.SendServerSetting('ScoreLimit',ScoreLimit);
+    }
   }
 ]);
 
