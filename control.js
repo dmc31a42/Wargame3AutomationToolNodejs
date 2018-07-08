@@ -466,7 +466,8 @@ function _on_player_connect(RegExpExec){
       IP: RegExpExec[4],
       Port: RegExpExec[5],
       country_code: 'XX',
-      country_name: 'Unknwon'
+      country_name: 'Unknwon',
+      u24: {},
     };
     emitAdminInfo();
   }
@@ -478,7 +479,7 @@ function _on_player_connect(RegExpExec){
 
 function on_player_connection(playerid){
   CustomModSelectTeamAddPlayer(playerid);
-  if(NodeConfig.ipstack_API_KEY != '') {
+  if(NodeConfig.ipstack_API_KEY && NodeConfig.ipstack_API_KEY != '') {
     var option = {
       hostname: 'api.ipstack.com',
       port: 80,
@@ -495,12 +496,37 @@ function on_player_connection(playerid){
         IP_request_Callback(responseData, playerid);
       })
     })
+    req.on('error', (e) => {
+      console.error(e);
+    });
+    req.end();
   }
-  req.on('error', (e) => {
+  var req_u24 = http.request({
+    hostname: '178.32.126.73',
+    port: 8080,
+    path: '/stats/u24_' + playerid,
+    method: 'GET'
+  }, function(res){
+    var responseData = '';
+      res.on('data', function(chunk){
+        responseData = responseData + chunk;
+      });
+      res.on('end', function(){
+        u24_Callback(responseData, playerid);
+      })
+  })
+  req_u24.on('error', (e) => {
     console.error(e);
   });
-  req.end();
+  req_u24.end();
   emitAdminInfo();
+}
+function u24_Callback(responseData, playerid){
+  var JSONData = JSON.parse(responseData.toString());
+  if(players[playerid] && JSONData._id){
+    players[playerid].u24 = JSONData;
+    emitAdminInfo();
+  }
 }
 
 function IP_request_Callback(responseData, playerid){

@@ -1,7 +1,7 @@
 var controller = angular.module('Wargame3AutomationTool.controller.admin', []);
 
-controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$rootScope', '$scope','uiSortableMultiSelectionMethods','$interval','$timeout', '$cookieStore', '$state',
-  function(socket, $rootScope, $scope, uiSortableMultiSelectionMethods, $interval, $timeout, $cookieStore, $state){
+controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$rootScope', '$scope','uiSortableMultiSelectionMethods','$interval','$timeout', '$cookieStore', '$state', '$uibModal',
+  function(socket, $rootScope, $scope, uiSortableMultiSelectionMethods, $interval, $timeout, $cookieStore, $state, $uibModal){
     $scope.origin = window.location.origin;
     if($rootScope.AdminLoginResult == 'OK'){
     } else {
@@ -13,6 +13,23 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$roo
         $state.go('login');
       }
     }
+    $scope.openPlayerDetail = function(){
+      console.log('opening PlayerDetail pop up');
+      if($scope.selectedItems.length == 1){
+        var playerid = $scope.selectedItems[0];
+        var player = $scope.players[playerid];
+        console.log($scope.selectedItems[0]);
+        var modalInstance = $uibModal.open({
+          templateUrl: 'partials/playerDetailPopUp.html',
+          controller: 'Wargame3AutomationTool.controller.playerDetailPopUp',
+          resolve: {
+            player: function(){
+              return player;
+            }
+          }
+        });
+      }
+    };
 
     $scope.Team1 = {};
     $scope.Team2 = {};
@@ -249,6 +266,14 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$roo
         'value': value
       });
     };
+
+    $scope.changeNbMaxPlayer = function(NbMaxPlayer){
+      var InitMoney = NbMaxPlayer/2*1000;
+      var ScoreLimit = ServerSettings.VictoryCond === 4 ? 500 : InitMoney*2;
+      SendServerSetting('NbMaxPlayer',NbMaxPlayer);
+      SendServerSetting('InitMoney',InitMoney);
+      SendServerSetting('ScoreLimit',ScoreLimit);
+    }
   }
 ]);
 

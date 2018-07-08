@@ -1,0 +1,254 @@
+<div class="modal-header">
+    <h3 class="modal-title">{{player.name}}의 프로필</h3>
+</div>
+<div class="modal-body">
+    <fieldset>
+        <legend>레벨</legend>
+        <div class="custom-row">
+            <div class="left-align">플레이어 레벨</div>
+            <div class="right-align">{{player['u24']['@level'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">캠페인 경험치</div>
+            <div class="right-align">{{player['u24']['@xp_campaign'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">국지전 경험치</div>
+            <div class="right-align">{{player['u24']['@xp_skirmish'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">멀티플레이어 경험치</div>
+            <div class="right-align">{{player['u24']['@xp_multi'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">랭킹 경험치</div>
+            <div class="right-align">{{player['u24']['@xp_ranked'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">전체 경험치</div>
+            <div class="right-align">{{sum([player['u24']['@level'],player['u24']['@xp_campaign'],player['u24']['@xp_skirmish'],player['u24']['@xp_multi'],player['u24']['@xp_ranked']]) | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">다음 레벨까지</div>
+            <div class="right-align">XX</div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>게임 횟수</legend>
+        <div class="custom-row">
+            <div class="left-align">전체</div>
+            <div class="right-align">{{sum([player['u24']['@time_campaign_played'], player['u24']['@time_multi_played'], player['u24']['@time_ranked_played'], player['u24']['@time_skirmish_played']]) | customTime}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">캠페인</div>
+            <div class="right-align">{{player['u24']['@time_campaign_played'] | customTime}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">멀티플레이어 게임</div>
+            <div class="right-align">{{player['u24']['@time_multi_played'] | customTime}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">랭킹 게임</div>
+            <div class="right-align">{{player['u24']['@time_ranked_played'] | customTime}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">국지전 게임</div>
+            <div class="right-align">{{player['u24']['@time_skirmish_played'] | customTime}}</div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>순위</legend>
+        <div class="custom-row">
+            <div class="left-align">등급</div>
+            <div class="right-align">값모름</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">평가</div>
+            <div class="right-align">{{player['u24']['ELO_LB_value'] | parseInt}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">등급 평가 범위</div>
+            <div class="right-align">값모름</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">경향</div>
+            <div class="right-align">값모름</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">전체 순위</div>
+            <div class="right-align">{{player['u24']['ELO_LB_rank']}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">랭킹 게임</div>
+            <div class="right-align">{{ranked_total | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">승리</div>
+            <div class="right-align">{{ranked_win | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">패배</div>
+            <div class="right-align">{{ranked_loss | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">무승부</div>
+            <div class="right-align">{{ranked_foul | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">승률</div>
+            <div class="right-align">{{ratio(ranked_win, ranked_loss, ranked_foul) | number:1}}%</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">청군으로 랭킹 플레이</div>
+            <div class="right-align">{{ranked_nato | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">홍군으로 랭킹 플레이</div>
+            <div class="right-align">{{ranked_pact | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">최근 게임</div>
+            <div class="right-align">{{player['u24']['ranked_last_game'] | EugenDateToNumber | date:"yyyy/MM/dd - H'h' m'm'"}}</div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>멀티플레이어</legend>
+        <div class="custom-row">
+            <div class="left-align">멀티플레이어 게임</div>
+            <div class="right-align">{{player['u24']['@multi_played'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">승리</div>
+            <div class="right-align">{{player['u24']['@multi_win'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">패배</div>
+            <div class="right-align">{{player['u24']['@multi_loss'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">무승부</div>
+            <div class="right-align">{{player['u24']['@multi_draw'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">승률</div>
+            <div class="right-align">{{ratio(player['u24']['@multi_win'],player['u24']['@multi_loss'], player['u24']['@multi_draw']) | number:1}}%</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">청군으로 게임 플레이</div>
+            <div class="right-align">{{player['u24']['@multi_nato'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">홍군으로 게임 플레이</div>
+            <div class="right-align">{{player['u24']['@multi_pact'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">최근 게임</div>
+            <div class="right-align">{{player['u24']['@multi_last_game'] | EugenDateToNumber | date:"yyyy/MM/dd - H'h' m'm'"}}</div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>캠페인</legend>
+        <div class="custom-row">
+            <div class="left-align">진행한 캠페인 수</div>
+            <div class="right-align">{{sum([player['u24']['@campaign_nato'],player['u24']['@campaign_pact']]) | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">청군으로 플레이한 캠페인</div>
+            <div class="right-align">{{player['u24']['@campaign_nato'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">홍군으로 플레이한 캠페인</div>
+            <div class="right-align">{{player['u24']['@campaign_pact'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">청군으로 플레이한 전투</div>
+            <div class="right-align">{{player['u24']['@tactic_nato'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">청군으로 승리한 전투</div>
+            <div class="right-align">{{player['u24']['@tactic_nato_win'] | ifEmpty:0}}({{ratioTotalWin(player['u24']['@tactic_nato'],player['u24']['@tactic_nato_win']) | number:1}}%)</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">홍군으로 플레이한 전투</div>
+            <div class="right-align">{{player['u24']['@tactic_pact'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">홍군으로 승리한 전투</div>
+            <div class="right-align">{{player['u24']['@tactic_pact_win'] | ifEmpty:0}}({{ratioTotalWin(player['u24']['@tactic_pact'],player['u24']['@tactic_pact_win']) | number:1}}%)</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">승리</div>
+            <div class="right-align">{{player['u24']['@campaign_wins'] | ifEmpty:0}}</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">최근 게임</div>
+            <div class="right-align">{{player['u24']['@campaign_last_game'] | EugenDateToNumber | date:"yyyy/MM/dd - H'h' m'm'"}}</div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>선호 병력</legend>
+        <div class="custom-row">
+            <div class="left-align">군수병력</div>
+            <div class="right-align">{{ratioTotalWin(nb_bought_total,nb_log_bought) | number:1}}%</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">정찰병력</div>
+            <div class="right-align">{{ratioTotalWin(nb_bought_total,nb_reco_bought) | number:1}}%</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">전차병력</div>
+            <div class="right-align">{{ratioTotalWin(nb_bought_total,nb_tank_bought) | number:1}}%</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">보병병력</div>
+            <div class="right-align">{{ratioTotalWin(nb_bought_total,nb_inf_bought) | number:1}}%</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">지원병력</div>
+            <div class="right-align">{{ratioTotalWin(nb_bought_total,nb_sup_bought) | number:1}}%</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">차량병력</div>
+            <div class="right-align">{{ratioTotalWin(nb_bought_total,nb_veh_bought) | number:1}}%</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">헬리콥터병력</div>
+            <div class="right-align">{{ratioTotalWin(nb_bought_total,nb_hel_bought) | number:1}}%</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">항공병력</div>
+            <div class="right-align">{{ratioTotalWin(nb_bought_total,nb_air_bought) | number:1}}%</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">해상병력</div>
+            <div class="right-align">{{ratioTotalWin(nb_bought_total,nb_naval_bought) | number:1}}%</div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>선호 모드</legend>
+        <div class="custom-row">
+            <div class="left-align">격멸전</div>
+            <div class="right-align">{{gametype_dest | ifEmpty:0}} ({{ratioTotalWin(gametype_total,gametype_dest) | number:1}}%)</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">정복전</div>
+            <div class="right-align">{{gametype_conquest | ifEmpty:0}} ({{ratioTotalWin(gametype_total,gametype_conquest) | number:1}}%)</div>
+        </div>
+        <div class="custom-row">
+            <div class="left-align">경제전</div>
+            <div class="right-align">{{gametype_economy | ifEmpty:0}} ({{ratioTotalWin(gametype_total,gametype_economy) | number:1}}%)</div>
+        </div>
+    </fieldset>
+    <fieldset>
+        <legend>친목</legend>
+        <div class="custom-row">
+            <div class="left-align"></div>
+            <div class="right-align">불명</div>
+        </div>
+    </fieldset>
+    
+</div>
+<div class="modal-footer">
+    <button class="btn btn-warning" type="button"
+    ng-click="close()">Cancel</button>
+</div>

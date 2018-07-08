@@ -5,7 +5,8 @@ var app = angular.module('Wargame3AutomationTool', [
   'ui.sortable',
   'ui.sortable.multiselection',
   'ngCookies',
-
+  'ui.bootstrap',
+  
   'Wargame3AutomationTool.router',
   'Wargame3AutomationTool.controller'
 ]);
@@ -252,3 +253,38 @@ app.filter('orderObjectBy', function() {
     return filtered;
   };
 });
+
+app.filter('ifEmpty', function() {
+  return function(input, defaultValue) {
+      if (angular.isUndefined(input) || input === null || input === '') {
+          return defaultValue;
+      }
+
+      return input;
+  }
+});
+
+app.filter('customTime', function(){
+  return function(input){
+    if(!input || input === '') return;
+    var time = parseInt(input);
+    var seconds = time%60;
+    var minutes = (time-seconds)/60%60;
+    var hours = (time-seconds-minutes*60)/3600;
+    return hours + '시간 ' + minutes + '분';
+  }
+})
+
+app.filter('EugenDateToNumber', function(){
+  return function(input){
+    if(!input || input === '') return;
+    return Math.floor(parseFloat(input)*1000);
+  }
+})
+
+app.filter('parseInt', function(){
+  return function(input){
+    if(!input || input === '') return;
+    return parseInt(input);
+  }
+})

@@ -1,7 +1,7 @@
 var controller = angular.module('Wargame3AutomationTool.controller.SelectTeam', []);
 
-controller.controller('Wargame3AutomationTool.controller.SelectTeam', ['$rootScope', '$scope', '$state', 'socket', '$timeout', '$cookies', '$stateParams', 
-    function ($rootScope, $scope, $state, socket, $timeout, $cookies, $stateParams) {
+controller.controller('Wargame3AutomationTool.controller.SelectTeam', ['$rootScope', '$scope', '$state', 'socket', '$timeout', '$cookies', '$stateParams', '$uibModal',
+    function ($rootScope, $scope, $state, socket, $timeout, $cookies, $stateParams, $uibModal) {
         if($stateParams.id) {
             socket.emit('login:SelectTeam',{
                 Code: $stateParams.id
@@ -21,6 +21,24 @@ controller.controller('Wargame3AutomationTool.controller.SelectTeam', ['$rootSco
             $scope.UnselectedPlayersListOrderReverse = ($scope.UnselectedPlayersListOrderPropertyName === propertyName) ? !$scope.UnselectedPlayersListOrderReverse : false;
             $scope.UnselectedPlayersListOrderPropertyName = propertyName;
         }
+
+        $scope.openPlayerDetail = function(){
+            console.log('opening PlayerDetail pop up');
+            if($scope.selectedItems.length == 1){
+              var playerid = $scope.selectedItems[0];
+              var player = $scope.players[playerid];
+              console.log($scope.selectedItems[0]);
+              var modalInstance = $uibModal.open({
+                templateUrl: 'partials/playerDetailPopUp.html',
+                controller: 'Wargame3AutomationTool.controller.playerDetailPopUp',
+                resolve: {
+                  player: function(){
+                    return player;
+                  }
+                }
+              });
+            }
+          };
         
         socket.on('SelectTeam:yourTeam',function(data){
             $scope.yourTeam = data.yourTeam;

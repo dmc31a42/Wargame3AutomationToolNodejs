@@ -46,6 +46,9 @@
 </div>
 <fieldset>
   <legend>선택되지 않은 플레이어 목록</legend>
+  <div>
+    <button ng-click="openPlayerDetail()" class="btn btn-warning">플레이어 상세 보기</button>
+  </div>
   <!--button ng-disabled="!(yourTeam == customModSettings.SelectTeam.whoisSelectTeam && selectedItems.length == customModSettings.SelectTeam.HowManySelect)" ng-click="selectPlayer()">선택한 플레이어를 자신의 팀으로 선택</button-->
   <button ng-click="selectPlayer()">선택한 플레이어를 자신의 팀으로 선택</button>
   <!--h3 ng-show="selectedItems.length != customModSettings.SelectTeam.HowManySelect && yourTeam == customModSettings.SelectTeam.whoisSelectTeam">
@@ -80,7 +83,7 @@
       <!--div class="player.deck">{{player.deck}}</div-->
   </div>
   <div id="playersList" ui-sortable="sortableOptions" ng-model="Left">
-    <div class="player" ui-sortable-selectable ng-repeat="player in Left | orderObjectBy:UnselectedPlayersListOrderPropertyName:UnselectedPlayersListOrderReverse"">
+    <div class="player" ui-sortable-selectable ng-repeat="player in Left" | orderObjectBy:UnselectedPlayersListOrderPropertyName:UnselectedPlayersListOrderReverse>
       <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
       <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
       <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>

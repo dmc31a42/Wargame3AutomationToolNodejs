@@ -27,7 +27,7 @@
     <legend>게임 상세 설정</legend>
     <label>
       Teams
-      <select ng-model="ServerSettings.NbMaxPlayer" ng-change="SendServerSetting('NbMaxPlayer',ServerSettings.NbMaxPlayer)" ng-options="Teams.value as Teams.name for Teams in Wargame3SelectOptions.Teams">
+      <select ng-model="ServerSettings.NbMaxPlayer" ng-change="changeNbMaxPlayer(ServerSettings.NbMaxPlayer)" ng-options="Teams.value as Teams.name for Teams in Wargame3SelectOptions.Teams">
       </select>
     </label>
     <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney" ng-change="SendServerSetting('InitMoney',ServerSettings.InitMoney)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
@@ -195,8 +195,13 @@
 </div>
 <fieldset>
   <legend>선택되지 않은 플레이어 목록</legend>
-  <button ng-click="setSelectedSide(0)">선택한 플레이어의 팀을 1팀으로 정하기</button>
-  <button ng-click="setSelectedSide(1)">선택한 플레이어의 팀을 2팀으로 정하기</button>
+  <div>
+    <button ng-click="openPlayerDetail()" class="btn btn-warning">플레이어 상세 보기</button>
+  </div>
+  <div>
+    <button ng-click="setSelectedSide(0)">선택한 플레이어의 팀을 1팀으로 정하기</button>
+    <button ng-click="setSelectedSide(1)">선택한 플레이어의 팀을 2팀으로 정하기</button>
+  </div>
   <div class="player top">
       <div class="playerid">
           <button ng-click="UnselectedPlayersListSortBy('playerid')">Playerid</button>
