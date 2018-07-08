@@ -76,16 +76,33 @@
 </div>
 <fieldset>
 <legend>플레이어 목록</legend>
+  
   <div class="player top">
-      <div class="playerid">Playerid</div>
-      <div class="level">level</div>
-      <div class="elo">elo </div>
-      <div class="side">side</div>
-      <div class="name">Name</div>
+      <div class="playerid">
+        <button ng-click="playersListSortBy('playerid')">Playerid</button>
+        <span class="sortorder" ng-show="playersListOrderPropertyName === 'playerid'" ng-class="{reverse:playersListOrderReverse}"></span>
+      </div>
+      <div class="level">
+          <button ng-click="playersListSortBy('level')">level</button>
+          <span class="sortorder" ng-show="playersListOrderPropertyName === 'level'" ng-class="{reverse:playersListOrderReverse}"></span>
+      </div>
+      <div class="elo">
+          <button ng-click="playersListSortBy('elo')">elo</button>
+          <span class="sortorder" ng-show="playersListOrderPropertyName === 'elo'" ng-class="{reverse:playersListOrderReverse}"></span>
+      </div>
+      <div class="side">
+          <button ng-click="playersListSortBy('side')">side</button>
+          <span class="sortorder" ng-show="playersListOrderPropertyName === 'side'" ng-class="{reverse:playersListOrderReverse}"></span>
+      </div>
+      <div class="name">
+          <button ng-click="playersListSortBy('name')">name</button>
+          <span class="sortorder" ng-show="playersListOrderPropertyName === 'name'" ng-class="{reverse:playersListOrderReverse}"></span>
+      </div>
+      <button ng-click="playersListOrderPropertyName = null; playersListOrderReverse = false" style="height: 26px;">정렬 초기화</button>
       <!--div class="player.deck">{{player.deck}}</div-->
   </div>
   <div id="playersList" ng-model="players">
-    <div class="player" ng-repeat="player in players">
+    <div class="player" ng-repeat="player in players | orderObjectBy:playersListOrderPropertyName:playersListOrderReverse">
       <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
       <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
       <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
@@ -178,16 +195,34 @@
 </div>
 <fieldset>
   <legend>선택되지 않은 플레이어 목록</legend>
+  <button ng-click="setSelectedSide(0)">선택한 플레이어의 팀을 1팀으로 정하기</button>
+  <button ng-click="setSelectedSide(1)">선택한 플레이어의 팀을 2팀으로 정하기</button>
   <div class="player top">
-      <div class="playerid">Playerid</div>
-      <div class="level">level</div>
-      <div class="elo">elo </div>
-      <div class="side">side</div>
-      <div class="name">Name</div>
+      <div class="playerid">
+          <button ng-click="UnselectedPlayersListSortBy('playerid')">Playerid</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'playerid'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="level">
+          <button ng-click="UnselectedPlayersListSortBy('level')">level</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'level'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="elo">
+          <button ng-click="UnselectedPlayersListSortBy('elo')">elo</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'elo'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="side">
+          <button ng-click="UnselectedPlayersListSortBy('side')">side</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'side'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="name">
+          <button ng-click="UnselectedPlayersListSortBy('name')">name</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'name'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <button ng-click="UnselectedPlayersListOrderPropertyName = null; UnselectedPlayersListOrderReverse = false" style="height: 26px;">정렬 초기화</button>
       <!--div class="player.deck">{{player.deck}}</div-->
   </div>
   <div id="playersList" ui-sortable="sortableOptions" ng-model="Left">
-    <div class="player" ui-sortable-selectable ng-repeat="player in Left">
+    <div class="player" ui-sortable-selectable ng-repeat="player in Left | orderObjectBy:UnselectedPlayersListOrderPropertyName:UnselectedPlayersListOrderReverse">
       <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
       <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
       <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
@@ -199,5 +234,3 @@
 </fieldset>
 <!--button ng-click="changeSelectedSide()">선택한 플레이어의 팀을 상대편으로 변경하기</button-->
 <!--button ng-click="unSelectSide()">선택한 플레이어의 팀을 선택 해제하기</button-->
-<button ng-click="setSelectedSide(0)">선택한 플레이어의 팀을 1팀으로 정하기</button>
-<button ng-click="setSelectedSide(1)">선택한 플레이어의 팀을 2팀으로 정하기</button>

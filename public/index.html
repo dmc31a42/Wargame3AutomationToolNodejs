@@ -8,13 +8,19 @@
     .ui-sortable-selected {background-color:yellow}
     .playersList{float:none;display: block}
     .player{float:none; display:block; display:flex;}
-    .player>.playerid{flex-basis: 60px; padding-left:10px; padding-right:10px;}
-    .player>.level{flex-basis: 20px; padding-left:10px; padding-right:10px;}
-    .player>.elo{flex-basis: 50px; padding-left:10px; padding-right:10px;}
-    .player>.side{flex-basis: 65px; padding-left:10px; padding-right:10px;}
+    .player>.playerid{flex-basis: 80px; padding-left:10px; padding-right:0px; text-align:right;}
+    .player>.level{flex-basis: 50px; padding-left:0px; padding-right:0px;text-align:right;}
+    .player>.elo{flex-basis: 50px; padding-left:0px; padding-right:0px;text-align:right;}
+    .player>.side{flex-basis: 65px; padding-left:10px; padding-right:10px;text-align:right;}
     .player>.country_flags{padding-left:10px; padding-right:10px; height:20px; margin-left: auto;}
     #Selected{display:flex;margin-bottom:40px;}
     #Selected>fieldset{flex-grow:1;}
+    .sortorder:after {
+      content: '\25b2';   
+    }
+    .sortorder.reverse:after {
+      content: '\25bc';  
+    }
   </style>
 </head>
 <body>

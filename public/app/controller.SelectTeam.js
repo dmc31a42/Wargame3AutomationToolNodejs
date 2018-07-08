@@ -15,6 +15,12 @@ controller.controller('Wargame3AutomationTool.controller.SelectTeam', ['$rootSco
         $scope.Left = {};
         $scope.err = '';
         $scope.selectedItems = {};
+        $scope.UnselectedPlayersListOrderPropertyName = 'playerid';
+        $scope.UnselectedPlayersListOrderReverse = false;
+        $scope.UnselectedPlayersListSortBy = function(propertyName){
+            $scope.UnselectedPlayersListOrderReverse = ($scope.UnselectedPlayersListOrderPropertyName === propertyName) ? !$scope.UnselectedPlayersListOrderReverse : false;
+            $scope.UnselectedPlayersListOrderPropertyName = propertyName;
+        }
         
         socket.on('SelectTeam:yourTeam',function(data){
             $scope.yourTeam = data.yourTeam;

@@ -46,16 +46,41 @@
 </div>
 <fieldset>
   <legend>선택되지 않은 플레이어 목록</legend>
+  <!--button ng-disabled="!(yourTeam == customModSettings.SelectTeam.whoisSelectTeam && selectedItems.length == customModSettings.SelectTeam.HowManySelect)" ng-click="selectPlayer()">선택한 플레이어를 자신의 팀으로 선택</button-->
+  <button ng-click="selectPlayer()">선택한 플레이어를 자신의 팀으로 선택</button>
+  <!--h3 ng-show="selectedItems.length != customModSettings.SelectTeam.HowManySelect && yourTeam == customModSettings.SelectTeam.whoisSelectTeam">
+    선택할 수 있는 인원보다 많거나 적은 플레이어를 선택하였습니다.<br/>
+    선택할 수 있는 인원 : {{customModSettings.SelectTeam.HowManySelect}}, 선택한 인원 : {{selectedItems.length}}
+  </h3-->
+  <h3>{{err}}</h3>
+  <h3 ng-if="yourTeam == customModSettings.SelectTeam.whoisSelectTeam">{{yourTeam + 1}} 팀장님의 차례입니다</h3>
+  <h3 ng-if="Left.length == 0">5초뒤 자동으로 팀원 배치가 시작됩니다.</h3>
   <div class="player top">
-      <div class="playerid">Playerid</div>
-      <div class="level">level</div>
-      <div class="elo">elo </div>
-      <div class="side">side</div>
-      <div class="name">Name</div>
+      <div class="playerid">
+          <button ng-click="UnselectedPlayersListSortBy('playerid')">Playerid</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'playerid'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="level">
+          <button ng-click="UnselectedPlayersListSortBy('level')">level</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'level'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="elo">
+          <button ng-click="UnselectedPlayersListSortBy('elo')">elo</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'elo'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="side">
+          <button ng-click="UnselectedPlayersListSortBy('side')">side</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'side'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="name">
+          <button ng-click="UnselectedPlayersListSortBy('name')">name</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'name'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <button ng-click="UnselectedPlayersListOrderPropertyName = null; UnselectedPlayersListOrderReverse = false" style="height: 26px;">정렬 초기화</button>
       <!--div class="player.deck">{{player.deck}}</div-->
   </div>
   <div id="playersList" ui-sortable="sortableOptions" ng-model="Left">
-    <div class="player" ui-sortable-selectable ng-repeat="player in Left">
+    <div class="player" ui-sortable-selectable ng-repeat="player in Left | orderObjectBy:UnselectedPlayersListOrderPropertyName:UnselectedPlayersListOrderReverse"">
       <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
       <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
       <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
@@ -65,12 +90,3 @@
     </div>
   </div>
 </fieldset>
-<!--button ng-disabled="!(yourTeam == customModSettings.SelectTeam.whoisSelectTeam && selectedItems.length == customModSettings.SelectTeam.HowManySelect)" ng-click="selectPlayer()">선택한 플레이어를 자신의 팀으로 선택</button-->
-<button ng-click="selectPlayer()">선택한 플레이어를 자신의 팀으로 선택</button>
-<!--h3 ng-show="selectedItems.length != customModSettings.SelectTeam.HowManySelect && yourTeam == customModSettings.SelectTeam.whoisSelectTeam">
-  선택할 수 있는 인원보다 많거나 적은 플레이어를 선택하였습니다.<br/>
-  선택할 수 있는 인원 : {{customModSettings.SelectTeam.HowManySelect}}, 선택한 인원 : {{selectedItems.length}}
-</h3-->
-<h3>{{err}}</h3>
-<h3 ng-if="yourTeam == customModSettings.SelectTeam.whoisSelectTeam">{{yourTeam + 1}} 팀장님의 차례입니다</h3>
-<h3 ng-if="Left.length == 0">5초뒤 자동으로 팀원 배치가 시작됩니다.</h3>

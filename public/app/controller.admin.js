@@ -19,6 +19,19 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$roo
     $scope.Left = {};
     $scope.err = '';
     $scope.selectedItems = {};
+    $scope.playersListOrderPropertyName = 'playerid';
+    $scope.playersListOrderReverse = false;
+    $scope.playersListSortBy = function(propertyName){
+      $scope.playersListOrderReverse = ($scope.playersListOrderPropertyName === propertyName) ? !$scope.playersListOrderReverse : false;
+      $scope.playersListOrderPropertyName = propertyName;
+    };
+    $scope.UnselectedPlayersListOrderPropertyName = 'playerid';
+    $scope.UnselectedPlayersListOrderReverse = false;
+    $scope.UnselectedPlayersListSortBy = function(propertyName){
+      $scope.UnselectedPlayersListOrderReverse = ($scope.UnselectedPlayersListOrderPropertyName === propertyName) ? !$scope.UnselectedPlayersListOrderReverse : false;
+      $scope.UnselectedPlayersListOrderPropertyName = propertyName;
+    }
+
     socket.on('Admin', function(data){
       if(loadFromServer){
         $timeout.cancel(loadFromServer);
