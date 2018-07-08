@@ -269,7 +269,7 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket','$roo
 
     $scope.changeNbMaxPlayer = function(NbMaxPlayer){
       var InitMoney = NbMaxPlayer/2*1000;
-      var ScoreLimit = ServerSettings.VictoryCond === 4 ? 500 : InitMoney*2;
+      var ScoreLimit = $scope.ServerSettings.VictoryCond === 4 ? 500 : InitMoney*2;
       SendServerSetting('NbMaxPlayer',NbMaxPlayer);
       SendServerSetting('InitMoney',InitMoney);
       SendServerSetting('ScoreLimit',ScoreLimit);
