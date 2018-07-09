@@ -479,7 +479,10 @@ function _on_player_connect(RegExpExec){
 
 function on_player_connection(playerid){
   CustomModSelectTeamAddPlayer(playerid);
-  if(NodeConfig.ipstack_API_KEY && NodeConfig.ipstack_API_KEY != '') {
+  if(players[playerid].IP.match("192.168.").index) {
+    players[playerid].country_code = "__";
+    players[playerid].country_name = "Special";
+  } else if(NodeConfig.ipstack_API_KEY && NodeConfig.ipstack_API_KEY != '') {
     var option = {
       hostname: 'api.ipstack.com',
       port: 80,
