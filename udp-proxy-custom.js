@@ -7,7 +7,6 @@ var proxy = require('udp-proxy'),
 		localaddress: '0.0.0.0',
 		localport: 10810,
 		localipv6: false,
-		proxyaddress: '::0',
 		timeOutTime: 10000
 	};
 
