@@ -33,11 +33,13 @@ TcpProxy.prototype.createProxy = function() {
         };    
         proxy.createServiceSocket(context);
         proxySocket.on("data", function(data) {
+            var wargame3Protocol = checkWargame3Protocol(data);
             if (context.connected) {
                 context.serviceSocket.write(data);
             } else {
                 context.buffers[context.buffers.length] = data;
             }
+            console.log(key);
             console.log("local >> proxy >> remote1");
             console.log(data);
         });
@@ -49,6 +51,9 @@ TcpProxy.prototype.createProxy = function() {
     proxy.server.listen(proxy.proxyPort, proxy.options.hostname);
 };
 
+function checkWargame3Protocol(data){
+    
+}
 TcpProxy.prototype.createServiceSocket = function(context) {
     const proxy = this;
     context.serviceSocket = new net.Socket();
@@ -63,6 +68,7 @@ TcpProxy.prototype.createServiceSocket = function(context) {
     });
     context.serviceSocket.on("data", function(data) {
         context.proxySocket.write(data);
+        console.log(proxy.servicePort, proxy.serviceHost);
         console.log("remote >> proxy >> local");
             console.log(data);
     });
