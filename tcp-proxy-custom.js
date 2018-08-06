@@ -36,7 +36,7 @@ TcpProxy.prototype.createProxy = function() {
             if(proxySocket.localPort == 10002){
                 var wargame3Protocol = checkWargame3Protocol(data);
                 if(wargame3Protocol){
-                    if(wargame3Protocol.commandCode == 0xE1){
+                    if(wargame3Protocol.CommandCode == 0xE1){
                         wargame3Protocol.ServerPort = 10810;
                     }
                     var wargame3ProtocolBuffer = wargame3Protocol.getBuffer();
