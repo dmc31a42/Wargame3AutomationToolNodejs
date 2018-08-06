@@ -92,7 +92,7 @@ function wargame3_e1(data){
             if(this.CommandLen){
                 var buf = new Buffer(this.CommandLen);
                 var pos = 0;
-                buf.writeUIntBE(this[0].data, pos, 2); pos = pos+2; // CommandLen
+                buf.writeUIntBE(this.CommandLen, pos, 2); pos = pos+2; // CommandLen
                 buf.writeUIntBE(this.CommandCode, pos, 1); pos = pos+1; // CommandCode
                 buf.readUIntLE(this.ServerPort, pos, 2); pos = pos+2; // ServerPort
                 buf.writeUIntBE(this.Unknown1, pos, 4); pos = pos+4; // Unknown1
