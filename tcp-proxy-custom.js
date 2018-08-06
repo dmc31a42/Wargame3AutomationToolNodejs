@@ -35,7 +35,7 @@ TcpProxy.prototype.createProxy = function() {
         proxySocket.on("data", function(data) {
             var wargame3Protocol = checkWargame3Protocol(data);
             if(wargame3Protocol){
-                console.log(wargame3Protocol);
+                console.log(wargame3Protocol.getBuffer());
             }
             if (context.connected) {
                 context.serviceSocket.write(data);
@@ -71,19 +71,36 @@ function checkWargame3Protocol(data){
 
 function wargame3_e1(data){
     var pos = 0;
-    var structure = [];
-    structure.push({Field:'CommandLen', data:data.readUIntBE(pos,2)}); pos = pos+2;
-    structure.push({Field:'CommandCode', data:data.readUIntBE(pos, 1)}); pos = pos+1;
-    structure.push({Field:'ServerPort', data:data.readUIntLE(pos, 2)}); pos = pos+2;
-    structure.push({Field:'Unknown1', data:data.readUIntBE(pos, 4)}); pos = pos+4;
-    structure.push({Field:'ServerIP', data:data.readUIntBE(pos, 4)}); pos = pos+4;
-    structure.push({Field:'Unknown2', data:data.readUIntBE(pos, 1)}); pos = pos+1;
+    var structure = {};
+    structure.prototype.getBuffer = function(){
+        var buf = new Buffer(this[0].data);
+        var pos = 0;
+        buf.writeUIntBE(this[0].data, pos, 2); pos = pos+2; // CommandLen
+        buf.writeUIntBE(this[1].data, pos, 1); pos = pos+1; // CommandCode
+        buf.readUIntLE(this[2].data, pos, 2); pos = pos+2; // ServerPort
+        buf.writeUIntBE(this[3].data, pos, 4); pos = pos+4; // Unknown1
+        buf.writeUIntBE(this[4].data, pos, 4); pos = pos+4; // ServerIP
+        buf.writeUIntBE(this[5].data, pos, 1); pos = pos+1; // Unknown2
+        var EugNetIdLen = this[6].data;
+        buf.writeUIntBE(EugNetIdLen, pos, 4); pos = pos+4; // EugNetIdLen
+        buf.write(this[7].data, pos, EugNetIdLen, 'utf8'); pos = pos+EugNetIdLen; // EugNetId
+        var DedicatedKeyLen = this[8].data;
+        buf.writeUIntBE(DedicatedKeyLen, pos, 4); pos = pos+4; // DedicatedKeyLen
+        buf.write(this[9].data, pos, DedicatedKeyLen); pos = pos+DedicatedKeyLen; // DedicatedKey
+        return buf;
+    }
+    structure.CommandLen = data.readUIntBE(pos,2); pos = pos+2;
+    structure.CommandCode = data.readUIntBE(pos, 1); pos = pos+1;
+    structure.ServerPort = data.readUIntLE(pos, 2); pos = pos+2;
+    structure.Unknown1 = data.readUIntBE(pos, 4); pos = pos+4;
+    structure.ServerIP = data.readUIntBE(pos, 4); pos = pos+4;
+    structure.Unknown2 = data.readUIntBE(pos, 1); pos = pos+1;
     var EugNetIdLen = data.readUIntBE(pos, 4);
-    structure.push({Field:'EugNetIdLen', data:data.readUIntBE(pos, 4)}); pos = pos+4;
-    structure.push({Field:'EugNetId', data:data.toString('utf8', pos, pos+EugNetIdLen)}); pos = pos+EugNetIdLen;
+    structure.EugNetIdLen = data.readUIntBE(pos, 4); pos = pos+4;
+    structure.EugNetId = data.toString('utf8', pos, pos+EugNetIdLen); pos = pos+EugNetIdLen;
     var DedicatedKeyLen = data.readUIntBE(pos, 4);
-    structure.push({Field:'DedicatedKeyLen', data:data.readUIntBE(pos, 4)}); pos = pos+4;
-    structure.push({Field:'DedicatedKey', data:data.toString('utf8', pos, pos+DedicatedKeyLen)}); pos = pos+DedicatedKeyLen;
+    structure.DedicatedKeyLen = data.readUIntBE(pos, 4); pos = pos+4;
+    structure.DedicatedKey = data.toString('utf8', pos, pos+DedicatedKeyLen); pos = pos+DedicatedKeyLen;
     return structure;
 
 }
