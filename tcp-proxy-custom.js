@@ -57,7 +57,7 @@ TcpProxy.prototype.createProxy = function() {
 function checkWargame3Protocol(data){
     var commandCode = [{code: 0xe1, callback:wargame3_e1},
     ];
-    if(data.length=3){
+    if(data.length>=3){
         var index = commandCode.findIndex(function(element){
             if(data[2] == element.code) return true;
         })
