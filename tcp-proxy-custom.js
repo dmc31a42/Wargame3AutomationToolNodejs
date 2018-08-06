@@ -33,7 +33,7 @@ TcpProxy.prototype.createProxy = function() {
         };    
         proxy.createServiceSocket(context);
         proxySocket.on("data", function(data) {
-            if(proxySocket.remotePort == 10002){
+            if(proxySocket.localPort == 10002){
                 var wargame3Protocol = checkWargame3Protocol(data);
                 if(wargame3Protocol){
                     if(wargame3Protocol.commandCode == 0xE1){
