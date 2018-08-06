@@ -69,39 +69,50 @@ function checkWargame3Protocol(data){
     }
 }
 
+
 function wargame3_e1(data){
-    var pos = 0;
-    var structure = {};
-    structure.prototype.getBuffer = function(){
-        var buf = new Buffer(this[0].data);
-        var pos = 0;
-        buf.writeUIntBE(this[0].data, pos, 2); pos = pos+2; // CommandLen
-        buf.writeUIntBE(this[1].data, pos, 1); pos = pos+1; // CommandCode
-        buf.readUIntLE(this[2].data, pos, 2); pos = pos+2; // ServerPort
-        buf.writeUIntBE(this[3].data, pos, 4); pos = pos+4; // Unknown1
-        buf.writeUIntBE(this[4].data, pos, 4); pos = pos+4; // ServerIP
-        buf.writeUIntBE(this[5].data, pos, 1); pos = pos+1; // Unknown2
-        var EugNetIdLen = this[6].data;
-        buf.writeUIntBE(EugNetIdLen, pos, 4); pos = pos+4; // EugNetIdLen
-        buf.write(this[7].data, pos, EugNetIdLen, 'utf8'); pos = pos+EugNetIdLen; // EugNetId
-        var DedicatedKeyLen = this[8].data;
-        buf.writeUIntBE(DedicatedKeyLen, pos, 4); pos = pos+4; // DedicatedKeyLen
-        buf.write(this[9].data, pos, DedicatedKeyLen); pos = pos+DedicatedKeyLen; // DedicatedKey
-        return buf;
+    class Wargame3_el_Send {
+        constructor(data){
+            FromBuffer(data);
+        }
+        FromBuffer(data){
+            var pos = 0;
+            this.CommandLen = data.readUIntBE(pos,2); pos = pos+2;
+            this.CommandCode = data.readUIntBE(pos, 1); pos = pos+1;
+            this.ServerPort = data.readUIntLE(pos, 2); pos = pos+2;
+            this.Unknown1 = data.readUIntBE(pos, 4); pos = pos+4;
+            this.ServerIP = data.readUIntBE(pos, 4); pos = pos+4;
+            this.Unknown2 = data.readUIntBE(pos, 1); pos = pos+1;
+            var EugNetIdLen = data.readUIntBE(pos, 4);
+            this.EugNetIdLen = data.readUIntBE(pos, 4); pos = pos+4;
+            this.EugNetId = data.toString('utf8', pos, pos+EugNetIdLen); pos = pos+EugNetIdLen;
+            var DedicatedKeyLen = data.readUIntBE(pos, 4);
+            this.DedicatedKeyLen = data.readUIntBE(pos, 4); pos = pos+4;
+            this.DedicatedKey = data.toString('utf8', pos, pos+DedicatedKeyLen); pos = pos+DedicatedKeyLen;
+        }
+        getBuffer(){
+            if(this.CommandLen){
+                var buf = new Buffer(this[0].data);
+                var pos = 0;
+                buf.writeUIntBE(this[0].data, pos, 2); pos = pos+2; // CommandLen
+                buf.writeUIntBE(this[1].data, pos, 1); pos = pos+1; // CommandCode
+                buf.readUIntLE(this[2].data, pos, 2); pos = pos+2; // ServerPort
+                buf.writeUIntBE(this[3].data, pos, 4); pos = pos+4; // Unknown1
+                buf.writeUIntBE(this[4].data, pos, 4); pos = pos+4; // ServerIP
+                buf.writeUIntBE(this[5].data, pos, 1); pos = pos+1; // Unknown2
+                var EugNetIdLen = this[6].data;
+                buf.writeUIntBE(EugNetIdLen, pos, 4); pos = pos+4; // EugNetIdLen
+                buf.write(this[7].data, pos, EugNetIdLen, 'utf8'); pos = pos+EugNetIdLen; // EugNetId
+                var DedicatedKeyLen = this[8].data;
+                buf.writeUIntBE(DedicatedKeyLen, pos, 4); pos = pos+4; // DedicatedKeyLen
+                buf.write(this[9].data, pos, DedicatedKeyLen); pos = pos+DedicatedKeyLen; // DedicatedKey
+                return buf;
+            } else {
+                return undefiend;
+            }
+        }
     }
-    structure.CommandLen = data.readUIntBE(pos,2); pos = pos+2;
-    structure.CommandCode = data.readUIntBE(pos, 1); pos = pos+1;
-    structure.ServerPort = data.readUIntLE(pos, 2); pos = pos+2;
-    structure.Unknown1 = data.readUIntBE(pos, 4); pos = pos+4;
-    structure.ServerIP = data.readUIntBE(pos, 4); pos = pos+4;
-    structure.Unknown2 = data.readUIntBE(pos, 1); pos = pos+1;
-    var EugNetIdLen = data.readUIntBE(pos, 4);
-    structure.EugNetIdLen = data.readUIntBE(pos, 4); pos = pos+4;
-    structure.EugNetId = data.toString('utf8', pos, pos+EugNetIdLen); pos = pos+EugNetIdLen;
-    var DedicatedKeyLen = data.readUIntBE(pos, 4);
-    structure.DedicatedKeyLen = data.readUIntBE(pos, 4); pos = pos+4;
-    structure.DedicatedKey = data.toString('utf8', pos, pos+DedicatedKeyLen); pos = pos+DedicatedKeyLen;
-    return structure;
+    return Wargame3_el_Send(data);
 
 }
 TcpProxy.prototype.createServiceSocket = function(context) {
