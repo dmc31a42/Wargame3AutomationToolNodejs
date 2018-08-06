@@ -73,7 +73,15 @@ function wargame3_e1(data){
     var pos = 0;
     var structure = [];
     structure.push({Field:'CommandLen', data:data.readUIntBE(pos,2)}); pos = pos+2;
-    structure.push({Field:'CommandCode', data:data.readInt8(pos)}); pos = pos+1;
+    structure.push({Field:'CommandCode', data:data.readUIntBE(pos, 1)}); pos = pos+1;
+    structure.push({Field:'ServerPort', data:data.readUIntLE(pos, 2)}); pos = pos+2;
+    structure.push({Field:'Unknown', data:data.readUIntBE(pos, 4)}); pos = pos+4;
+    var EugNetIdLen = data.readUIntBE(pos, 4);
+    structure.push({Field:'EugNetIdLen', data:data.readUIntBE(pos, 4)}); pos = pos+4;
+    structure.push({Field:'EugNetId', data:data.toString('utf8', pos, pos+EugNetIdLen)}); pos = pos+EugNetIdLen;
+    var DedicatedKeyLen = data.readUIntBE(pos, 4);
+    structure.push({Field:'DedicatedKeyLen', data:data.readUIntBE(pos, 4)}); pos = pos+4;
+    structure.push({Field:'DedicatedKey', data:data.toString('utf8', pos, pos+DedicatedKeyLen)}); pos = pos+DedicatedKeyLen;
     return structure;
 
 }
