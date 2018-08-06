@@ -61,7 +61,7 @@ function checkWargame3Protocol(data){
         var index = commandCode.findIndex(function(element){
             if(data[2] == element.code) return true;
         })
-        if(index>0){
+        if(index>=0){
             return commandCode[index].callback(data);
         }
     } else {
