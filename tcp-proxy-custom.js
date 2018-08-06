@@ -112,7 +112,7 @@ function wargame3_e1(data){
             }
         }
     }
-    return Wargame3_el_Send(data);
+    return new Wargame3_el_Send(data);
 
 }
 TcpProxy.prototype.createServiceSocket = function(context) {
