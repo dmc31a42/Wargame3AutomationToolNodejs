@@ -38,7 +38,7 @@ TcpProxy.prototype.createProxy = function() {
                 var wargame3ProtocolBuffer = wargame3Protocol.getBuffer();
                 console.log(key);
                 console.log("local >> proxy >> remote1 : Wargame3Protocol");
-                console.log();
+                console.log(wargame3ProtocolBuffer);
                 if (context.connected) {
                     context.serviceSocket.write(wargame3ProtocolBuffer);
                 } else {
@@ -47,7 +47,7 @@ TcpProxy.prototype.createProxy = function() {
             } else {
                 console.log(key);
                 console.log("local >> proxy >> remote1");
-                console.log();
+                console.log(data);
                 if (context.connected) {
                     context.serviceSocket.write(data);
                 } else {
