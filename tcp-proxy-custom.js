@@ -83,29 +83,25 @@ function wargame3_e1(data){
             this.Unknown1 = data.readUIntBE(pos, 4); pos = pos+4;
             this.ServerIP = data.readUIntBE(pos, 4); pos = pos+4;
             this.Unknown2 = data.readUIntBE(pos, 1); pos = pos+1;
-            var EugNetIdLen = data.readUIntBE(pos, 4);
             this.EugNetIdLen = data.readUIntBE(pos, 4); pos = pos+4;
-            this.EugNetId = data.toString('utf8', pos, pos+EugNetIdLen); pos = pos+EugNetIdLen;
-            var DedicatedKeyLen = data.readUIntBE(pos, 4);
+            this.EugNetId = data.toString('utf8', pos, pos+this.EugNetIdLen); pos = pos+this.EugNetIdLen;
             this.DedicatedKeyLen = data.readUIntBE(pos, 4); pos = pos+4;
-            this.DedicatedKey = data.toString('utf8', pos, pos+DedicatedKeyLen); pos = pos+DedicatedKeyLen;
+            this.DedicatedKey = data.toString('utf8', pos, pos+this.DedicatedKeyLen); pos = pos+this.DedicatedKeyLen;
         }
         getBuffer(){
             if(this.CommandLen){
-                var buf = new Buffer(this[0].data);
+                var buf = new Buffer(this.CommandLen);
                 var pos = 0;
                 buf.writeUIntBE(this[0].data, pos, 2); pos = pos+2; // CommandLen
-                buf.writeUIntBE(this[1].data, pos, 1); pos = pos+1; // CommandCode
-                buf.readUIntLE(this[2].data, pos, 2); pos = pos+2; // ServerPort
-                buf.writeUIntBE(this[3].data, pos, 4); pos = pos+4; // Unknown1
-                buf.writeUIntBE(this[4].data, pos, 4); pos = pos+4; // ServerIP
-                buf.writeUIntBE(this[5].data, pos, 1); pos = pos+1; // Unknown2
-                var EugNetIdLen = this[6].data;
-                buf.writeUIntBE(EugNetIdLen, pos, 4); pos = pos+4; // EugNetIdLen
-                buf.write(this[7].data, pos, EugNetIdLen, 'utf8'); pos = pos+EugNetIdLen; // EugNetId
-                var DedicatedKeyLen = this[8].data;
-                buf.writeUIntBE(DedicatedKeyLen, pos, 4); pos = pos+4; // DedicatedKeyLen
-                buf.write(this[9].data, pos, DedicatedKeyLen); pos = pos+DedicatedKeyLen; // DedicatedKey
+                buf.writeUIntBE(this.CommandCode, pos, 1); pos = pos+1; // CommandCode
+                buf.readUIntLE(this.ServerPort, pos, 2); pos = pos+2; // ServerPort
+                buf.writeUIntBE(this.Unknown1, pos, 4); pos = pos+4; // Unknown1
+                buf.writeUIntBE(this.ServerIP, pos, 4); pos = pos+4; // ServerIP
+                buf.writeUIntBE(this.Unknown2, pos, 1); pos = pos+1; // Unknown2
+                buf.writeUIntBE(this.EugNetIdLen, pos, 4); pos = pos+4; // EugNetIdLen
+                buf.write(this.EugNetId, pos, this.EugNetIdLen, 'utf8'); pos = pos+this.EugNetIdLen; // EugNetId
+                buf.writeUIntBE(this.DedicatedKeyLen, pos, 4); pos = pos+4; // DedicatedKeyLen
+                buf.write(this.DedicatedKey, pos, this.DedicatedKeyLen); pos = pos+this.DedicatedKeyLen; // DedicatedKey
                 return buf;
             } else {
                 return undefiend;
