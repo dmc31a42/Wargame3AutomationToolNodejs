@@ -35,16 +35,25 @@ TcpProxy.prototype.createProxy = function() {
         proxySocket.on("data", function(data) {
             var wargame3Protocol = checkWargame3Protocol(data);
             if(wargame3Protocol){
-                console.log(wargame3Protocol.getBuffer());
-            }
-            if (context.connected) {
-                context.serviceSocket.write(data);
+                var wargame3ProtocolBuffer = wargame3Protocol.getBuffer();
+                console.log(key);
+                console.log("local >> proxy >> remote1 : Wargame3Protocol");
+                console.log();
+                if (context.connected) {
+                    context.serviceSocket.write(wargame3ProtocolBuffer);
+                } else {
+                    context.buffers[context.buffers.length] = wargame3ProtocolBuffer;
+                }
             } else {
-                context.buffers[context.buffers.length] = data;
+                console.log(key);
+                console.log("local >> proxy >> remote1");
+                console.log();
+                if (context.connected) {
+                    context.serviceSocket.write(data);
+                } else {
+                    context.buffers[context.buffers.length] = data;
+                }
             }
-            console.log(key);
-            console.log("local >> proxy >> remote1");
-            console.log(data);
         });
         proxySocket.on("close", function(hadError) {
             delete proxy.proxySockets[uniqueKey(proxySocket)];
