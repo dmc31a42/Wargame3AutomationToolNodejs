@@ -73,7 +73,7 @@ function checkWargame3Protocol(data){
 function wargame3_e1(data){
     class Wargame3_el_Send {
         constructor(data){
-            FromBuffer(data);
+            this.FromBuffer(data);
         }
         FromBuffer(data){
             var pos = 0;
