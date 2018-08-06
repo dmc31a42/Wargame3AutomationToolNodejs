@@ -95,7 +95,7 @@ function checkWargame3Protocol(data){
 
 
 function wargame3_e1(data){
-    class Wargame3_el_Send {
+    class Wargame3_e1_Send {
         constructor(data){
             this.FromBuffer(data);
         }
@@ -134,7 +134,7 @@ function wargame3_e1(data){
             }
         }
     }
-    return new Wargame3_el_Send(data);
+    return new Wargame3_e1_Send(data);
 
 }
 TcpProxy.prototype.createServiceSocket = function(context) {
