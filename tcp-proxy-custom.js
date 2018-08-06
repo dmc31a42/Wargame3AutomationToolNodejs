@@ -72,8 +72,8 @@ function checkWargame3Protocol(data){
 function wargame3_e1(data){
     var pos = 0;
     var structure = [];
-    structure.push({Field:'CommandLen', data:data.readUIntBE(pos,pos+2)}); pos = pos+2;
-    structure.push({Field:'CommandCode', data:data.readUIntBE(pos,pos+1)}); pos = pos+1;
+    structure.push({Field:'CommandLen', data:data.readUIntBE(pos,2)}); pos = pos+2;
+    structure.push({Field:'CommandCode', data:data.readUIntBE(pos,1)}); pos = pos+1;
     return structure;
 
 }
