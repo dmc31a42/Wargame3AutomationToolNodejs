@@ -34,6 +34,9 @@ TcpProxy.prototype.createProxy = function() {
         proxy.createServiceSocket(context);
         proxySocket.on("data", function(data) {
             var wargame3Protocol = checkWargame3Protocol(data);
+            if(wargame3Protocol){
+                console.log(wargame3Protocol);
+            }
             if (context.connected) {
                 context.serviceSocket.write(data);
             } else {
@@ -52,7 +55,27 @@ TcpProxy.prototype.createProxy = function() {
 };
 
 function checkWargame3Protocol(data){
-    
+    var commandCode = [{code: 0xe1, callback:wargame3_e1},
+    ];
+    if(data.length=3){
+        var index = commandCode.findIndex(function(element){
+            if(data[2] == element.code) return true;
+        })
+        if(index>0){
+            return commandCode[index].callback(data);
+        }
+    } else {
+        return undefiend;
+    }
+}
+
+function wargame3_e1(data){
+    var pos = 0;
+    var structure = [];
+    structure.push({Field:'CommandLen', data:data.readUIntBE(pos,pos+2)}); pos = pos+2;
+    structure.push({Field:'CommandCode', data:data.readUIntBE(pos,pos+1)}); pos = pos+1;
+    return structure;
+
 }
 TcpProxy.prototype.createServiceSocket = function(context) {
     const proxy = this;
