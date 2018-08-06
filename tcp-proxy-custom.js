@@ -33,20 +33,31 @@ TcpProxy.prototype.createProxy = function() {
         };    
         proxy.createServiceSocket(context);
         proxySocket.on("data", function(data) {
-            var wargame3Protocol = checkWargame3Protocol(data);
-            if(wargame3Protocol){
-                if(wargame3Protocol.commandCode == 0xE1){
-                    wargame3Protocol.ServerPort = 10810;
-                }
-                var wargame3ProtocolBuffer = wargame3Protocol.getBuffer();
-                console.log(key);
-                console.log("local >> proxy >> remote1 : Wargame3Protocol");
-                console.log(wargame3Protocol);
-                console.log(wargame3ProtocolBuffer);
-                if (context.connected) {
-                    context.serviceSocket.write(wargame3ProtocolBuffer);
+            if(proxySocket.remotePort == 10002){
+                var wargame3Protocol = checkWargame3Protocol(data);
+                if(wargame3Protocol){
+                    if(wargame3Protocol.commandCode == 0xE1){
+                        wargame3Protocol.ServerPort = 10810;
+                    }
+                    var wargame3ProtocolBuffer = wargame3Protocol.getBuffer();
+                    console.log(key);
+                    console.log("local >> proxy >> remote1 : Wargame3Protocol");
+                    console.log(wargame3Protocol);
+                    console.log(wargame3ProtocolBuffer);
+                    if (context.connected) {
+                        context.serviceSocket.write(wargame3ProtocolBuffer);
+                    } else {
+                        context.buffers[context.buffers.length] = wargame3ProtocolBuffer;
+                    }
                 } else {
-                    context.buffers[context.buffers.length] = wargame3ProtocolBuffer;
+                    console.log(key);
+                    console.log("local >> proxy >> remote1");
+                    console.log(data);
+                    if (context.connected) {
+                        context.serviceSocket.write(data);
+                    } else {
+                        context.buffers[context.buffers.length] = data;
+                    }
                 }
             } else {
                 console.log(key);
