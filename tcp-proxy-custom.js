@@ -75,7 +75,9 @@ function wargame3_e1(data){
     structure.push({Field:'CommandLen', data:data.readUIntBE(pos,2)}); pos = pos+2;
     structure.push({Field:'CommandCode', data:data.readUIntBE(pos, 1)}); pos = pos+1;
     structure.push({Field:'ServerPort', data:data.readUIntLE(pos, 2)}); pos = pos+2;
-    structure.push({Field:'Unknown', data:data.readUIntBE(pos, 4)}); pos = pos+4;
+    structure.push({Field:'Unknown1', data:data.readUIntBE(pos, 4)}); pos = pos+4;
+    structure.push({Field:'ServerIP', data:data.readUIntBE(pos, 4)}); pos = pos+4;
+    structure.push({Field:'Unknown2', data:data.readUIntBE(pos, 1)}); pos = pos+4;
     var EugNetIdLen = data.readUIntBE(pos, 4);
     structure.push({Field:'EugNetIdLen', data:data.readUIntBE(pos, 4)}); pos = pos+4;
     structure.push({Field:'EugNetId', data:data.toString('utf8', pos, pos+EugNetIdLen)}); pos = pos+EugNetIdLen;
