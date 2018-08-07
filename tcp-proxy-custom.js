@@ -79,7 +79,9 @@ TcpProxy.prototype.createProxy = function() {
 };
 
 function checkWargame3Protocol(data){
-    var commandCode = [{code: 0xe1, callback:wargame3_e1},
+    var commandCode = [
+        {code: 0xe1, callback:wargame3_e1},
+        {code: 0xC2, callback:wargame3_C2}
     ];
     if(data.length>=3){
         var index = commandCode.findIndex(function(element){
@@ -135,8 +137,56 @@ function wargame3_e1(data){
         }
     }
     return new Wargame3_e1_Send(data);
-
 }
+
+function wargame3_C2(data){
+    class Wargame3_C2 {
+        constructor(data){
+            this.FromBuffer(data);
+        }
+        FromBuffer(data){
+            var pos = 0;
+            this.send = false;
+            this.receive = true;
+            this.CommandLen = data.readUIntBE(pos,2); pos = pos+2;
+            this.CommandCode = data.readUIntBE(pos, 1); pos = pos+1;
+            this.ServerPort = data.readUIntLE(pos, 2); pos = pos+2;
+            this.WhoSend = data.readUIntBE(pos, 4); pos+=4;
+            if(this.whoSend == 0){
+                this.EugNetId = data.readUIntBE(pos,4); pos+=4;
+                this.send = true;
+                this.receive = false;
+            }
+            this.Unknown1 = data.readUIntBE(pos, 4); pos = pos+4;
+            this.ChatLength = data.readUIntBE(pos, 2); pos+=2;
+            this.Padding = data.readUIntBE(pos, 1); pos+=1;
+            this.Chat = data.toString('utf8', pos, pos+this.ChatLength); pos+=this.ChatLength;
+        }
+        getBuffer(){
+            if(this.CommandLen){
+                var length = this.WhoSend == 0 ? 14+this.Chat.length : 10+this.Chat.length;
+                var buf = new Buffer(length);
+                var pos = 0;
+                buf.writeUIntBE(length-2, pos, 2); pos = pos+2; // CommandLen
+                buf.writeUIntBE(this.CommandCode, pos, 1); pos = pos+1; // CommandCode
+                buf.writeUIntBE(this.WhoSend, pos, 4); pos+=4;
+                if(this.WhoSend==0){
+                    buf.writeUIntBE(this.EugNetId, pos, 4); pos+=4;
+                }
+                buf.writeUIntBE(this.Unknown1, pos, 4); pos+=4;
+                var chatLength = this.Chat.length;
+                buf.writeUIntBE(chatLength, pos, 2); pos+=2;
+                buf.writeUIntBE(this.Padding, pos, 1); pos+=1;
+                buf.write(this.Chat, pos, chatLength); pos+=chatLength;
+                return buf;
+            } else {
+                return undefiend;
+            }
+        }
+    }
+    return new Wargame3_C2(data);
+}
+
 TcpProxy.prototype.createServiceSocket = function(context) {
     const proxy = this;
     context.serviceSocket = new net.Socket();
