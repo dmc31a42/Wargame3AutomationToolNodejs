@@ -6,6 +6,12 @@
     "configurations": [
         {
             "type": "node",
+            "request": "launch",
+            "name": "Launch Program wrd_deck_decode",
+            "program": "${workspaceFolder}/wrd-deck-decode.js"
+        },
+        {
+            "type": "node",
             "request": "attach",
             "name": "Attach to Remote",
             "address": "192.168.88.24",
@@ -37,5 +43,6 @@
             "webRoot": "${workspaceFolder}/public",
             "skipFiles": ["*.min.js"]
         },
+
     ]
 }
