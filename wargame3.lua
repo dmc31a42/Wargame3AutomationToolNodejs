@@ -26,7 +26,8 @@ function p_wargame3.dissector(tvb, pinfo, tree)
     [0xe1] = Dissector.get("wargame3_e1"),
 	[0xc1] = Dissector.get("wargame3_c1"),
 	[0xe2] = Dissector.get("wargame3_e2"),
-	[0xc9] = Dissector.get("wargame3_c9")
+	[0xc9] = Dissector.get("wargame3_c9"),
+	[0xc2] = Dissector.get("wargame3_c2")
   }
   
   while pos < tvb:len() do
@@ -186,7 +187,7 @@ end
 -- wargame3_c9 : commandCode == 0xc9, Port == 10811
 --------------------------------------
 p_wargame3_c9 = Proto("wargame3_c9", "WARGAME3_c9")
-local f_wargame3_c9 = p_wargame3_c1.fields
+local f_wargame3_c9 = p_wargame3_c9.fields
 f_wargame3_c9.CommandLen = ProtoField.uint16("wargame3_c9.CommandLen", "CommandLen", base.DEC)
 f_wargame3_c9.CommandCode = ProtoField.uint8("wargame3_c9.CommandCode", "CommandCode", base.HEX)
 -- Receive from Client (tcp.dstport == 10811)
@@ -212,4 +213,37 @@ function p_wargame3_c9.dissector(tvb, pinfo, tree)
 	subtree:add(f_wargame3_c9.ValueLen, tvb(pos, 4)); pos = pos + 4
 	subtree:add(f_wargame3_c9.Value, tvb(pos, ValueLen)); pos = pos + ValueLen
   else return end
+end
+
+
+--------------------------------------
+-- wargame3_c2 : commandCode == 0xc2, Port == 10811
+--------------------------------------
+p_wargame3_c2 = Proto("wargame3_c2", "WARGAME3_c2")
+local f_wargame3_c2 = p_wargame3_c2.fields
+f_wargame3_c2.CommandLen = ProtoField.uint16("wargame3_c9.CommandLen", "CommandLen", base.DEC)
+f_wargame3_c2.CommandCode = ProtoField.uint8("wargame3_c9.CommandCode", "CommandCode", base.HEX)
+f_wargame3_c2.WhoSend = ProtoField.uint32("wargame3_c2.ToSend", "WhoSend", base.DEC)
+f_wargame3_c2.EugNetId = ProtoField.uint32("wargame3_c2.EugNetId", "EugNetId",base.DEC)
+f_wargame3_c2.Unknown1 = ProtoField.uint32("wargame3_c2.Unknown1", "Unknown1", base.HEX)
+f_wargame3_c2.ChatLength = ProtoField.uint16("wargame3_c2.ChatLength", "ChatLength", base.DEC)
+f_wargame3_c2.Padding = ProtoField.uint8("wargame3_c2.Padding", "Padding", base.DEC)
+f_wargame3_c2.Chat = ProtoField.string("wargame3_c2.Chat", "Chat")
+
+function p_wargame3_c2.dissector(tvb, pinfo, tree)
+  if tvb:len() == 0 then return end
+  subtree = tree:add(p_wargame3_c2, tvb(0))
+  local pos = 0
+  subtree:add(f_wargame3_c9.CommandLen, tvb(pos, 2)); pos = pos + 2
+  subtree:add(f_wargame3_c9.CommandCode, tvb(pos, 1)); pos = pos + 1
+  local WhoSend = tvb(pos, 4):uint()
+  subtree:add(f_wargame3_c2.WhoSend, tvb(pos, 4)); pos = pos + 4
+  if WhoSend == 0 then
+	subtree:add(f_wargame3_c2.EugNetId, tvb(pos, 4)); pos = pos + 4
+  end
+  subtree:add(f_wargame3_c2.Unknown1, tvb(pos, 4)); pos = pos + 4
+  local ChatLength = tvb(pos, 2):uint()
+  subtree:add(f_wargame3_c2.ChatLength, tvb(pos, 2)); pos = pos + 2
+  subtree:add(f_wargame3_c2.Padding, tvb(pos, 1)); pos = pos + 1
+  subtree:add(f_wargame3_c2.Chat, tvb(pos, ChatLength)); pos = pos + ChatLength
 end
