@@ -17,7 +17,7 @@
             "address": "192.168.88.24",
             "port": 5858,
             "localRoot": "${workspaceFolder}",
-            "remoteRoot": "Absolute path to the remote directory containing the program"
+            "remoteRoot": "/opt/wargame3_server/Wargame3AutomationToolNodejs/"
         },
         {
             "type": "node",

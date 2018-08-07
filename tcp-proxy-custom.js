@@ -33,41 +33,31 @@ TcpProxy.prototype.createProxy = function() {
         };    
         proxy.createServiceSocket(context);
         proxySocket.on("data", function(data) {
-            if(proxySocket.localPort == 10002){
-                var wargame3Protocol = checkWargame3Protocol(data);
-                if(wargame3Protocol){
-                    if(wargame3Protocol.CommandCode == 0xE1){
-                        wargame3Protocol.ServerPort = 10810;
-                    }
-                    var wargame3ProtocolBuffer = wargame3Protocol.getBuffer();
-                    console.log(key);
-                    console.log("local >> proxy >> remote1 : Wargame3Protocol");
-                    console.log(wargame3Protocol);
-                    console.log(wargame3ProtocolBuffer);
-                    if (context.connected) {
-                        context.serviceSocket.write(wargame3ProtocolBuffer);
-                    } else {
-                        context.buffers[context.buffers.length] = wargame3ProtocolBuffer;
-                    }
-                } else {
-                    console.log(key);
-                    console.log("local >> proxy >> remote1");
-                    console.log(data);
-                    if (context.connected) {
-                        context.serviceSocket.write(data);
-                    } else {
-                        context.buffers[context.buffers.length] = data;
-                    }
-                }
+            if (context.connected) {
+                context.serviceSocket.write(data);
             } else {
-                console.log(key);
-                console.log("local >> proxy >> remote1");
-                console.log(data);
-                if (context.connected) {
-                    context.serviceSocket.write(data);
-                } else {
-                    context.buffers[context.buffers.length] = data;
+                context.buffers[context.buffers.length] = data;
+            }
+            console.log(key);
+            console.log("local >> proxy >> remote");
+            console.log(data);
+            var wargame3Protocol = checkWargame3Protocol(data);
+            if(wargame3Protocol){
+                if(wargame3Protocol.CommandCode == 0xE1){
+                    wargame3Protocol.ServerPort = 10810;
+                // } else if(wargame3Protocol.CommandCode == 0xC2) {
+                //     wargame3Protocol.Chat = wargame3Protocol.Chat + '라고 말했다 메롱';
                 }
+                var wargame3ProtocolBuffer = new Uint8Array(wargame3Protocol.getBuffer());
+                // if (context.connected) {
+                //     context.serviceSocket.write(wargame3ProtocolBuffer);
+                // } else {
+                //     context.buffers[context.buffers.length] = wargame3ProtocolBuffer;
+                // }
+                //console.log("local >> proxy >> remote1 : Wargame3Protocol");
+                //console.log(wargame3ProtocolBuffer);
+            }  else {
+                
             }
         });
         proxySocket.on("close", function(hadError) {
@@ -76,6 +66,64 @@ TcpProxy.prototype.createProxy = function() {
         });
     });
     proxy.server.listen(proxy.proxyPort, proxy.options.hostname);
+};
+
+TcpProxy.prototype.createServiceSocket = function(context) {
+    const proxy = this;
+    context.serviceSocket = new net.Socket();
+    context.serviceSocket.connect(proxy.servicePort, proxy.serviceHost,
+    function() {
+        context.connected = true;
+        if (context.buffers.length > 0) {
+            for (var i = 0; i < context.buffers.length; i++) {
+                context.serviceSocket.write(context.buffers[i]);
+            }
+        }
+    });
+    context.serviceSocket.on("data", function(data) {
+        
+        var wargame3Protocol = checkWargame3Protocol(data);
+        if(wargame3Protocol){
+            if(wargame3Protocol.CommandCode == 0xE1){
+                wargame3Protocol.ServerPort = 10810;
+            } else if(wargame3Protocol.CommandCode == 0xC2) {
+                wargame3Protocol.Chat = wargame3Protocol.Chat + '라고 말했다 메롱2';
+            }
+            var wargame3ProtocolBuffer = new Uint8Array(wargame3Protocol.getBuffer());
+            console.log(wargame3ProtocolBuffer);
+            context.proxySocket.write(wargame3ProtocolBuffer);
+        } else {
+            context.proxySocket.write(data);
+            console.log("remote >> proxy >> local");
+            console.log(data);
+        }
+    });
+    context.serviceSocket.on("close", function(hadError) {
+        context.proxySocket.destroy();
+    });
+    context.serviceSocket.on("error", function(e) {
+        context.proxySocket.destroy();
+    });
+    return context;
+}
+
+TcpProxy.prototype.end = function() {
+    this.server.close();
+    for (var key in this.proxySockets) {
+        this.proxySockets[key].destroy();
+    }
+    this.server.unref();
+};
+
+TcpProxy.prototype.log = function(msg) {
+    if (!this.options.quiet) {
+        console.log(msg);
+    }
+};
+
+module.exports.createProxy = function(proxyPort,
+serviceHost, servicePort, options) {
+    return new TcpProxy(proxyPort, serviceHost, servicePort, options);
 };
 
 function checkWargame3Protocol(data){
@@ -94,8 +142,6 @@ function checkWargame3Protocol(data){
         return undefiend;
     }
 }
-
-
 function wargame3_e1(data){
     class Wargame3_e1_Send {
         constructor(data){
@@ -145,14 +191,14 @@ function wargame3_C2(data){
             this.FromBuffer(data);
         }
         FromBuffer(data){
+            this.data = data;
             var pos = 0;
             this.send = false;
             this.receive = true;
             this.CommandLen = data.readUIntBE(pos,2); pos = pos+2;
             this.CommandCode = data.readUIntBE(pos, 1); pos = pos+1;
-            this.ServerPort = data.readUIntLE(pos, 2); pos = pos+2;
             this.WhoSend = data.readUIntBE(pos, 4); pos+=4;
-            if(this.whoSend == 0){
+            if(this.WhoSend == 0){
                 this.EugNetId = data.readUIntBE(pos,4); pos+=4;
                 this.send = true;
                 this.receive = false;
@@ -164,7 +210,8 @@ function wargame3_C2(data){
         }
         getBuffer(){
             if(this.CommandLen){
-                var length = this.WhoSend == 0 ? 14+this.Chat.length : 10+this.Chat.length;
+                var chatBuffer = Buffer.from(this.Chat);
+                var length = this.WhoSend == 0 ? 17+chatBuffer.length+1 : 14+chatBuffer.length+1;
                 var buf = new Buffer(length);
                 var pos = 0;
                 buf.writeUIntBE(length-2, pos, 2); pos = pos+2; // CommandLen
@@ -174,10 +221,9 @@ function wargame3_C2(data){
                     buf.writeUIntBE(this.EugNetId, pos, 4); pos+=4;
                 }
                 buf.writeUIntBE(this.Unknown1, pos, 4); pos+=4;
-                var chatLength = this.Chat.length;
-                buf.writeUIntBE(chatLength, pos, 2); pos+=2;
+                buf.writeUIntBE(chatBuffer.length, pos, 2); pos+=2;
                 buf.writeUIntBE(this.Padding, pos, 1); pos+=1;
-                buf.write(this.Chat, pos, chatLength); pos+=chatLength;
+                chatBuffer.copy(buf, pos); pos+=chatBuffer.length;
                 return buf;
             } else {
                 return undefiend;
@@ -186,49 +232,3 @@ function wargame3_C2(data){
     }
     return new Wargame3_C2(data);
 }
-
-TcpProxy.prototype.createServiceSocket = function(context) {
-    const proxy = this;
-    context.serviceSocket = new net.Socket();
-    context.serviceSocket.connect(proxy.servicePort, proxy.serviceHost,
-    function() {
-        context.connected = true;
-        if (context.buffers.length > 0) {
-            for (var i = 0; i < context.buffers.length; i++) {
-                context.serviceSocket.write(context.buffers[i]);
-            }
-        }
-    });
-    context.serviceSocket.on("data", function(data) {
-        context.proxySocket.write(data);
-        console.log(proxy.servicePort, proxy.serviceHost);
-        console.log("remote >> proxy >> local");
-            console.log(data);
-    });
-    context.serviceSocket.on("close", function(hadError) {
-        context.proxySocket.destroy();
-    });
-    context.serviceSocket.on("error", function(e) {
-        context.proxySocket.destroy();
-    });
-    return context;
-}
-
-TcpProxy.prototype.end = function() {
-    this.server.close();
-    for (var key in this.proxySockets) {
-        this.proxySockets[key].destroy();
-    }
-    this.server.unref();
-};
-
-TcpProxy.prototype.log = function(msg) {
-    if (!this.options.quiet) {
-        console.log(msg);
-    }
-};
-
-module.exports.createProxy = function(proxyPort,
-serviceHost, servicePort, options) {
-    return new TcpProxy(proxyPort, serviceHost, servicePort, options);
-};
