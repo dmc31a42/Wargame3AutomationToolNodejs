@@ -47,7 +47,9 @@ end
 
 local tcp_dissector_table = DissectorTable.get("tcp.port")
 tcp_dissector_table:add(10002, p_wargame3)
+tcp_dissector_table:add(10810, p_wargame3)
 tcp_dissector_table:add(10811, p_wargame3)
+tcp_dissector_table:add(10813, p_wargame3)
 tcp_dissector_table:add(10821, p_wargame3)
 
 --------------------------------------
@@ -130,7 +132,7 @@ function p_wargame3_c1.dissector(tvb, pinfo, tree)
   local pos = 0
   subtree:add(f_wargame3_c1.CommandLen, tvb(pos, 2)); pos = pos + 2
   subtree:add(f_wargame3_c1.CommandCode, tvb(pos, 1)); pos = pos + 1
-  if pinfo.dst_port == 10811 then
+  if pinfo.dst_port == 10811 or pinfo.dst_port == 10810  or pinfo.dst_port == 10813 then
     subtree:add(f_wargame3_c1.Unknown1, tvb(pos, 4)); pos = pos + 4
 	subtree:add(f_wargame3_c1.EugNetId, tvb(pos, 4)); pos = pos + 4
 	subtree:add(f_wargame3_c1.Unknown3, tvb(pos, 128)); pos = pos + 128
@@ -141,7 +143,7 @@ function p_wargame3_c1.dissector(tvb, pinfo, tree)
 	local PlayerNameLen = tvb(pos, 4):uint()
 	subtree:add(f_wargame3_c1.PlayerNameLen, tvb(pos, 4)); pos = pos + 4
 	subtree:add(f_wargame3_c1.PlayerName, tvb(pos, PlayerNameLen)); pos = pos + PlayerNameLen
-  elseif pinfo.src_port == 10811 then
+  elseif pinfo.src_port == 10811 or pinfo.src_port == 10810 or pinfo.src_port == 10813 then
     subtree:add(f_wargame3_c1.Unknown5, tvb(pos, 4)); pos = pos + 4
 	subtree:add(f_wargame3_c1.Unknown6, tvb(pos, 1)); pos = pos + 1
 	subtree:add(f_wargame3_c1.Unknown7, tvb(pos, 4)); pos = pos + 4
@@ -204,8 +206,8 @@ function p_wargame3_c9.dissector(tvb, pinfo, tree)
   local pos = 0
   subtree:add(f_wargame3_c9.CommandLen, tvb(pos, 2)); pos = pos + 2
   subtree:add(f_wargame3_c9.CommandCode, tvb(pos, 1)); pos = pos + 1
-  if pinfo.dst_port == 10811 then
-  elseif pinfo.src_port == 10811 then
+  if pinfo.dst_port == 10811 or pinfo.dst_port == 10810 or pinfo.dst_port == 10813 then
+  elseif pinfo.src_port == 10811 or pinfo.src_port == 10810 or pinfo.src_port == 10813 then
     local VariableLen = tvb(pos, 4):uint()
 	subtree:add(f_wargame3_c9.VariableLen, tvb(pos, 4)); pos = pos + 4
 	subtree:add(f_wargame3_c9.Variable, tvb(pos, VariableLen)); pos = pos + VariableLen
