@@ -309,7 +309,8 @@ TcpProxy.prototype.createProxy = function() {
         notice.Padding = 0;
         notice.receive = false;
         notice.send = true;
-        notice.Unknown1 = 1694564352;
+        notice.Type = 0x65;
+        notice.Unknown1 = 65536;
         notice.WhoSend = 0;
         proxy.notices.push(notice);
     }
