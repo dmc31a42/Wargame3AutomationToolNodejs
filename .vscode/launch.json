@@ -13,11 +13,20 @@
         {
             "type": "node",
             "request": "attach",
-            "name": "Attach to Remote",
+            "name": "Wargame3 Attach to Remote",
             "address": "192.168.88.24",
-            "port": 5858,
+            "port": 5859,
             "localRoot": "${workspaceFolder}",
             "remoteRoot": "/opt/wargame3_server/Wargame3AutomationToolNodejs/"
+        },
+        {
+            "type": "node",
+            "request": "attach",
+            "name": "Steel Attach to Remote",
+            "address": "192.168.88.26",
+            "port": 5859,
+            "localRoot": "${workspaceFolder}",
+            "remoteRoot": "/home/nakwonelec/다운로드/steeldivision_dedi/Wargame3AutomationToolNodejs/"
         },
         {
             "type": "node",

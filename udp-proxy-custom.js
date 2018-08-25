@@ -1,5 +1,5 @@
 // Let's create a DNS-proxy that proxies IPv4 udp-requests to googles IPv6 DNS-server
-var proxy = require('udp-proxy'),
+var proxy = require('./udp-proxy'),
 	options = {
 		address: '127.0.0.1',
 		port: 10811,

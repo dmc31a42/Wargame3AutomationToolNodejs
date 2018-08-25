@@ -1,6 +1,10 @@
 var net = require("net");
 var NodeConfig = require('./node-config');
 var exec = require('child_process').exec;
+const path = require('path');
+var fs = require("fs");
+net.bytesWritten = 5000;
+net.bufferSize = 5000;
 
 function executeRCON(command) {
 	var execution_string = NodeConfig.rconPath + 
@@ -17,6 +21,7 @@ function executeRCON(command) {
 		//}
 	});
 }
+
 class Wargame3_E1_Send {
     constructor(){
     }
@@ -27,7 +32,7 @@ class Wargame3_E1_Send {
         this.CommandLen = data.readUIntBE(pos,2); pos+=2;
         this.CommandCode = data.readUIntBE(pos, 1); pos+=1;
         this.ServerPort = data.readUIntLE(pos, 2); pos+=2;
-        this.Unknown1 = data.readUIntBE(pos, 4); pos+=4;
+        this.Version = data.readUIntBE(pos, 4); pos+=4;
         this.ServerIP = data.readUIntLE(pos, 4); pos+=4;
         this.Unknown2 = data.readUIntBE(pos, 1); pos+=1;
         this.EugNetIdLen = data.readUIntBE(pos, 4); pos+=4;
@@ -48,7 +53,7 @@ class Wargame3_E1_Send {
             buf.writeUIntBE(length-2, pos, 2); pos+=2; // CommandLen
             buf.writeUIntBE(this.CommandCode, pos, 1); pos+=1; // CommandCode
             buf.writeUIntLE(this.ServerPort, pos, 2); pos+=2; // ServerPort
-            buf.writeUIntBE(this.Unknown1, pos, 4); pos+=4; // Unknown1
+            buf.writeUIntBE(this.Version, pos, 4); pos+=4; // Version
             buf.writeUIntLE(this.ServerIP, pos, 4); pos+=4; // ServerIP
             buf.writeUIntBE(this.Unknown2, pos, 1); pos+=1; // Unknown2
             buf.writeUIntBE(EugNetIdLen, pos, 4); pos+=4; // EugNetIdLen
@@ -242,6 +247,285 @@ class Wargame3_C1_Receive {
     }
 }
 
+class Wargame3_C1_Send {
+    constructor(){}
+    FromBuffer(data){
+        this.data = data;
+        var pos = 0;
+        this.send = false;
+        this.receive = true;
+        this.CommandLen = data.readUIntBE(pos,2); pos+=2;
+        this.CommandCode = data.readUIntBE(pos, 1); pos+=1;
+        this.UserSessionId = data.readUIntBE(pos, 4); pos+=4;
+        this.Unknown1 = data.slice(pos, pos+1); pos+=1; // Client:0x00, Obs: 0x35??
+        this.ClientObsMod = data.slice(pos, pos+4); pos+=4; // i don't know exactly 1 byte / 4byte or 4byte / 1byte
+        return this;
+    }
+    getBuffer(){
+        if(this.CommandCode){
+            var length = 12;
+            var buf = new Buffer(length);
+            var pos = 0;
+            buf.writeUIntBE(length-2, pos, 2); pos+=2; // CommandLen
+            buf.writeUIntBE(this.CommandCode, pos, 1); pos+=1; // CommandCode
+            buf.writeUIntBE(this.UserSessionId, pos, 4); pos+=4;
+            buf.writeUIntBE(this.Unknown1, pos, 1); pos+=1;
+            buf.writeUIntBE(this.ClientObsMod, pos, 4); pos+=4;
+            return buf;
+        } else {
+            return ;
+        }
+    }
+}
+
+class Steel_C1_Receive {
+    constructor(){}
+    FromBuffer(data){
+        this.data = data;
+        var pos = 0;
+        this.send = false;
+        this.receive = true;
+        this.CommandLen = data.readUIntBE(pos,2); pos+=2;
+        this.CommandCode = data.readUIntBE(pos, 1); pos+=1;
+        this.Unknown1 = data.readUIntBE(pos, 4); pos+=4;
+        this.EugNetId = data.readUIntBE(pos, 4); pos+=4;
+        this.Unknown2 = data.slice(pos, pos+128); pos+=128;
+        this.VersionLen = data.readUIntBE(pos, 4); pos+=4;
+        this.Version = data.toString('utf8', pos, pos+this.VersionLen); pos+=this.VersionLen;
+        this.Unknown3 = data.readUIntBE(pos, 2); pos+=2;
+        this.PlayerNameLen = data.readUIntBE(pos, 4); pos+=4;
+        this.PlayerName = data.toString('utf8', pos, pos+this.PlayerNameLen); pos+=this.PlayerNameLen;
+        return this;
+    }
+    getBuffer(){
+        if(this.CommandCode){
+            var Version = Buffer.from(this.Version);
+            var VersionLen = Version.length;
+            var PlayerName = Buffer.from(this.PlayerName);
+            var PlayerNameLen = PlayerName.length;
+            var Unknown2Len = this.Unknown2.length;
+            var length = 21 + VersionLen + PlayerNameLen + Unknown2Len;
+            var buf = new Buffer(length);
+            var pos = 0;
+            buf.writeUIntBE(length-2, pos, 2); pos+=2; // CommandLen
+            buf.writeUIntBE(this.CommandCode, pos, 1); pos+=1; // CommandCode
+            buf.writeUIntBE(this.Unknown1, pos, 4); pos+=4;
+            buf.writeUIntBE(this.EugNetId, pos, 4); pos+=4;
+            this.Unknown2.copy(buf, pos); pos+=Unknown2Len;
+            buf.writeUIntBE(VersionLen, pos, 4); pos+=4;
+            Version.copy(buf, pos); pos+=VersionLen;
+            buf.writeUIntBE(this.Unknown3, pos, 2); pos+=2;
+            buf.writeUIntBE(PlayerNameLen, pos, 4); pos+=4;
+            PlayerName.copy(buf, pos); pos+=PlayerNameLen;
+            return buf;
+        } else {
+            return ;
+        }
+    }
+}
+
+class Steel_C1_Send {
+    constructor(){}
+    FromBuffer(data){
+        this.data = data;
+        var pos = 0;
+        this.send = false;
+        this.receive = true;
+        this.CommandLen = data.readUIntBE(pos,2); pos+=2;
+        this.CommandCode = data.readUIntBE(pos, 1); pos+=1;
+        this.UserSessionId = data.readUIntBE(pos, 4); pos+=4;
+        this.ClientObsMod = data.slice(pos, pos+4); pos+=4; // Client:0x00, Obs: 0x35
+        return this;
+    }
+    getBuffer(){
+        if(this.CommandCode){
+            var length = 11;
+            var buf = new Buffer(length);
+            var pos = 0;
+            buf.writeUIntBE(length-2, pos, 2); pos+=2; // CommandLen
+            buf.writeUIntBE(this.CommandCode, pos, 1); pos+=1; // CommandCode
+            buf.writeUIntBE(this.UserSessionId, pos, 4); pos+=4;
+            buf.writeUIntBE(this.ClientObsMod, pos, 4); pos+=4;
+            return buf;
+        } else {
+            return ;
+        }
+    }
+}
+
+class Wargame3_C8_Send {
+    constructor(){}
+    FromBuffer(data){
+        this.data = data;
+        var pos = 0;
+        this.send = false;
+        this.receive = true;
+        this.CommandLen = data.readUIntBE(pos,2); pos+=2;
+        this.CommandCode = data.readUIntBE(pos, 1); pos+=1;
+        this.UnknownMod = data.readUIntBE(pos, 1); pos+=1;
+        this.Unknown1 = data.readUIntBE(pos, 4); pos+=4;
+        this.EugNetId = data.readUIntBE(pos, 4); pos+=4;
+        this.Unknown2 = data.readUIntBE(pos, 1); pos+=1;
+        this.PlayerNumber = data.readUIntLE(pos, 4); pos+=4;
+        return this;
+    }
+    getBuffer(){
+        if(this.CommandCode){
+            var length = 17;
+            var buf = new Buffer(length);
+            var pos = 0;
+            buf.writeUIntBE(length-2, pos, 2); pos+=2; // CommandLen
+            buf.writeUIntBE(this.CommandCode, pos, 1); pos+=1; // CommandCode
+            buf.writeUIntBE(this.UnknownMod, pos, 1); pos+=1;
+            buf.writeUIntBE(this.Unknown1, pos, 4); pos+=4;
+            buf.writeUIntBE(this.EugNetId, pos, 4); pos+=4;
+            buf.writeUIntBE(this.Unknown2, pos, 1); pos+=1;
+            buf.writeUIntLE(this.PlayerNumber, pos, 4); pos+=4;
+            return buf;
+        } else {
+            return ;
+        }
+    }
+}
+
+class Steel_C8_Send {
+    constructor(){}
+    FromBuffer(data){
+        this.data = data;
+        var pos = 0;
+        this.send = false;
+        this.receive = true;
+        this.CommandLen = data.readUIntBE(pos,2); pos+=2;
+        this.CommandCode = data.readUIntBE(pos, 1); pos+=1;
+        this.UnknownMod = data.readUIntBE(pos, 1); pos+=1;
+        this.Unknown1 = data.readUIntBE(pos, 4); pos+=4;
+        this.EugNetId = data.readUIntBE(pos, 4); pos+=4;
+        this.PlayerNumber = data.readUIntLE(pos, 4); pos+=4;
+        return this;
+    }
+    getBuffer(){
+        if(this.CommandCode){
+            var length = 16;
+            var buf = new Buffer(length);
+            var pos = 0;
+            buf.writeUIntBE(length-2, pos, 2); pos+=2; // CommandLen
+            buf.writeUIntBE(this.CommandCode, pos, 1); pos+=1; // CommandCode
+            buf.writeUIntBE(this.UnknownMod, pos, 1); pos+=1;
+            buf.writeUIntBE(this.Unknown1, pos, 4); pos+=4;
+            buf.writeUIntBE(this.EugNetId, pos, 4); pos+=4;
+            buf.writeUIntLE(this.PlayerNumber, pos, 4); pos+=4;
+            return buf;
+        } else {
+            return ;
+        }
+    }
+}
+
+class Wargame3_CA_Send {
+    constructor(){}
+    FromBuffer(data){
+        this.data = data;
+        var pos = 0;
+        this.send = false;
+        this.receive = true;
+        this.CommandLen = data.readUIntBE(pos,2); pos+=2;
+        this.CommandCode = data.readUIntBE(pos, 1); pos+=1;
+        this.PlayerNumber = data.readUIntBE(pos, 4); pos+=4;
+        this.PropertyLen = data.readUIntBE(pos, 4); pos+=4;
+        this.Property = data.toString('utf8', pos, pos+this.PropertyLen); pos+=this.PropertyLen;
+        this.ValueLen = data.readUIntBE(pos, 4); pos+=4;
+        this.Value = data.toString('utf8', pos, pos+this.ValueLen); pos+=this.ValueLen;
+        return this;
+    }
+    getBuffer(){
+        if(this.CommandCode){
+            var Property = Buffer.from(this.Property);
+            var PropertyLen = Property.length;
+            var Value = Buffer.from(this.Value);
+            var ValueLen = Value.length;
+            var length = 15 + PropertyLen + ValueLen;
+            var buf = new Buffer(length);
+            var pos = 0;
+            buf.writeUIntBE(length-2, pos, 2); pos+=2; // CommandLen
+            buf.writeUIntBE(this.CommandCode, pos, 1); pos+=1; // CommandCode
+            buf.writeUIntBE(this.PlayerNumber, pos, 4); pos+=4;
+            buf.writeUIntBE(PropertyLen, pos, 4); pos+=4;
+            Property.copy(buf, pos); pos+=PropertyLen;
+            buf.writeUIntBE(ValueLen, pos, 4); pos+=4;
+            Value.copy(buf, pos); pos+=ValueLen;
+            return buf;
+        } else {
+            return ;
+        }
+    }
+}
+
+class Wargame3_C9_Send {
+    constructor(){}
+    FromBuffer(data){
+        this.data = data;
+        var pos = 0;
+        this.send = false;
+        this.receive = true;
+        this.CommandLen = data.readUIntBE(pos,2); pos+=2;
+        this.CommandCode = data.readUIntBE(pos, 1); pos+=1;
+        this.PropertyLen = data.readUIntBE(pos, 4); pos+=4;
+        this.Property = data.toString('utf8', pos, pos+this.PropertyLen); pos+=this.PropertyLen;
+        this.ValueLen = data.readUIntBE(pos, 4); pos+=4;
+        this.Value = data.toString('utf8', pos, pos+this.ValueLen); pos+=this.ValueLen;
+        return this;
+    }
+    getBuffer(){
+        if(this.CommandCode){
+            var Property = Buffer.from(this.Property);
+            var PropertyLen = Property.length;
+            var Value = Buffer.from(this.Value);
+            var ValueLen = Value.length;
+            var length = 11 + PropertyLen + ValueLen;
+            var buf = new Buffer(length);
+            var pos = 0;
+            buf.writeUIntBE(length-2, pos, 2); pos+=2; // CommandLen
+            buf.writeUIntBE(this.CommandCode, pos, 1); pos+=1; // CommandCode
+            buf.writeUIntBE(PropertyLen, pos, 4); pos+=4;
+            Property.copy(buf, pos); pos+=PropertyLen;
+            buf.writeUIntBE(ValueLen, pos, 4); pos+=4;
+            Value.copy(buf, pos); pos+=ValueLen;
+            return buf;
+        } else {
+            return ;
+        }
+    }
+}
+
+class Wargame3_CF_Send {
+    constructor(){}
+    FromBuffer(data){
+        this.data = data;
+        var pos = 0;
+        this.send = false;
+        this.receive = true;
+        this.CommandLen = data.readUIntBE(pos,2); pos+=2;
+        this.CommandCode = data.readUIntBE(pos, 1); pos+=1;
+        this.Padding = data.readUIntBE(pos, 4); pos+=4;
+        this.Buffer = data.slice(pos);
+        return this;
+    }
+    getBuffer(){
+        if(this.CommandCode){
+            var length = 7 + this.Buffer.length;
+            var buf = new Buffer(length);
+            var pos = 0;
+            buf.writeUIntBE(length-2, pos, 2); pos+=2; // CommandLen
+            buf.writeUIntBE(this.CommandCode, pos, 1); pos+=1; // CommandCode
+            buf.writeUIntBE(this.Padding, pos, 4); pos+=4;
+            this.Buffer.copy(buf, pos); pos+=this.Buffer.length;
+            return buf;
+        } else {
+            return ;
+        }
+    }
+}
+
 function uniqueKey(socket) {
     var key = socket.remoteAddress + ":" + socket.remotePort;
     return key;
@@ -338,6 +622,18 @@ TcpProxy.prototype.createServiceSocket = function(context) {
             context.proxySocket.write(element);
             console.log("remote >> proxy >> local", element);
         })
+        if(context.blockFromServer && ReplayFilePosition == 0){
+            ReplayFileBuffer = fs.readFileSync(path.join("./replay_2018-03-01_21-56-19.wargamerpl2"));
+            ReplayFilePosition = 0;
+            context.replayInterval = setInterval(function(){
+                var replayStart = new Wargame3_CF_Send();
+                replayStart.CommandCode = 0xCF;
+                replayStart.Padding = 0;
+                replayStart.Buffer = ReplayFileBuffer.slice(ReplayFilePosition, ReplayFilePosition+1000);
+                ReplayFilePosition+=1000;
+                context.proxySocket.write(replayStart.getBuffer())
+            }, 100);
+        }
         if(proxy.proxyPort == 10810){
             for(var i=context.sentNotice; i+1<proxy.notices.length; i++){
                 var noticeProtocol = proxy.notices[i+1];
@@ -354,10 +650,12 @@ TcpProxy.prototype.createServiceSocket = function(context) {
         if(hadError){
             console.log(hadError);
         }
+        clearInterval(context.replayInterval)
         context.proxySocket.destroy();
     });
     context.serviceSocket.on("error", function(e) {
         console.log(e);
+        clearInterval(context.replayInterval)
         context.proxySocket.destroy();
     });
     return context;
@@ -383,65 +681,84 @@ serviceHost, servicePort, options) {
     return new TcpProxy(proxyPort, serviceHost, servicePort, options);
 };
 
-function checkWargame3Protocol(data){
-    var commandCode = [
-        {code: 0xe1, callback:wargame3_e1},
-        {code: 0xC2, callback:wargame3_C2}
-    ];
-    if(data.length>=3){
-        var index = commandCode.findIndex(function(element){
-            if(data[2] == element.code) return true;
-        })
-        if(index>=0){
-            return commandCode[index].callback(data);
-        }
-    } else {
-        return undefiend;
-    }
-}
-
+var ReplayFileBuffer;
+var ReplayFilePosition = 0;
 function checkWargame3Receive(data, context){
     var commandCode = [
         {code: 0xE1, class: Wargame3_E1_Receive},
         {code: 0xC2, class: Wargame3_C2_All},
+        {code: 0xCA, class: Wargame3_CA_Send, modifyFunction:function(protocol){
+            if(context.user.EugNetId == 986359 && protocol.Property == "PlayerObserver") {
+                protocol.Value = "1";
+                return [protocol];
+            } else {
+                return [protocol];
+            }
+        }},
+        {code: 0xC8, class: Wargame3_C8_Send, preFunction:function(protocol){       
+            if(protocol.UnknownMod==0){
+                context.user.PlayerNumber = protocol.PlayerNumber;
+            }
+        }},
+        {code: 0xC1, class: Wargame3_C1_Send, modifyFunction:function(protocol){
+            if(context.user.EugNetId == 986359){
+                context.blockFromServer = true;
+                protocol.UserSessionId = 0xffffffff;
+                protocol.Unknown1 = 0x35;
+                protocol.ClientObsMod = 0x35;              
+                return [protocol];
+            } else {
+                return [protocol];
+            }
+        }}
+        
         
     ];
     var pos = 0;
     var buffers = [];
-    
-    while(pos<data.length){
-        var slicedBuffer = data.slice(pos);
-        if(slicedBuffer.length>=3){
-            var index = commandCode.findIndex(function(element){
-                if(slicedBuffer[2] == element.code) return true;
-            })
-            if(index>=0){
-                var wargame3Protocol = new commandCode[index].class().FromBuffer(slicedBuffer);
-                if(commandCode[index].preFunction){
-                    commandCode[index].preFunction(wargame3Protocol);
-                }
-                if(commandCode[index].modifyFunction){
-                    var modifiedProtocol = commandCode[index].modifyFunction(wargame3Protocol);
-                    var modifiedBuffer = modifiedProtocol.getBuffer();
-                    console.log('Wargame3Receive', modifiedProtocol);
-                    buffers.push(modifiedBuffer);
-                    pos+=modifiedBuffer.length;
-                } else {
-                    console.log('Wargame3Receive', wargame3Protocol);
-                    var wargame3Buffer = wargame3Protocol.getBuffer();
-                    buffers.push(wargame3Buffer);
-                    pos+=wargame3Buffer.length;
-                }
-            } else {
-                var length = slicedBuffer.readUIntBE(0,2); 
-                buffers.push(slicedBuffer.slice(0, length+2));
-                pos+=(length+2);
-            }
-        } else {
-            buffers.push(slicedBuffer);
-            pos+=slicedBuffer.length;
-        }
+    if(context.blockFromServer){
+
     }
+    else {
+        while(pos<data.length){
+            var slicedBuffer = data.slice(pos);
+            if(slicedBuffer.length>=3){
+                var index = commandCode.findIndex(function(element){
+                    if(slicedBuffer[2] == element.code) return true;
+                })
+                var length = slicedBuffer.readUIntBE(0,2); 
+                if(index>=0){
+                    var wargame3Protocol = new commandCode[index].class().FromBuffer(slicedBuffer);
+                    if(commandCode[index].preFunction){
+                        commandCode[index].preFunction(wargame3Protocol);
+                    }
+                    if(commandCode[index].modifyFunction){
+                        var modifiedProtocols = commandCode[index].modifyFunction(wargame3Protocol);
+                        if(modifiedProtocols){
+                            modifiedProtocols.forEach((element)=>{
+                                var modifiedBuffer = element.getBuffer();
+                                console.log('Wargame3Receive', element);
+                                buffers.push(modifiedBuffer);
+                            })
+                            if(context.blockFromServer){
+                                break;
+                            }
+                        }
+                    } else {
+                        console.log('Wargame3Receive', wargame3Protocol);
+                        var wargame3Buffer = wargame3Protocol.getBuffer();
+                        buffers.push(wargame3Buffer);
+                    }
+                } else {
+                    buffers.push(slicedBuffer.slice(0, length+2));
+                }
+                pos+=(length+2);
+            } else {
+                buffers.push(slicedBuffer);
+                pos+=slicedBuffer.length;
+            }
+        }
+    }    
     return buffers;
 }
 
@@ -449,7 +766,7 @@ function checkWargame3Send(data, context){
     var commandCode = [
         {code: 0xE1, class: Wargame3_E1_Send, modifyFunction:function(protocol){
             protocol.ServerPort = 10810
-            return protocol;
+            return [protocol];
         }},
         {code: 0xC2, class: Wargame3_C2_All, preFunction:function(protocol){
             if(protocol.Type==0x65){
@@ -464,6 +781,11 @@ function checkWargame3Send(data, context){
                 EugNetId: protocol.EugNetId,
                 PlayerName: protocol.PlayerName
             }
+        },modifyFunction:function(protocol){
+            if(protocol.EugNetId == 986359){
+                //protocol.Unknown3 = 2;
+            }
+            return [protocol];
         }} // Player->Proxy->Dedicated
     ];
     var pos = 0;
@@ -475,17 +797,21 @@ function checkWargame3Send(data, context){
             var index = commandCode.findIndex(function(element){
                 if(slicedBuffer[2] == element.code) return true;
             })
+            var length = slicedBuffer.readUIntBE(0,2); 
             if(index>=0){
                 var wargame3Protocol = new commandCode[index].class().FromBuffer(slicedBuffer);
                 if(commandCode[index].preFunction){
                     commandCode[index].preFunction(wargame3Protocol);
                 }
                 if(commandCode[index].modifyFunction){
-                    var modifiedProtocol = commandCode[index].modifyFunction(wargame3Protocol);
-                    var modifiedBuffer = modifiedProtocol.getBuffer();
-                    console.log('Wargame3Send', modifiedProtocol);
-                    buffers.push(modifiedBuffer);
-                    pos+=modifiedBuffer.length;
+                    var modifiedProtocols = commandCode[index].modifyFunction(wargame3Protocol);
+                    if(modifiedProtocols){
+                        modifiedProtocols.forEach((element)=>{
+                            var modifiedBuffer = element.getBuffer();
+                            console.log('Wargame3Send', element);
+                            buffers.push(modifiedBuffer);
+                        })
+                    }
                 } else {
                     console.log('Wargame3Send', wargame3Protocol);
                     var wargame3Buffer = wargame3Protocol.getBuffer();
@@ -495,8 +821,8 @@ function checkWargame3Send(data, context){
             } else {
                 var length = slicedBuffer.readUIntBE(0,2); 
                 buffers.push(slicedBuffer.slice(0, length+2));
-                pos+=(length+2);
             }
+            pos+=(length+2);
         } else {
             buffers.push(slicedBuffer);
             pos+=slicedBuffer.length;

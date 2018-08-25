@@ -12,7 +12,8 @@
     "node-bitarray": "^0.1.0",
     "node-tcp-proxy": "0.0.8",
     "socket.io": "~2.0.4",
-    "tail": "~1.2.3"
+    "tail": "~1.2.3",
+    "udp-proxy": "^1.0.1"
   },
   "devDependencies": {},
   "scripts": {
