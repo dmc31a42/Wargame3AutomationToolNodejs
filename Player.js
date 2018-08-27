@@ -94,7 +94,14 @@ class Player{
     set PlayerTeamName(str) {this._PlayerTeamName = str;}
     get PlayerTeamName() {return this._PlayerTeamName;}
 
-
+    static get Enum() {
+        return  {
+            Side: {
+                Bluefor:0,
+                Redfor:1
+            }
+        }
+    }    
 
     getCountryCodeName() {
         var player = this;

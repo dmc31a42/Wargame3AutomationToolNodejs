@@ -84,13 +84,44 @@ class ServerState{
     get Version() {return this._Version;}
 
     set VictoryCond(str) {this._VictoryCond = parseInt(str);}
-    get VictoryCond() {return tihs._VictoryCond;}
+    get VictoryCond() {return this._VictoryCond;}
 
     set WarmupCountdown(str) {this._WarmupCountdown = parseInt(str);}
     get WarmupCountdown() {return this._WarmupCountdown;}
 
     set WithHost(str) {this._WithHost = parseInt(str);}
     get WithHost() {return this._WithHost;}
+
+    static get Enum() {
+        return {
+            GameState: {
+                Lobby: 0,
+                Loading: 51,
+                Deployment: 52,
+                Game: 53,
+                Debriefing: 101,
+                Launch: 4,
+                toString: function(GameState){
+                    switch(GameState){
+                        case 0:
+                            return "Lobby";
+                        case 51:
+                            return "Loading";
+                        case 52:
+                            return "Deployment";
+                        case 53:
+                            return "Game";
+                        case 101:
+                            return "Debriefing";
+                        case 4:
+                            return "Launch";
+                        default:
+                            return "UNKNOWN";
+                    }
+                }
+            }
+        }
+    } 
 
     toJSON() {
         return {

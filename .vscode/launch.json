@@ -7,7 +7,13 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program wrd_deck_decode",
+            "name": "EugProxyMerge.js Launch Program",
+            "program": "${workspaceFolder}/EugProxyMerge.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "wrd_deck_decode Launch Program",
             "program": "${workspaceFolder}/wrd-deck-decode.js"
         },
         {

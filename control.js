@@ -3,7 +3,7 @@ var http = require('http');
 
 /* Server Global variable */
 var players = {};
-var infoRun = false;
+var infoRun = true;
 var NodeConfig = require('./node-config');
 var exec = require('child_process').exec;
 var AdminCode = NodeConfig.AdminCode;
@@ -299,7 +299,7 @@ server.listen(NodeConfig.ServicePort, function() {
   console.log('Socket IO server listening on port ' + NodeConfig.ServicePort);
 });
 
-Tail = require('tail').Tail;
+Tail = require('./tail.js').Tail;
 
 tail = new Tail("../serverlog.txt", {
 	separator: '\n',
@@ -318,6 +318,10 @@ tail.on("line", function(data) {
     }
   }
 });
+
+tail.on("historicalDataEnd", function(end){
+  infoRun = false;
+})
 
 tail.on("error", function(error) {
   console.log('ERROR: ', error);
@@ -372,6 +376,7 @@ function register_events(){
   register_event('Canceling launch game', _on_switch_to_cancel_launch);
 /* Server Status */
   register_event('Variable (.*) set to "*([^"]*)', _setServerSetting);
+  //register_event('Variable ([^ ]*) set to "*([^"]*)', _setServerSetting); //공백을 무시하게 해야할 듯
 }
 
 var parserValue = {

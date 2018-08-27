@@ -6,6 +6,10 @@ const Player = require('./Player');
 const ServerState = require('./ServerState');
 
 const serverState = new ServerState();
+const EventEmitter = require('events');
+class EugEmitter extends EventEmitter {}
+const eugEmitter = new EugEmitter();
+
 
 function executeRCON(command) {
     var execution_string = ServerConfig.rconPath + " -H " 
@@ -82,13 +86,12 @@ var UserToDedicatedCommandCodes = [
         const PlayerName = protocol.PlayerName;
 
         var EugNetIdKeys = Object.keys(serverState.players);
-        if(EugNetIdKeys.indexOf(EugNetId)>-1){
-            context.user = serverState.players[EugNetId];
-        } else {
+        if(EugNetIdKeys.indexOf(EugNetId)==-1){
             var player = new Player();
-            context.user = player;
             serverState.players[EugNetId] = player;
         }
+        context.user = serverState.players[EugNetId];
+
         context.user.EugNetId = EugNetId;
         context.user.PlayerName = PlayerName;
         var address = context.proxySocket.address();
@@ -129,6 +132,27 @@ const EugUdpProxyBtwUserAndDedicated = require('./EugUdpProxy.js').createServer(
     localipv6: false,
     timeOutTime: 10000
 });
+
+// TEST TEST TEST
+eugEmitter.on("playerChanged", (playerid)=>{
+    console.log("playerChanged", serverState.players[playerid]);
+})
+eugEmitter.on("playerDeleted", (playerid)=>{
+    console.log("playerDeleted", playerid);
+})
+eugEmitter.on("serverStateChanged", ()=>{
+    console.log("serverStateChanged", serverState);
+})
+// eugEmitter.on("serverGameStateChanged", (GameState)=>{
+//     console.log("serverGameStateChanged", ServerState.Enum.GameState.toString(GameState));
+// })
+eugEmitter.on("serverPropertyChanged", (key, value)=>{
+    console.log("serverPropertyChanged", key + "->" + value);
+})
+//
+
+const EugLogTail = require('./EugLogTail.js')(serverState, eugEmitter);
+EugLogTail.watch();
 
 process.on("uncaughtException", function(err) {
 
