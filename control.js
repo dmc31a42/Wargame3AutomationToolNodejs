@@ -327,7 +327,7 @@ tail.on("error", function(error) {
   console.log('ERROR: ', error);
 });
 
-tail.watch();
+tail.watch(0);
 console.log("watch start");
 
 var registeredEvents = {};

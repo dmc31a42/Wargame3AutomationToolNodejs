@@ -40,44 +40,10 @@ class DefaultModule{
 
   setProtocolModulars() {
     this._DedicatedToUserProtocols = {
-      C2: (protocol, extraProtocols, serverState, context) => {
-        return {
-          protocol: protocol,
-          extraProtocols: {
-            // pre: ,
-            // post: 
-          }
-        };
-      },
-      CA: (protocol, extraProtocols, serverState, context) => {
-        return {
-          protocol: protocol,
-          extraProtocols: {
-            // pre: ,
-            // post: 
-          }
-        };
-      },
-      C8: (protocol, extraProtocols, serverState, context) => {
-        return {
-          protocol: protocol,
-          extraProtocols: {
-            // pre: ,
-            // post: 
-          }
-        };
-      },
-      C1: (protocol, extraProtocols, serverState, context) => {
-        return {
-          protocol: protocol,
-          extraProtocols: {
-            // pre: ,
-            // post: 
-          }
-        };
-      },
+      enabled: true,
     };
     this._UserToDedicatedProtocols = {
+      enabled: true,
       C2: (protocol, extraProtocols, serverState, context) => {
         if(protocol.Type==0x65){
           const DeckRegExp = /^@(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/;
@@ -87,26 +53,16 @@ class DefaultModule{
         }
         return {
           protocol: protocol,
-          extraProtocols: {
-            // pre: ,
-            // post: 
-          }
+          extraProtocols: extraProtocols
         };
-      },
-      C1: (protocol, extraProtocols, serverState, context) => {
-        return {
-          protocol: protocol,
-          extraProtocols: {
-            // pre: ,
-            // post: 
-          }
-        };
-      },
+      }
     };
   }
 
   set enabled(value) {
     this._enabled = value;
+    this._DedicatedToUserProtocols.enabled = value;
+    this._UserToDedicatedProtocols.enabled = value;
   }
   get enabled() {return this._enabled;}
 
@@ -120,8 +76,8 @@ class DefaultModule{
 
   get ProtocolModulars() {
     return {
-      UserToDedicated: this._UserToDedicatedProtocols,
-      DedicatedToUser: this._DedicatedToUserProtocols
+      proxyToService: this._UserToDedicatedProtocols,
+      serviceToProxy: this._DedicatedToUserProtocols
     }
   }
 }
