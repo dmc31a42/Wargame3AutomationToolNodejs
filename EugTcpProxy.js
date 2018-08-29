@@ -1,25 +1,5 @@
 var net = require("net");
-var NodeConfig = require('./node-config');
-var exec = require('child_process').exec;
-const path = require('path');
-var fs = require("fs");
 const EugPacketStruct = require('./EugPacketStruct');
-
-function executeRCON(command) {
-	var execution_string = NodeConfig.rconPath + 
-	    ' -H ' + NodeConfig.rconRemoteHost + 
-	    ' -P ' + NodeConfig.rconRemotePort +
-        " -p '" + NodeConfig.rconPassword + "'" +
-		' "' + command + '"';
-	
-	var child = exec(execution_string, function (error, stdout, stderr) {
-		//console.log('stdout: ' + stdout);
-		//console.log('stderr: ' + stderr);
-		//if (error !== null) {
-		//	console.log('exec error: ' + error);
-		//}
-	});
-}
 
 function uniqueKey(socket) {
     var key = socket.remoteAddress + ":" + socket.remotePort;
@@ -88,7 +68,7 @@ class EugTcpProxy {
                 connected: false,
                 proxySocket: proxySocket,
             };
-            proxy.contexts[key] = context;
+            proxy.contexts[key] = context;  
             proxy.createServiceSocket(context);
             proxySocket.on("data", function (data) {
                 var buffers = checkWargame3Packet(data, proxy.proxyToServiceCommandCodes, proxy.serverState, context);
@@ -183,11 +163,13 @@ class EugTcpProxy {
             console.log(msg);
         }
     }
+
+    static createProxy(proxyPort, serviceHost, servicePort, options, serverState, proxyToServiceClasses, proxyToServiceModulars, serviceToProxyClasses, serviceToProxyModulars) {
+        return new this(proxyPort, serviceHost, servicePort, options, serverState, proxyToServiceClasses, proxyToServiceModulars, serviceToProxyClasses, serviceToProxyModulars);    
+    }
 }
 
-module.exports.createProxy = function(proxyPort, serviceHost, servicePort, options, serverState, proxyToServiceClasses, proxyToServiceModulars, serviceToProxyClasses, serviceToProxyModulars) {
-    return new EugTcpProxy(proxyPort, serviceHost, servicePort, options, serverState, proxyToServiceClasses, proxyToServiceModulars, serviceToProxyClasses, serviceToProxyModulars);
-};
+module.exports = EugTcpProxy;
 
 function checkWargame3Packet(data, commandCodes, serverState, context) {
     var pos = 0;

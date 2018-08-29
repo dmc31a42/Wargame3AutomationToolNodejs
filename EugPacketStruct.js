@@ -307,18 +307,18 @@ class Wargame3_C1_Receive {
         this.VersionLen = data.readUIntBE(pos, 4); pos+=4;
         this.Version = data.toString('utf8', pos, pos+this.VersionLen); pos+=this.VersionLen;
         this.Unknown3 = data.readUIntBE(pos, 1); pos+=1;
-        this.PlayerNameLen = data.readUIntBE(pos, 4); pos+=4;
-        this.PlayerName = data.toString('utf8', pos, pos+this.PlayerNameLen); pos+=this.PlayerNameLen;
+        this.PasswordLen = data.readUIntBE(pos, 4); pos+=4;
+        this.Password = data.toString('utf8', pos, pos+this.PasswordLen); pos+=this.PasswordLen;
         return this;
     }
     getBuffer(){
         if(this.CommandCode){
             var Version = Buffer.from(this.Version);
             var VersionLen = Version.length;
-            var PlayerName = Buffer.from(this.PlayerName);
-            var PlayerNameLen = PlayerName.length;
+            var Password = Buffer.from(this.Password);
+            var PasswordLen = Password.length;
             var Unknown2Len = this.Unknown2.length;
-            var length = 20 + VersionLen + PlayerNameLen + Unknown2Len;
+            var length = 20 + VersionLen + PasswordLen + Unknown2Len;
             var buf = new Buffer(length);
             var pos = 0;
             buf.writeUIntBE(length-2, pos, 2); pos+=2; // CommandLen
@@ -329,8 +329,8 @@ class Wargame3_C1_Receive {
             buf.writeUIntBE(VersionLen, pos, 4); pos+=4;
             Version.copy(buf, pos); pos+=VersionLen;
             buf.writeUIntBE(this.Unknown3, pos, 1); pos+=1;
-            buf.writeUIntBE(PlayerNameLen, pos, 4); pos+=4;
-            PlayerName.copy(buf, pos); pos+=PlayerNameLen;
+            buf.writeUIntBE(PasswordLen, pos, 4); pos+=4;
+            Password.copy(buf, pos); pos+=PasswordLen;
             return buf;
         } else {
             return ;
@@ -384,18 +384,18 @@ class Steel_C1_Receive {
         this.VersionLen = data.readUIntBE(pos, 4); pos+=4;
         this.Version = data.toString('utf8', pos, pos+this.VersionLen); pos+=this.VersionLen;
         this.Unknown3 = data.readUIntBE(pos, 2); pos+=2;
-        this.PlayerNameLen = data.readUIntBE(pos, 4); pos+=4;
-        this.PlayerName = data.toString('utf8', pos, pos+this.PlayerNameLen); pos+=this.PlayerNameLen;
+        this.PasswordLen = data.readUIntBE(pos, 4); pos+=4;
+        this.Password = data.toString('utf8', pos, pos+this.PasswordLen); pos+=this.PasswordLen;
         return this;
     }
     getBuffer(){
         if(this.CommandCode){
             var Version = Buffer.from(this.Version);
             var VersionLen = Version.length;
-            var PlayerName = Buffer.from(this.PlayerName);
-            var PlayerNameLen = PlayerName.length;
+            var Password = Buffer.from(this.Password);
+            var PasswordLen = Password.length;
             var Unknown2Len = this.Unknown2.length;
-            var length = 21 + VersionLen + PlayerNameLen + Unknown2Len;
+            var length = 21 + VersionLen + PasswordLen + Unknown2Len;
             var buf = new Buffer(length);
             var pos = 0;
             buf.writeUIntBE(length-2, pos, 2); pos+=2; // CommandLen
@@ -406,8 +406,8 @@ class Steel_C1_Receive {
             buf.writeUIntBE(VersionLen, pos, 4); pos+=4;
             Version.copy(buf, pos); pos+=VersionLen;
             buf.writeUIntBE(this.Unknown3, pos, 2); pos+=2;
-            buf.writeUIntBE(PlayerNameLen, pos, 4); pos+=4;
-            PlayerName.copy(buf, pos); pos+=PlayerNameLen;
+            buf.writeUIntBE(PasswordLen, pos, 4); pos+=4;
+            Password.copy(buf, pos); pos+=PasswordLen;
             return buf;
         } else {
             return ;

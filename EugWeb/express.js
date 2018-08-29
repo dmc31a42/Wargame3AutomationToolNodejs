@@ -1,11 +1,11 @@
-module.exports = function(servicePort) {
+module.exports = function() {
   const express = require('express');
   const session = require('express-session');
   const bodyParser = require('body-parser');
   const SERVER_CONFIG = require('../server-config.json');
 
   var app = express();
-  //app.set('views','./views/MongoDB');
+  app.set('views','./modules');
   app.set('view engine', 'jade');
   app.use(bodyParser.urlencoded({ extended: false }));
   app.use(session({

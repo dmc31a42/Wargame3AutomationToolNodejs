@@ -1,0 +1,22 @@
+doctype html
+html
+    head
+        meta(charset='utf-8')
+        script(src="/socket.io/socket.io.js")
+        script(src="https://code.jquery.com/jquery-3.3.1.min.js")
+        script(src="/js/test.js")        
+    body
+        fieldset(id="login")
+            legend Admin Login(미구현)
+            input(type="password")
+            button() Login
+        for namePathEnabled in namePathEnableds
+            fieldset(id=namePathEnabled.path)
+                legend=namePathEnabled.name
+                    if namePathEnabled.path != "default"
+                        input(type="checkbox", name="enabled", enabled=namePathEnabled.enabled)
+                        if namePathEnabled.enabled
+                            |&nbsp;Enabled
+                        else
+                            |&nbsp;Disabled
+                iframe(src="/" + namePathEnabled.path, frameborder="0")

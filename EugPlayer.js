@@ -39,8 +39,6 @@ class Player{
 
     set name(str) {this._name = str;}
     get name() {return this._name;}
-    set PlayerName(str) {this._name = str;}
-    get PlayerName() {return this._name;}
 
     set playerid(str) {
         this._playerid = parseInt(str);

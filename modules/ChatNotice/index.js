@@ -10,11 +10,11 @@
 //   get preFunction() {return this._preFunction;}
 //   get modifyFunction() {return this._modifyFunction;}
 // }
+const ServerConfig = require('../../server-config.json');
+const EugPacketStruct = require('../../EugPacketStruct');
 
-class DefaultModule{
+class ChatNoticeModule{
   constructor(serverState, eugEmitter, eugRCON, importedModules){
-    // this._publicRouterView = true;
-    // this._adminRouterView = true;
     this._enabled = true;
     this._serverState = serverState;
     this._eugEmitter = eugEmitter;
@@ -22,7 +22,7 @@ class DefaultModule{
     this._importedModules = importedModules;
     this.setProtocolModulars();
     this.moduleInfo = {
-      name: "Default Setting"
+      name: "Chat Notice"
     }
   }
 
@@ -30,7 +30,7 @@ class DefaultModule{
     const router = require('express').Router();
     this._publicRouter = router;
     router.get('/', (req, res)=>{
-      res.send("default_module public get");
+      res.send("Chat Notice public get");
     })
     return router;
   }
@@ -39,7 +39,34 @@ class DefaultModule{
     const router = require('express').Router();
     this._adminRouter = router;
     router.get('/', (req, res)=>{
-      res.send("defualt_module private get");
+      res.render('./ChatNotice/admin/views/index');
+    })
+    io.on('connection', (socket)=>{
+      socket.on('sendChatTo', (data)=>{
+        if(!data.playeridTo || !data.chat){
+          return;
+        }
+        var playeridFrom;
+        if(data.playeridFrom){
+          playeridFrom = data.playeridFrom;
+        } else {
+          playeridFrom = ServerConfig.serverAdminEugNetId;
+        }
+        const chat = data.chat;
+        const playeridTo = data.playeridTo;
+        const sendMsg = new EugPacketStruct.Wargame3.DedicatedToUser.C2();
+        sendMsg.ChatLength = 0;
+        sendMsg.CommandCode = 0xC2;
+        sendMsg.CommandLen = 0;
+        sendMsg.WhoSend = 0;
+        sendMsg.EugNetId = parseInt(playeridFrom);
+        sendMsg.Type = 0x65;
+        sendMsg.Unknown1 = 0x010000;
+        sendMsg.Padding = 0;
+        sendMsg.Chat = chat;
+        eugRCON.sendProtocolsFromDedicatedToUsers(playeridTo, sendMsg);
+      })
+      socket.on('disconnect',()=>{})
     })
     return router;
   }
@@ -50,18 +77,6 @@ class DefaultModule{
     };
     this._UserToDedicatedProtocols = {
       enabled: true,
-      C2: (protocol, extraProtocols, serverState, context) => {
-        if(protocol.Type==0x65){
-          const DeckRegExp = /^@(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/;
-          if(DeckRegExp.exec(protocol.Chat)){
-              this._eugRCON.setpvar(context.user.EugNetId, 'PlayerDeckContent', protocol.Chat)
-          }
-        }
-        return {
-          protocol: protocol,
-          extraProtocols: extraProtocols
-        };
-      }
     };
   }
 
@@ -85,5 +100,5 @@ class DefaultModule{
 }
 
 module.exports = function(serverState, eugEmitter, eugRCON, importedModules) {
-  return new DefaultModule(serverState, eugEmitter, eugRCON, importedModules);
+  return new ChatNoticeModule(serverState, eugEmitter, eugRCON, importedModules);
 }

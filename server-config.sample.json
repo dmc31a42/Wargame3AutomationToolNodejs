@@ -14,5 +14,6 @@
 	"external_ip": "external_ip",
 	"SESSION": {
 		"secret": "keyboard cat"
-	}
+	},
+	"serverAdminEugNetId": 1
 }

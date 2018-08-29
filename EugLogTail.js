@@ -1,13 +1,14 @@
 //"use strinct";
 /* Server Global variable */
 const Tail = require('./tail.js').Tail;
-const Player = require('./Player');
+const EugPlayer = require('./EugPlayer.js');
 const ServerState = require('./ServerState');
 
 class EugLogTail{
-    constructor(serverState, eugEmitter){
+    constructor(serverState, eugEmitter, eugTcpProxyBtwUserAndDedicated){
         this.serverState = serverState;
         this.eugEmitter = eugEmitter;
+        this.eugTcpProxyBtwUserAndDedicated = eugTcpProxyBtwUserAndDedicated;
         this._infoRun = false;
         //registeredEvents initialize
         this.initializeRegisteredEvents();
@@ -47,19 +48,31 @@ class EugLogTail{
         function _on_player_connect(RegExpExec){
             var playerid = RegExpExec[1];
             var player;
-            var playeridKey = Object.keys(eugLogTail.serverState.players).find((element)=>{return element == playerid});
-            // Creating player data struct if no present
-            if(playeridKey){
-              // does not work includes. so, use indexOf
-                player = eugLogTail.serverState.players[playeridKey];
+            // var playeridKey = Object.keys(eugLogTail.serverState.players).find((element)=>{return element == playerid});
+            // // Creating player data struct if no present
+            // if(playeridKey){
+            //   // does not work includes. so, use indexOf
+            //     player = eugLogTail.serverState.players[playeridKey];
+            // } else {
+            //     player = new EugPlayer();
+            //     player.playerid = playerid;
+            //     eugLogTail.serverState.players[playerid] = player;
+            // }
+            var context = Object.values(eugLogTail.eugTcpProxyBtwUserAndDedicated.contexts).find((context)=>{
+                return context.user.playerid == parseInt(playerid);
+            })
+            if(context){
+                player = context.user;
+                eugLogTail.serverState.players[player.playerid] = player;
             } else {
-                player = new Player();
+                player = new EugPlayer();
                 player.playerid = playerid;
                 eugLogTail.serverState.players[playerid] = player;
             }
+            
             player.UserSessionId = RegExpExec[2];
             player.socket = RegExpExec[3];
-            player.side = Player.Enum.Side.Bluefor;
+            player.side = EugPlayer.Enum.Side.Bluefor;
             // This part is processed in EugTcpProxy
             // player.IP = RegExpExec[4];
             // player.Port = RegExpExec[5];
@@ -215,8 +228,12 @@ class EugLogTail{
         this._tail.watch(0);
         console.log("watch start");
     }
+
+    unwatch(){
+        this._tail.unwatch();
+    }
 }
 
-module.exports = function(serverState, eugEmitter){
-    return new EugLogTail(serverState, eugEmitter);
+module.exports = function(serverState, eugEmitter, eugTcpProxyBtwUserAndDedicated){
+    return new EugLogTail(serverState, eugEmitter, eugTcpProxyBtwUserAndDedicated);
 }

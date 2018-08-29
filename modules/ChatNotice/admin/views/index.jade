@@ -1,0 +1,15 @@
+doctype html
+html
+    head
+        meta(charset='utf-8')
+        script(src="/socket.io/socket.io.js")
+        script(src="https://code.jquery.com/jquery-3.3.1.min.js")
+        script(src="/admin/ChatNotice/js/chatNotice.js")        
+    body
+        |playeridFrom:
+        input#playeridFrom(type="text", name="playeridFrom")
+        |&nbsp;playeridTo:
+        input#playeridTo(type="text", name="playeridTo")
+        |&nbsp;Chat:
+        input#chat(type="text", name="chat")
+        button#sendChat Send
