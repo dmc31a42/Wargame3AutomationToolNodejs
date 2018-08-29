@@ -2,7 +2,7 @@ module.exports = function(servicePort) {
   const express = require('express');
   const session = require('express-session');
   const bodyParser = require('body-parser');
-  const SERVER_CONFIG = require('./config.json');
+  const SERVER_CONFIG = require('../server-config.json');
 
   var app = express();
   //app.set('views','./views/MongoDB');

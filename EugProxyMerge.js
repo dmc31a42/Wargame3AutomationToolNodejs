@@ -1,31 +1,16 @@
 "use strict;"
+const fs = require('fs');
 const EugPacketStruct = require('./EugPacketStruct.js');
 var ServerConfig = require('./server-config.json');
-var exec = require('child_process').exec;
+
 const Player = require('./Player');
 const ServerState = require('./ServerState');
-
+const eugRCON = require('./EugRCON')(ServerConfig.rconPath, ServerConfig.rconRemoteHost, ServerConfig.rconRemotePort, ServerConfig.rconPassword)
 const serverState = new ServerState();
 const EventEmitter = require('events');
 class EugEmitter extends EventEmitter {}
 const eugEmitter = new EugEmitter();
 
-
-function executeRCON(command) {
-    var execution_string = ServerConfig.rconPath + " -H " 
-        + ServerConfig.rconRemoteHost + ' -P '
-        + ServerConfig.rconRemotePort + " -p '"
-        + ServerConfig.rconPassword + "'" + ' "' 
-        + command + '"';
-	
-	var child = exec(execution_string, function (error, stdout, stderr) {
-		//console.log('stdout: ' + stdout);
-		//console.log('stderr: ' + stderr);
-		//if (error !== null) {
-		//	console.log('exec error: ' + error);
-		//}
-	});
-}
 
 class BtwDedicatedAndEugMainModule{
     constructor(){
@@ -106,6 +91,23 @@ class BtwUserAndDedicatedMainModule{
 }
 
 const btwDedicatedAndEugMainModule = new BtwDedicatedAndEugMainModule();
+const btwUserAndDedicatedMainModule = new BtwUserAndDedicatedMainModule();
+
+const btwUserAndDedicatedModules = [btwUserAndDedicatedMainModule];
+var moduleFolders = fs.readdirSync("./modules");
+moduleFolders.forEach((element)=>{
+    var importedModule = require("./modules/" + element)(serverState, eugEmitter, eugRCON, btwUserAndDedicatedModules);
+    if(!importedModule.moduleInfo && !(importedModule.moduleInfo.name == element)){
+        ////수정해야함
+    }
+    btwUserAndDedicatedModules.push(importedModule);
+})
+const UserToDedicatedModulars = [];
+const DedicatedToUserModulars = [];
+btwUserAndDedicatedModules.forEach((element)=>{
+    UserToDedicatedModulars.push(element.ProtocolModulars.proxyToService);
+    DedicatedToUserModulars.push(element.ProtocolModulars.serviceToProxy);
+})
 
 const EugTcpProxyBtwDedicatedAndEug = require('./EugTcpProxy.js').createProxy(
     ServerConfig.port_mms,
@@ -124,9 +126,9 @@ const EugTcpProxyBtwUserAndDedicated = require('./EugTcpProxy.js').createProxy(
     {}, 
     serverState, 
     EugPacketStruct.Wargame3.UserToDedicated,
-    UserToDedicatedCommandCodes, 
+    UserToDedicatedModulars, 
     EugPacketStruct.Wargame3.DedicatedToUser,
-    DedicatedToUserCommandCodes);
+    DedicatedToUserModulars);
 const EugUdpProxyBtwUserAndDedicated = require('./EugUdpProxy.js').createServer({
     address: '127.0.0.1',
     port: ServerConfig.game_local_port,

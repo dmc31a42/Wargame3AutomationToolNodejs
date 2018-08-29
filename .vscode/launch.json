@@ -21,7 +21,7 @@
             "request": "attach",
             "name": "Wargame3 Attach to Remote",
             "address": "192.168.88.24",
-            "port": 5859,
+            "port": 5858,
             "localRoot": "${workspaceFolder}",
             "remoteRoot": "/opt/wargame3_server/Wargame3AutomationToolNodejs/"
         },

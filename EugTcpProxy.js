@@ -54,18 +54,22 @@ class EugTcpProxy {
         var proxyToServiceCommandCodes = {};
         var serviceToProxyCommandCodes = {};
         for(var commandKey in this.proxyToServiceClasses) {
-            proxyToServiceCommandCodes[commandKey].Class = proxyToServiceClasses[commandKey];
+            proxyToServiceCommandCodes[commandKey] = {
+                Class: this.proxyToServiceClasses[commandKey]
+            }
             proxyToServiceCommandCodes[commandKey].Modulars = [];
-            proxyToServiceModulars.forEach((proxyToServiceModular)=>{
+            this.proxyToServiceModulars.forEach((proxyToServiceModular)=>{
                 if(proxyToServiceModular[commandKey]){
                     proxyToServiceCommandCodes[commandKey].Modulars.push(proxyToServiceModular);
                 }
             })
         }
         for(var commandKey in this.serviceToProxyClasses) {
-            serviceToProxyCommandCodes[commandKey].Class = serviceToProxyClasses[commandKey];
+            serviceToProxyCommandCodes[commandKey] = {
+                Class: this.serviceToProxyClasses[commandKey]
+            }
             serviceToProxyCommandCodes[commandKey].Modulars = [];
-            serviceToProxyModulars.forEach((serviceToProxyModular)=>{
+            this.serviceToProxyModulars.forEach((serviceToProxyModular)=>{
                 if(serviceToProxyModular[commandKey]){
                     serviceToProxyCommandCodes[commandKey].Modulars.push(serviceToProxyModular);
                 }
@@ -193,6 +197,7 @@ function checkWargame3Packet(data, commandCodes, serverState, context) {
         if(slicedBuffer.length>=3){
             var commandKey = slicedBuffer[2].toString(16).toUpperCase();
             var commandCode = commandCodes[commandKey];
+            var length = slicedBuffer.readUIntBE(0,2); 
             if(commandCode){
                 var wargame3Protocol = new commandCodes[commandKey].Class().FromBuffer(slicedBuffer);
                 var preProtocol = [];

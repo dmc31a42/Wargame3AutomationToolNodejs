@@ -11,5 +11,8 @@
     "port_mms": 10002,
     "game_external_port": 10810,
     "game_local_port": 10811,
-    "external_ip": "external_ip"
+	"external_ip": "external_ip",
+	"SESSION": {
+		"secret": "keyboard cat"
+	}
 }

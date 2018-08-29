@@ -12,10 +12,14 @@
 // }
 
 class DefaultModule{
-  constructor(){
+  constructor(serverState, eugEmitter, eugRCON, importedModules){
     // this._publicRouterView = true;
     // this._adminRouterView = true;
     this._enabled = true;
+    this._serverState = serverState;
+    this._eugEmitter = eugEmitter;
+    this._eugRCON = eugRCON;
+    this._importedModules = importedModules;
     this.createPublicRouter();
     this.createAdminRouter();
     this.setProtocolModulars();
@@ -48,7 +52,7 @@ class DefaultModule{
         if(protocol.Type==0x65){
           const DeckRegExp = /^@(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/;
           if(DeckRegExp.exec(protocol.Chat)){
-              // executeRCON('setpvar ' + context.user.EugNetId + ' ' + 'PlayerDeckContent ' + protocol.Chat);
+              this._eugEmitter.setpvar(context.user.EugNetId, 'PlayerDeckContent', protocol.Chat)
           }
         }
         return {
@@ -57,6 +61,10 @@ class DefaultModule{
         };
       }
     };
+  }
+
+  close(){
+    return true;
   }
 
   set enabled(value) {
@@ -80,4 +88,8 @@ class DefaultModule{
       serviceToProxy: this._DedicatedToUserProtocols
     }
   }
+}
+
+module.exports = function(serverState, eugEmitter, eugRCON, importedModules) {
+  return new DefaultModule(serverState, eugEmitter, eugRCON, importedModules);
 }
