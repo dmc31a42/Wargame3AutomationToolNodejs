@@ -34,14 +34,8 @@ class EugWeb {
 
     importedModules.forEach((importedModule)=>{
       var path = importedModule.moduleInfo.path;
-      app.use('/admin/' + path + '/css', express.static('modules/' + path + '/admin/css'));
-      app.use('/admin/' + path + '/js', express.static('modules/' + path + '/admin/js'));
-      app.use('/admin/' + path + '/images', express.static('modules/' + path + '/admin/images'));
       app.use('/admin/' + path, importedModule.adminRouter(io.of('/admin:' + path)))
-      app.use('/' + path + '/css', express.static('modules/' + path + '/public/css'));
-      app.use('/' + path + '/js', express.static('modules/' + path + '/public/js'));
-      app.use('/' + path + '/images', express.static('modules/' + path + '/public/images'));
-      app.use('/' + path, importedModule.publicRouter(io.of('/' + path)))
+      app.use('/' + path, importedModule.publicRouter(io.of('/public:' + path)))
     })
 
     

@@ -12,14 +12,15 @@
 // }
 const ServerConfig = require('../../server-config.json');
 const EugPacketStruct = require('../../EugPacketStruct');
-
+const express = require('express');
 class ChatNoticeModule{
-  constructor(serverState, eugEmitter, eugRCON, importedModules){
+  constructor(serverState, eugEmitter, eugRCON, importedModules, absolutePath){
     this._enabled = true;
     this._serverState = serverState;
     this._eugEmitter = eugEmitter;
     this._eugRCON = eugRCON;
     this._importedModules = importedModules;
+    this._absolutePath = absolutePath;
     this.setProtocolModulars();
     this.moduleInfo = {
       name: "Chat Notice"
@@ -36,11 +37,15 @@ class ChatNoticeModule{
   }
 
   adminRouter(io) {
-    const router = require('express').Router();
+    const router = express.Router();
+    const app = express();
+    app.set('views', this._absolutePath + "/admin/views");
+    app.set('view engine', 'jade');
     this._adminRouter = router;
     router.get('/', (req, res)=>{
-      res.render('./ChatNotice/admin/views/index');
+      res.render('index');
     })
+    app.use('/js', express.static(this._absolutePath + "/admin/js"))
     io.on('connection', (socket)=>{
       socket.on('sendChatTo', (data)=>{
         if(!data.playeridTo || !data.chat){
@@ -68,7 +73,8 @@ class ChatNoticeModule{
       })
       socket.on('disconnect',()=>{})
     })
-    return router;
+    app.use('/', router);
+    return app;
   }
 
   setProtocolModulars() {
@@ -99,6 +105,6 @@ class ChatNoticeModule{
   }
 }
 
-module.exports = function(serverState, eugEmitter, eugRCON, importedModules) {
-  return new ChatNoticeModule(serverState, eugEmitter, eugRCON, importedModules);
+module.exports = function(serverState, eugEmitter, eugRCON, importedModules, absolutePath) {
+  return new ChatNoticeModule(serverState, eugEmitter, eugRCON, importedModules, absolutePath);
 }

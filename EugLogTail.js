@@ -80,9 +80,11 @@ class EugLogTail{
             // player.country_name = "Unknown";
 
             if(!eugLogTail._infoRun) {
-              eugEmitter.emit("playerChanged", player.playerid);
+                eugEmitter.emit("serverStateChanged");
+                eugEmitter.emit("playerConnected", player.playerid);
+                eugEmitter.emit("playerChanged", player.playerid);
+                }
             }
-          }
 
           function _on_player_deck_set(RegExpExec){
             var playerid = RegExpExec[1];
@@ -92,6 +94,7 @@ class EugLogTail{
             player.deck = playerdeck;
           
             if(!eugLogTail._infoRun){
+                eugEmitter.emit("serverStateChanged");
                 eugEmitter.emit("playerChanged", player.playerid);
                 eugEmitter.emit("playerDeckChanged", player.playerid, player.deck);
             }
@@ -105,6 +108,7 @@ class EugLogTail{
             player.level = playerlevel;
           
             if(!eugLogTail._infoRun){
+                eugEmitter.emit("serverStateChanged");
                 eugEmitter.emit("playerChanged", player.playerid);
                 eugEmitter.emit("playerLevelChanged", player.playerid, player.level);
             }
@@ -118,6 +122,7 @@ class EugLogTail{
             player.elo = playerelo;
           
             if(!eugLogTail._infoRun){
+                eugEmitter.emit("serverStateChanged");
                 eugEmitter.emit("playerChanged", player.playerid);
                 eugEmitter.emit("playerEloChanged", player.playerid, player.elo);
             }
@@ -129,6 +134,8 @@ class EugLogTail{
             delete eugLogTail.serverState.players[playerid];
             
             if(!eugLogTail._infoRun){
+                eugEmitter.emit("serverStateChanged");
+                eugEmitter.emit("playerChanged", playeridInt);
                 eugEmitter.emit("playerDeleted", playeridInt);
             }
             //delete players[playerid];
@@ -142,6 +149,7 @@ class EugLogTail{
             player.side = playerside;
           
             if(!eugLogTail._infoRun){
+                eugEmitter.emit("serverStateChanged");
                 eugEmitter.emit("playerChanged", player.playerid);
                 eugEmitter.emit("playerSideChanged", player.playerid, player.side);
             }
@@ -155,6 +163,7 @@ class EugLogTail{
             player.name = playername;
           
             if(!eugLogTail._infoRun){
+                eugEmitter.emit("serverStateChanged");
                 eugEmitter.emit("playerChanged", player.playerid);
                 eugEmitter.emit("playerNameChanged", player.playerid, player.name);
             }

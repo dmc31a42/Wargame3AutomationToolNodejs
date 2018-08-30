@@ -4,7 +4,35 @@ html
         meta(charset='utf-8')
         script(src="/socket.io/socket.io.js")
         script(src="https://code.jquery.com/jquery-3.3.1.min.js")
-        //script(src="/admin/js/test.js")        
+        script(src="/admin/js/mutate.events.js")
+        script(src="/admin/js/mutate.min.js")
+        //script(src="/admin/js/test.js")   
+        script.
+            function onElementHeightChange(elm, callback){
+                    var lastHeight = elm.clientHeight, newHeight;
+                    var lastScrollY = window.pageYOffset, newScrollY;
+                    (function run(){
+                        newHeight = elm.clientHeight;
+                        if( lastHeight != newHeight )
+                            callback();
+                        lastHeight = newHeight;
+
+                        if (elm.onElementHeightChangeTimer)
+                        clearTimeout(elm.onElementHeightChangeTimer);
+
+                        elm.onElementHeightChangeTimer = setTimeout(run, 200);
+                    })();
+                }
+            function onloadSetResizeBind(iframe){
+                //- $(iframe).height($(iframe).contents().find("body").outerHeight());
+                //- $(iframe).contents().find("body").mutate("height", ()=>{
+                //-     $(iframe).height($(iframe).contents().find("body").outerHeight());
+                //- });
+                $(iframe).height($(iframe).contents().find("body").outerHeight()+20);
+                onElementHeightChange($(iframe).contents().find("body").get(0), ()=>{
+                    $(iframe).height($(iframe).contents().find("body").outerHeight()+20);
+                })
+            }
     body
         for namePathEnabled in namePathEnableds
             fieldset(id=namePathEnabled.path)
@@ -15,4 +43,4 @@ html
                             |&nbsp;Enabled
                         else
                             |&nbsp;Disabled
-                iframe(src="/admin/" + namePathEnabled.path, frameborder="0")
+                iframe(src="/admin/" + namePathEnabled.path, frameborder="0", onload="onloadSetResizeBind(this)", style="width:100%")

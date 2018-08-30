@@ -91,26 +91,9 @@ const btwDedicatedAndEugMainModule = new BtwDedicatedAndEugMainModule();
 const btwUserAndDedicatedMainModule = new BtwUserAndDedicatedMainModule();
 
 const btwUserAndDedicatedModules = [btwUserAndDedicatedMainModule];
-var moduleFolders = fs.readdirSync("./modules");
-const importedModules = [];
-moduleFolders.forEach((element)=>{
-    var importedModule = require("./modules/" + element)(serverState, eugEmitter, eugRCON, btwUserAndDedicatedModules);
-    importedModules.push(importedModule);
-    if(!importedModule.moduleInfo){
-        importedModule.moduleInfo = {
-            name: element,
-            path: element,
-        };
-        ////수정해야함
-    } else {
-        // if(!importedModule.moduleInfo.path) {
-        //     importedModule.moduleInfo.path = element;
-        // }
-        if(!importedModule.moduleInfo.name) {
-            importedModule.moduleInfo.name = element;
-        }
-    }
-    importedModule.moduleInfo.path = element;
+//
+const importedModules = require('./modules')(serverState, eugEmitter, eugRCON, btwUserAndDedicatedModules);
+importedModules.forEach((importedModule)=>{
     btwUserAndDedicatedModules.push(importedModule);
 })
 const UserToDedicatedModulars = [];

@@ -35,12 +35,24 @@ class EugRCON {
     this.executeRCON('setsvar ' + property + ' ' + value);
   }
 
+  kick(playerid){
+      this.executeRCON('kick ' + playerid);
+  }
+
+  ban(playerid){
+      this.executeRCON('ban ' + playerid);
+  }
+
   launch() {
     this.executeRCON('launch')
   }
 
   cancel_launch() {
     this.executeRCON('cancel_launch')
+  }
+
+  command(command) {
+      this.executeRCON(command);
   }
 
   sendProtocolsFromDedicatedToUsersIFCondition(eugProtocols, conditionFunction) {

@@ -1,4 +1,4 @@
-
+const express = require('express');
 // class ProtocolModular {
 //   constructor(code, preFunction, modifyFunction){
 //     this._code = code;
@@ -12,7 +12,7 @@
 // }
 
 class DefaultModule{
-  constructor(serverState, eugEmitter, eugRCON, importedModules){
+  constructor(serverState, eugEmitter, eugRCON, importedModules, absolutePath){
     // this._publicRouterView = true;
     // this._adminRouterView = true;
     this._enabled = true;
@@ -20,6 +20,7 @@ class DefaultModule{
     this._eugEmitter = eugEmitter;
     this._eugRCON = eugRCON;
     this._importedModules = importedModules;
+    this._absolutePath = absolutePath;
     this.setProtocolModulars();
     this.moduleInfo = {
       name: "Default Setting"
@@ -27,7 +28,7 @@ class DefaultModule{
   }
 
   publicRouter(io) {
-    const router = require('express').Router();
+    const router = express.Router();
     this._publicRouter = router;
     router.get('/', (req, res)=>{
       res.send("default_module public get");
@@ -36,11 +37,9 @@ class DefaultModule{
   }
 
   adminRouter(io) {
-    const router = require('express').Router();
+    const router = express.Router();
     this._adminRouter = router;
-    router.get('/', (req, res)=>{
-      res.send("defualt_module private get");
-    })
+    router.get('/*', express.static(this._absolutePath + "/admin/static"));
     return router;
   }
 
@@ -84,6 +83,6 @@ class DefaultModule{
   }
 }
 
-module.exports = function(serverState, eugEmitter, eugRCON, importedModules) {
-  return new DefaultModule(serverState, eugEmitter, eugRCON, importedModules);
+module.exports = function(serverState, eugEmitter, eugRCON, importedModules, absolutePath) {
+  return new DefaultModule(serverState, eugEmitter, eugRCON, importedModules, absolutePath);
 }
