@@ -30,14 +30,14 @@ class DefaultModule{
   publicRouter(io) {
     const router = express.Router();
     this._publicRouter = router;
-    router.get('/*', express.static(this._absolutePath + "/public/"));
+    router.get('/*', express.static(this._absolutePath + "/public"));
     return router;
   }
 
   adminRouter(io) {
     const router = express.Router();
     this._adminRouter = router;
-    router.get('/*', express.static(this._absolutePath + "/admin/static"));
+    router.get('/*', express.static(this._absolutePath + "/admin"));
     return router;
   }
 

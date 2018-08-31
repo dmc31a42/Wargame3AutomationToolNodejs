@@ -5,10 +5,13 @@ router
         function($urlRouterProvider) {
             $urlRouterProvider.otherwise("/admin");
         }]);
+
 router
     .config(['$stateProvider',
         function($stateProvider) {
+
             $stateProvider
+
                 .state('admin', {
                     url :'/admin',
                     views :  {
