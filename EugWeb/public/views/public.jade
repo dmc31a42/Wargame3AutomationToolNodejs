@@ -4,12 +4,38 @@ html
         meta(charset='utf-8')
         script(src="/socket.io/socket.io.js")
         script(src="https://code.jquery.com/jquery-3.3.1.min.js")
-        script(src="/js/test.js")        
+        script.
+            function onElementHeightChange(elm, callback){
+                    var lastHeight = elm.clientHeight, newHeight;
+                    var lastScrollY = window.pageYOffset, newScrollY;
+                    (function run(){
+                        newHeight = elm.clientHeight;
+                        if( lastHeight != newHeight )
+                            callback();
+                        lastHeight = newHeight;
+
+                        if (elm.onElementHeightChangeTimer)
+                        clearTimeout(elm.onElementHeightChangeTimer);
+
+                        elm.onElementHeightChangeTimer = setTimeout(run, 200);
+                    })();
+                }
+            function onloadSetResizeBind(iframe){
+                //- $(iframe).height($(iframe).contents().find("body").outerHeight());
+                //- $(iframe).contents().find("body").mutate("height", ()=>{
+                //-     $(iframe).height($(iframe).contents().find("body").outerHeight());
+                //- });
+                $(iframe).height($(iframe).contents().find("body").outerHeight()+20);
+                onElementHeightChange($(iframe).contents().find("body").get(0), ()=>{
+                    $(iframe).height($(iframe).contents().find("body").outerHeight()+20);
+                })
+            }
     body
         fieldset(id="login")
-            legend Admin Login(미구현)
-            input(type="password")
-            button() Login
+            legend Admin Login
+            form(action="/admin", method="post")
+                input(type="password", name="password", placeholder="password")
+                input(type="submit")
         for namePathEnabled in namePathEnableds
             fieldset(id=namePathEnabled.path)
                 legend=namePathEnabled.name
@@ -19,4 +45,4 @@ html
                             |&nbsp;Enabled
                         else
                             |&nbsp;Disabled
-                iframe(src="/" + namePathEnabled.path, frameborder="0")
+                iframe(src="/" + namePathEnabled.path, frameborder="0", onload="onloadSetResizeBind(this)", style="width:100%")

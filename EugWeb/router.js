@@ -1,3 +1,5 @@
+const SERVER_CONFIG = require('../server-config.json');
+
 module.exports = function(serverState, eugEmitter, eugRCON, importedModules, io) {
     this.serverState = serverState;
     this.eugEmitter = eugEmitter;
@@ -13,12 +15,33 @@ module.exports = function(serverState, eugEmitter, eugRCON, importedModules, io)
         });
     })
 
-    router.get('/admin', (req, res) => {
-        res.render('../EugWeb/admin/views/admin', {
-            namePathEnableds: namePathEnableds
-        });
+    router.post('/admin', (req, res)=>{
+        var password = req.body.password;
+        if(password == SERVER_CONFIG.AdminCode) {
+            req.session.admin = true;
+            res.redirect("/admin");
+        } else {
+            res.status(404);
+            res.redirect("/");
+        }
     })
-    io.of('/admin').on('connection', (socket) => {
+    router.get('/admin', (req, res) => {
+        if(req.session.admin){
+            res.render('../EugWeb/admin/views/admin', {
+                namePathEnableds: namePathEnableds
+            });
+        } else {
+            res.status(404);
+            res.redirect("/");
+        }
+    })
+    io.of('/admin').use(function(socket, next){
+        if(socket.request.session.admin) {
+            next();
+        } else {
+            next(new Error("Not Authorized"));
+        }  
+    }).on('connection', (socket) => {
         this.eugEmitter.on("serverStateChanged", ()=>{
             socket.emit('serverStateChanged', serverState);
         })
@@ -60,6 +83,10 @@ module.exports = function(serverState, eugEmitter, eugRCON, importedModules, io)
         this.eugEmitter.on("serverStateChanged", ()=>{
             socket.emit('serverStateChanged', serverState);
         });
+
+        socket.on("serverStateChanged", ()=>{
+            socket.emit('serverStateChanged', serverState);
+        })
         socket.on('disconnect', function() {})
     })
 

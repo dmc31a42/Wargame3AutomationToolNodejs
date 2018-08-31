@@ -1,0 +1,122 @@
+
+<fieldset id='SelectTeam'>
+  <legend>팀 선택 모드</legend>
+    <label style="display:block;">누가 선택할 차례? :
+      <input type="radio" ng-model="selectTeamSettings.whoisTurn" value="0" ng-change="changewhoisSelectTeam(0)">1팀</input>
+      <input type="radio" ng-model="selectTeamSettings.whoisTurn" value="1" ng-change="changewhoisSelectTeam(1)">2팀</input>
+    </label>
+    <label>
+      팀원 선택시 즉시 반영 활성화 : 
+      <input type="checkbox" ng-model="selectTeamSettings.immediately" ng-true-value="1" ng-false-value="0" ng-change="setApplyImmediately(selectTeamSettings.immediately)">
+    </label>
+    <label style="display:block;">
+      팀1 팀장 접속 코드 : 
+      <input type="text" ng-model="selectTeamSettings.team1Code" ng-change="SetSelectTeamAccessCode(0,selectTeamSettings.team1Code)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" >
+    </label>
+    <label>
+      팀2 팀장 접속 코드 : 
+      <input type="text" ng-model="selectTeamSettings.team2Code" ng-change="SetSelectTeamAccessCode(1,selectTeamSettings.team2Code)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" >
+    </label>
+    <div>
+      팀1 접속 주소 : <a ng-href="{{origin}}/SelectTeam/{{selectTeamSettings.team1Code}}" target="_blank">{{origin}}/SelectTeam/{{selectTeamSettings.team1Code}}</a>
+    </div>
+    <div>
+      팀2 접속 주소 : <a ng-href="{{origin}}/SelectTeam/{{selectTeamSettings.team2Code}}" target="_blank">{{origin}}/SelectTeam/{{selectTeamSettings.team2Code}}</a>
+    </div>
+  <button ng-click="resetSelectTeam()">팀 선택 설정 초기화</button>
+</fieldset>
+<div id="Selected">
+  <fieldset id="Team1">
+  <legend>팀 1 플레이어 목록</legend>
+    <div class="player top">
+      <div class="playerid">Playerid</div>
+      <div class="level">level</div>
+      <div class="elo">elo </div>
+      <div class="side">side</div>
+      <div class="name">Name</div>
+      <!--div class="player.deck">{{player.deck}}</div-->
+  </div>
+  <div id="playersList" ng-model="Team1">
+    <div class="player" ng-repeat="player in Team1">
+      <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
+      <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
+      <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
+      <div class="side">{{player.side}}</div>
+      <div class="name">{{player.name}}</div>
+      <!--div class="player.deck">{{player.deck}}</div-->
+      <button ng-click="setSideInList(player,1)" style="margin-left: auto;">2팀으로</button>
+      <button ng-click="setSideInList(player,-1)">선택해제</button>
+    </div>
+  </div>
+</fieldset>
+<fieldset id="Team2">
+<legend>팀 2 플레이어 목록</legend>
+  <div class="player top">
+      <div class="playerid">Playerid</div>
+      <div class="level">level</div>
+      <div class="elo">elo </div>
+      <div class="side">side</div>
+      <div class="name">Name</div>
+      <!--div class="player.deck">{{player.deck}}</div-->
+  </div>
+  <div id="playersList" ng-model="Team2">
+    <div class="player" ng-repeat="player in Team2">
+      <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
+      <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
+      <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
+      <div class="side">{{player.side}}</div>
+      <div class="name">{{player.name}}</div>
+      <!--div class="player.deck">{{player.deck}}</div-->
+      <button ng-click="setSideInList(player,0)" style="margin-left: auto;">1팀으로</button>
+      <button ng-click="setSideInList(player,-1)">선택해제</button>
+    </div>
+  </div>
+</fieldset>
+</div>
+<fieldset>
+  <legend>선택되지 않은 플레이어 목록</legend>
+  <div>
+    <button ng-click="openPlayerDetail()" class="btn btn-warning">플레이어 상세 보기</button>
+  </div>
+  <div>
+    <button ng-click="setSelectedSide(0)">선택한 플레이어의 팀을 1팀으로 정하기</button>
+    <button ng-click="setSelectedSide(1)">선택한 플레이어의 팀을 2팀으로 정하기</button>
+  </div>
+  <div class="player top">
+      <div class="playerid">
+          <button ng-click="UnselectedPlayersListSortBy('playerid')">Playerid</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'playerid'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="level">
+          <button ng-click="UnselectedPlayersListSortBy('level')">level</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'level'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="elo">
+          <button ng-click="UnselectedPlayersListSortBy('elo')">elo</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'elo'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="side">
+          <button ng-click="UnselectedPlayersListSortBy('side')">side</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'side'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <div class="name">
+          <button ng-click="UnselectedPlayersListSortBy('name')">name</button>
+          <span class="sortorder" ng-show="UnselectedPlayersListOrderPropertyName === 'name'" ng-class="{reverse:UnselectedPlayersListOrderReverse}"></span>
+      </div>
+      <button ng-click="UnselectedPlayersListOrderPropertyName = null; UnselectedPlayersListOrderReverse = false" style="height: 26px;">정렬 초기화</button>
+      <!--div class="player.deck">{{player.deck}}</div-->
+  </div>
+  <div id="playersList" ui-sortable="sortableOptions" ng-model="Left">
+    <div class="player" ui-sortable-selectable ng-repeat="player in Left | orderObjectBy:UnselectedPlayersListOrderPropertyName:UnselectedPlayersListOrderReverse">
+      <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
+      <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
+      <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
+      <div class="side">{{player.side}}</div>
+      <div class="name">{{player.name}}</div>
+      <!--div class="player.deck">{{player.deck}}</div-->
+    </div>
+  </div>
+</fieldset>
+
+<!--button ng-click="changeSelectedSide()">선택한 플레이어의 팀을 상대편으로 변경하기</button-->
+<!--button ng-click="unSelectSide()">선택한 플레이어의 팀을 선택 해제하기</button-->

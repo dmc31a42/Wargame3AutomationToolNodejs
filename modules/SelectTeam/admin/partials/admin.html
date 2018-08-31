@@ -18,10 +18,10 @@
       <input type="text" ng-model="selectTeamSettings.team2Code" ng-change="SetSelectTeamAccessCode(1,selectTeamSettings.team2Code)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" >
     </label>
     <div>
-      팀1 접속 주소 : <a ng-href="{{origin}}/SelectTeam/{{selectTeamSettings.team1Code}}" target="_blank">{{origin}}/SelectTeam/{{selectTeamSettings.team1Code}}</a>
+      팀1 접속 주소 : <a ng-href="{{origin}}/SelectTeam?code={{selectTeamSettings.team1Code}}" target="_blank">{{origin}}/SelectTeam?code={{selectTeamSettings.team1Code}}</a>
     </div>
     <div>
-      팀2 접속 주소 : <a ng-href="{{origin}}/SelectTeam/{{selectTeamSettings.team2Code}}" target="_blank">{{origin}}/SelectTeam/{{selectTeamSettings.team2Code}}</a>
+      팀2 접속 주소 : <a ng-href="{{origin}}/SelectTeam?code={{selectTeamSettings.team2Code}}" target="_blank">{{origin}}/SelectTeam?code={{selectTeamSettings.team2Code}}</a>
     </div>
   <button ng-click="resetSelectTeam()">팀 선택 설정 초기화</button>
 </fieldset>
@@ -81,6 +81,10 @@
   <div>
     <button ng-click="setSelectedSide(0)">선택한 플레이어의 팀을 1팀으로 정하기</button>
     <button ng-click="setSelectedSide(1)">선택한 플레이어의 팀을 2팀으로 정하기</button>
+  </div>
+  <div>
+    <button ng-click="setSelectedTeamLeader(0)" ng-disabled="Team1.length>0">선택한 플레이어를 1팀 팀장으로 정하기</button>
+    <button ng-click="setSelectedTeamLeader(1)" ng-disabled="Team2.length>0">선택한 플레이어를 2팀 팀장으로 정하기</button>
   </div>
   <div class="player top">
       <div class="playerid">

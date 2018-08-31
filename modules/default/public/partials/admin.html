@@ -1,0 +1,115 @@
+<div class="container" ng-if="ServerSettings">
+  <fieldset id="gameSettings">
+    <legend>게임 설정</legend>
+    <label>방 이름<input readonly type="text" ng-model="ServerSettings.ServerName" ng-value="ServerName" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }" ></label>
+    <label>방 비밀번호<input readonly type="text" ng-model="ServerSettings.Password" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>
+      전장(Map)
+      <select disabled="disabled" ng-model="ServerSettings.Map" ng-options="Map.value as Map.name for Map in Wargame3SelectOptions.Map" convert-map>
+      </select>
+    <label>
+      게임 모드
+      <select disabled="disabled" ng-model="ServerSettings.VictoryCond" ng-options="VictoryCond.value as VictoryCond.name for VictoryCond in Wargame3SelectOptions.VictoryCond">
+      </select>
+    </label>
+    <label>
+      상대
+      <select disabled="disabled" ng-model="ServerSettings.GameType" ng-options="GameType.value as GameType.name for GameType in Wargame3SelectOptions.GameType">
+      </select>
+    </label>
+    <label>
+      공개여부(의미불명)
+      <select disabled="disabled" ng-model="ServerSettings.Private" ng-options="Private.value as Private.name for Private in Wargame3SelectOptions.Private">
+      </select>
+    </label>
+  </fieldset>
+  <fieldset id="gameDetailSettings">
+    <legend>게임 상세 설정</legend>
+    <label>
+      Teams
+      <select disabled="disabled" ng-model="ServerSettings.NbMaxPlayer" ng-options="Teams.value as Teams.name for Teams in Wargame3SelectOptions.Teams">
+      </select>
+    </label>
+    <label>시작 점수<input readonly type="number" step="1000" ng-model="ServerSettings.InitMoney" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>승리 점수<input readonly type="number" step="1000" ng-model="ServerSettings.ScoreLimit" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>제한 시간(분)<input readonly type="number" step="5" ng-model="ServerSettings.TimeLimit" convert-sec-to-min ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>
+      점수 획득 속도
+      <select disabled="disabled" ng-model="ServerSettings.IncomeRate" ng-options="IncomeRate.value as IncomeRate.name for IncomeRate in Wargame3SelectOptions.IncomeRate">
+      </select>
+    </label>
+  </fieldset>
+  <fieldset id="contraints">
+    <legend>Contraints</legend>
+    <label>
+      Thematic
+      <select disabled="disabled" ng-model="ServerSettings.ThematicConstraint" ng-options="ThematicConstraint.value as ThematicConstraint.name for ThematicConstraint in Wargame3SelectOptions.ThematicConstraint">
+      </select>
+    </label>
+    <label>
+      Nations / Coalitions
+      <select disabled="disabled" ng-model="ServerSettings.NationConstraint" ng-options="NationConstraint.value as NationConstraint.name for NationConstraint in Wargame3SelectOptions.NationConstraint">
+      </select>
+    <label>
+      Era
+      <select disabled="disabled" ng-model="ServerSettings.DateConstraint" ng-options="DateConstraint.value as DateConstraint.name for DateConstraint in Wargame3SelectOptions.DateConstraint">
+      </select>
+    </label>
+  </fieldset>
+  <fieldset id="advancedSettings">
+    <legend>고급 설정</legend>
+    <label>
+      자동 시작 조건(계산해야함)
+      <select disabled="disabled" ng-model="ServerSettings.NbMinPlayer" ng-options="AutoLaunchCond.value as AutoLaunchCond.name for AutoLaunchCond in Wargame3SelectOptions.AutoLaunchCond" auto-launch-cond>
+      </select>
+    </label>
+    <label>자동시작 필요 인원수<input readonly type="text" ng-model="ServerSettings.NbMinPlayer" readonly></label>
+    <label>Countdown<input readonly type="text" ng-model="ServerSettings.WarmupCountdown" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>전개 시간<input readonly type="text" ng-model="ServerSettings.DeploiementTimeMax" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>최대 허용 불러오는 시간<input readonly type="text" ng-model="ServerSettings.LoadingTimeMax" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+    <label>디브리핑 시간<input readonly type="text" ng-model="ServerSettings.DebriefingTimeMax" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
+  </fieldset>
+</div>
+<fieldset>
+<legend>플레이어 목록</legend>
+  
+  <div class="player top">
+      <div class="playerid">
+        <button ng-click="playersListSortBy('playerid')">Playerid</button>
+        <span class="sortorder" ng-show="playersListOrderPropertyName === 'playerid'" ng-class="{reverse:playersListOrderReverse}"></span>
+      </div>
+      <div class="level">
+          <button ng-click="playersListSortBy('level')">level</button>
+          <span class="sortorder" ng-show="playersListOrderPropertyName === 'level'" ng-class="{reverse:playersListOrderReverse}"></span>
+      </div>
+      <div class="elo">
+          <button ng-click="playersListSortBy('elo')">elo</button>
+          <span class="sortorder" ng-show="playersListOrderPropertyName === 'elo'" ng-class="{reverse:playersListOrderReverse}"></span>
+      </div>
+      <div class="side">
+          <button ng-click="playersListSortBy('side')">side</button>
+          <span class="sortorder" ng-show="playersListOrderPropertyName === 'side'" ng-class="{reverse:playersListOrderReverse}"></span>
+      </div>
+      <div class="name">
+          <button ng-click="playersListSortBy('name')">name</button>
+          <span class="sortorder" ng-show="playersListOrderPropertyName === 'name'" ng-class="{reverse:playersListOrderReverse}"></span>
+      </div>
+      <button ng-click="playersListOrderPropertyName = null; playersListOrderReverse = false" style="height: 26px;">정렬 초기화</button>
+      <!--div class="player.deck">{{player.deck}}</div-->
+  </div>
+  <div id="playersList" ng-model="players">
+    <div class="player" ng-repeat="player in players | orderObjectBy:playersListOrderPropertyName:playersListOrderReverse">
+      <div class="playerid">{{player.playerid | minLength:7:"&nbsp;&nbsp;"}}</div>
+      <div class="level">{{player.level | minLength:2:"&nbsp;&nbsp;"}}</div>
+      <div class="elo">{{player.elo | number:0 | minLength:4:"&nbsp;&nbsp;"}}</div>
+      <div class="side">{{player.side | WargameSide:this}}</div>
+      <div class="name">{{player.name}}</div>
+      <img class="country_flags" src="flags/{{player.country_code | lowercase}}.png" alt="{{player.country_name}}" title="{{player.country_name}}"/>
+      <button ng-show="player.side == 1" ng-click="changeSide(player, 0)">1팀으로</button>
+      <button ng-show="player.side == 0" ng-click="changeSide(player, 1)">2팀으로</button>
+      <button ng-click="command('kick ' + player.playerid)" >킥</button>
+      <button ng-click="command('ban ' + player.playerid)" >밴</button>
+      <!--div class="player.deck">{{player.deck}}</div-->
+    </div>
+  </div>
+</fieldset>

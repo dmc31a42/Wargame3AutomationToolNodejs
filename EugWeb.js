@@ -8,10 +8,31 @@ class EugWeb {
     this.eugRCON = eugRCON;
     this.importedModules = importedModules;
 
-    var app = require('./EugWeb/express')();
+
+    const express = require('express');
+    const session = require('express-session');
+    const bodyParser = require('body-parser');
+    const SERVER_CONFIG = require('./server-config.json');
+
+    var app = express();
+    app.set('views','./modules');
+    app.set('view engine', 'jade');
+    app.use(bodyParser.urlencoded({ extended: false }));
+    const sessionMiddleware = session({
+      secret: SERVER_CONFIG.SESSION.secret,
+      resave: false,
+      saveUninitialized: true
+    });
+    app.use(sessionMiddleware);
+    app.locals.pretty = true;
+
+
+    // var app = require('./EugWeb/express')();
     const server = require('http').createServer(app);
     var io = require('socket.io')(server);
-
+    io.use(function(socket, next){
+      sessionMiddleware(socket.request, socket.request.res, next);
+    })
     app.use('/admin', function(req, res, next){
       // if(!req.isAdmin) {
       //   res.status(404);
@@ -29,12 +50,23 @@ class EugWeb {
     app.use('/images', express.static('./EugWeb/public/images'));
     var mainRouter = require('./EugWeb/router')(serverState, eugEmitter, eugRCON, importedModules, io);
     app.use('/', mainRouter);
-
-
+    app.use('/admin/*', (req, res, next)=>{
+      if(req.session.admin){
+        next();
+      } else {
+        res.redirect("/");
+      }
+    })
 
     importedModules.forEach((importedModule)=>{
       var path = importedModule.moduleInfo.path;
-      app.use('/admin/' + path, importedModule.adminRouter(io.of('/admin:' + path)))
+      app.use('/admin/' + path, importedModule.adminRouter(io.of('/admin:' + path).use(function(socket, next){
+        if(socket.request.session.admin){
+          next();
+        } else {
+          next(new Error("Not Authorized"));
+        }
+      })))
       app.use('/' + path, importedModule.publicRouter(io.of('/public:' + path)))
     })
 

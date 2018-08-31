@@ -138,6 +138,18 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket', 'soc
       }
     };
 
+    $scope.setSelectedTeamLeader = function(side) {
+      if($scope.selectedItems.length == 1) {
+        if($scope.Left[parseInt($scope.selectedItems[0])]){
+          socket.emit('setTeamLeader',{
+            playerid: parseInt($scope.selectedItems[0]),
+            side: side
+          });
+          $scope.selectedItems = [];
+        }
+      }
+    }
+
     $scope.setApplyImmediately = function(value) {
       socket.emit('setImmediately', {
         immediately: value

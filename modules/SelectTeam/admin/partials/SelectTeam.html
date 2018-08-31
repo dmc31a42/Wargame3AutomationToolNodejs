@@ -1,4 +1,4 @@
-<h1>{{yourTeam + 1}} 팀장님 환영합니다.</h1>
+<h1>{{selectTeamSettings.yourTurn + 1}} 팀장님 환영합니다.</h1>
 
 <div id="Selected">
   <fieldset id="Team1">
@@ -56,7 +56,7 @@
     선택할 수 있는 인원 : {{customModSettings.SelectTeam.HowManySelect}}, 선택한 인원 : {{selectedItems.length}}
   </h3-->
   <h3>{{err}}</h3>
-  <h3 ng-if="yourTeam == customModSettings.SelectTeam.whoisSelectTeam">{{yourTeam + 1}} 팀장님의 차례입니다</h3>
+  <h3 ng-if="selectTeamSettings.yourTurn == selectTeamSettings.whoisTurn">{{selectTeamSettings.yourTurn + 1}} 팀장님의 차례입니다</h3>
   <h3 ng-if="Left.length == 0">5초뒤 자동으로 팀원 배치가 시작됩니다.</h3>
   <div class="player top">
       <div class="playerid">

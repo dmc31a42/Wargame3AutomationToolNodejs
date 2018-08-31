@@ -30,9 +30,7 @@ class DefaultModule{
   publicRouter(io) {
     const router = express.Router();
     this._publicRouter = router;
-    router.get('/', (req, res)=>{
-      res.send("default_module public get");
-    })
+    router.get('/*', express.static(this._absolutePath + "/public/"));
     return router;
   }
 

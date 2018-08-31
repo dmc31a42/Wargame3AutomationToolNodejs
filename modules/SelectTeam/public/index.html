@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html ng-app="Wargame3AutomationTool">
+<head>
+  <meta charset="utf-8">
+  <title>Socket.io Chat Example</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <style>
+    .ui-sortable-selected {background-color:yellow}
+    .playersList{float:none;display: block}
+    .player{float:none; display:block; display:flex;}
+    .player>.playerid{flex-basis: 80px; padding-left:10px; padding-right:0px; text-align:right;}
+    .player>.level{flex-basis: 50px; padding-left:0px; padding-right:0px;text-align:right;}
+    .player>.elo{flex-basis: 50px; padding-left:0px; padding-right:0px;text-align:right;}
+    .player>.side{flex-basis: 65px; padding-left:10px; padding-right:10px;text-align:right;}
+    .player>.country_flags{padding-left:10px; padding-right:10px; height:20px; margin-left: auto;}
+    #Selected{display:flex;margin-bottom:40px;}
+    #Selected>fieldset{flex-grow:1;}
+    .sortorder:after {
+      content: '\25b2';   
+    }
+    .sortorder.reverse:after {
+      content: '\25bc';  
+    }
+    .custom-row{display:flex;}
+    .right-align{margin-left: auto;}
+    .modal-body{display:flex;flex-wrap: wrap;}
+    .modal-body>fieldset{
+      flex-grow: 1;
+      width: 50%;
+      padding-right: 10px;
+      padding-left: 10px;}
+  </style>
+</head>
+<body>
+  
+  <div ui-view></div>  
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/jquery-ui.min.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular.min.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.9/angular-cookies.js"></script>
+  <script src="//unpkg.com/@uirouter/angularjs/release/angular-ui-router.min.js"></script>
+  <!-- Include UI Bootstrap library -->
+  <script src="//unpkg.com/angular-ui-bootstrap@2.5.6/dist/ui-bootstrap-tpls.js"></script>
+  <!-- Include Bootstrap CSS CDN link -->
+  <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+
+  <script src="/SelectTeam/app/app.js"></script>
+  <script src="/SelectTeam/app/controller.js"></script>
+  <script src="/SelectTeam/app/router.js"></script>
+  <script src="/SelectTeam/app/controller.login.js"></script>
+  <script src="/SelectTeam/app/controller.admin.js"></script>
+  <script src="/SelectTeam/app/controller.SelectTeam.js"></script>
+  <script src="/SelectTeam/app/controller.playerDetailPopUp.js"></script>
+  <script src="https://rawgithub.com/angular-ui/ui-sortable/master/src/sortable.js"></script>
+  <script src="https://rawgit.com/thgreasi/ui-sortable-multiselection/master/src/ui.sortable.multiselection.js"></script>
+</body>
+</html>
