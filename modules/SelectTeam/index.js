@@ -208,6 +208,7 @@ class SelectTeamModule{
           sendMsg.Unknown1 = 0x010000;
           sendMsg.Padding = 0;
           sendMsg.Chat = "[Server Notice] Copy and paste below link to select your team member";
+          eugRCON.sendProtocolsFromDedicatedToUsers(playeridTo, sendMsg);
 
           const sendMsg2 = new EugPacketStruct.Wargame3.DedicatedToUser.C2();
           sendMsg2.ChatLength = 0;
