@@ -79,7 +79,7 @@ class EugTcpProxy {
                     else {
                         context.buffers[context.buffers.length] = element;
                     }
-                    console.log("local >> proxy >> remote : ", element);
+                    //console.log("local >> proxy >> remote : ", element);
                 });
             });
             proxySocket.on("close", function (hadError) {
@@ -88,10 +88,30 @@ class EugTcpProxy {
                 }
                 delete proxy.proxySockets[uniqueKey(proxySocket)];
                 context.serviceSocket.destroy();
+                try{
+                    if(context.user && context.user._connectCorrectly == false)
+                    {
+                       delete context.user; 
+                    }
+                    
+                } catch(e){
+                    console.log(e);
+                }               
+                //delete proxy.contexts[uniqueKey(proxySocket)]
             });
             proxySocket.on("error", function (e) {
                 console.log(e);
                 context.proxySocket.destroy();
+                try{
+                    if(context.user && context.user._connectCorrectly == false)
+                    {
+                       delete context.user; 
+                    }
+                    
+                } catch(e){
+                    console.log(e);
+                }                
+                //delete proxy.contexts[uniqueKey(proxySocket)]
             });
         });
         proxy.server.listen(proxy.proxyPort, proxy.options.hostname);
@@ -111,7 +131,7 @@ class EugTcpProxy {
             var buffers = checkWargame3Packet(data, proxy.serviceToProxyCommandCodes, proxy.serverState, context);
             buffers.forEach((element) => {
                 context.proxySocket.write(element);
-                console.log("remote >> proxy >> local", element);
+                //console.log("remote >> proxy >> local", element);
             });
         });
         context.serviceSocket.on("close", function (hadError) {
@@ -120,11 +140,31 @@ class EugTcpProxy {
             }
             clearInterval(context.replayInterval);
             context.proxySocket.destroy();
+            try{
+                if(context.user && context.user._connectCorrectly == false)
+                {
+                   delete context.user; 
+                }
+                
+            } catch(e){
+                console.log(e);
+            }               
+            //delete proxy.contexts[uniqueKey(proxySocket)]
         });
         context.serviceSocket.on("error", function (e) {
             console.log(e);
             clearInterval(context.replayInterval);
             context.proxySocket.destroy();
+            try{
+                if(context.user && context.user._connectCorrectly == false)
+                {
+                   delete context.user; 
+                }
+                
+            } catch(e){
+                console.log(e);
+            }        
+            //delete proxy.contexts[uniqueKey(proxySocket)]
         });
         return context;
     }
@@ -160,7 +200,7 @@ class EugTcpProxy {
     }
     log(msg) {
         if (!this.options.quiet) {
-            console.log(msg);
+            //console.log(msg);
         }
     }
 
@@ -197,13 +237,13 @@ function checkWargame3Packet(data, commandCodes, serverState, context) {
                     }
                 });
                 preProtocol.forEach((element)=>{
-                    console.log("preProtocol: ", element);
+                    //console.log("preProtocol: ", element);
                     buffers.push(element.getBuffer());
                 })
-                console.log("Protocol: ", modifiedProtocol);
+                //console.log("Protocol: ", modifiedProtocol);
                 buffers.push(modifiedProtocol.getBuffer());
                 postProtocol.forEach((element)=>{
-                    console.log("postProtocol: ", element);
+                    //console.log("postProtocol: ", element);
                     buffers.push(element.getBuffer());
                 })
             } else {

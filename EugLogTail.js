@@ -1,6 +1,7 @@
 //"use strinct";
 /* Server Global variable */
-const Tail = require('./tail.js').Tail;
+// const Tail = require('./tail.js').Tail;
+const Tail = require('tail').Tail;
 const EugPlayer = require('./EugPlayer.js');
 const ServerState = require('./ServerState');
 
@@ -59,7 +60,9 @@ class EugLogTail{
             //     eugLogTail.serverState.players[playerid] = player;
             // }
             var context = Object.values(eugLogTail.eugTcpProxyBtwUserAndDedicated.contexts).find((context)=>{
-                return context.user.playerid == parseInt(playerid);
+                if(context.user) {
+                    return context.user.playerid == parseInt(playerid);
+                }
             })
             if(context){
                 player = context.user;
@@ -73,6 +76,7 @@ class EugLogTail{
             player.UserSessionId = RegExpExec[2];
             player.socket = RegExpExec[3];
             player.side = EugPlayer.Enum.Side.Bluefor;
+            player._connectCorrectly = true;
             // This part is processed in EugTcpProxy
             // player.IP = RegExpExec[4];
             // player.Port = RegExpExec[5];
@@ -132,7 +136,14 @@ class EugLogTail{
             var playerid = RegExpExec[1];
             var playeridInt = eugLogTail.serverState.players[playerid].playerid;
             delete eugLogTail.serverState.players[playerid];
-            
+            var context = Object.values(eugLogTail.eugTcpProxyBtwUserAndDedicated.contexts).find((context)=>{
+                if(context.user){
+                    return context.user.playerid == parseInt(playerid);
+                }
+            })
+            if(context){
+                delete context.user;
+            } 
             if(!eugLogTail._infoRun){
                 eugEmitter.emit("serverStateChanged");
                 eugEmitter.emit("playerChanged", playeridInt);
@@ -223,10 +234,10 @@ class EugLogTail{
               }
             }
         });
-        tail.on("historicalDataEnd", function(end){
-            eugLogTail._infoRun = false;
-            console.log("historicalDataEnd");
-        })
+        // tail.on("historicalDataEnd", function(end){
+        //     eugLogTail._infoRun = false;
+        //     console.log("historicalDataEnd");
+        // })
         tail.on("error", function(error) {
             console.log('ERROR: ', error);
         });

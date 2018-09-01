@@ -1,7 +1,9 @@
 var ServerConfig = require('./server-config.json');
 var http = require('http');
 class Player{
-    constructor(){}
+    constructor(){
+        this._connectCorrectly = false;
+    }
     
     // 반드시 IP port 부분은 웹에서 제거해줘야함
     set IP(str) {

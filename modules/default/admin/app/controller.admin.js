@@ -114,11 +114,11 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket', 'soc
         }
     });
 
-    $scope.$watch('ServerSettings.NbMinPlayer', function(){
-      if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('NbMaxPlayer')) {
-        $scope.AutoLaunchCond = $scope.ServerSettings.NbMinPlayer - $scope.ServerSettings.NbMaxPlayer;
-      }
-    });
+    // $scope.$watch('ServerSettings.NbMinPlayer', function(){
+    //   if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('NbMaxPlayer')) {
+    //     $scope.AutoLaunchCond = $scope.ServerSettings.NbMinPlayer - $scope.ServerSettings.NbMaxPlayer;
+    //   }
+    // });
 
     $scope.$watch('ServerSettings.VictoryCond', function(){
       if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('VictoryCond')) {

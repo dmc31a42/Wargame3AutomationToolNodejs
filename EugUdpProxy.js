@@ -812,7 +812,7 @@ UdpProxy.prototype.createClient = function createClient(msg, sender) {
         proxy.emit('proxyError', err);
     }).on('send', function (msg, sender) {
         var self = this;
-        console.log(msg);
+        //console.log(msg);
         proxy.emit('message', msg, sender);
         this.send(msg, 0, msg.length, proxy.port, proxy.host, function (err, bytes) {
             if (err) proxy.emit('proxyError', err);
