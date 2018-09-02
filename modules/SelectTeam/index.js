@@ -105,17 +105,15 @@ class SelectTeamModule{
           socket.targetTeam = selectTeamModule._Team2Selected;
             socket.yourTurn = 1;
             break;
+          default:
+            return socket.emit("getyourTurn", {
+              response: -1,
+              error: "Not authorized"
+            })
         }
-        if(socket.yourTurn) {
-          socket.emit("getyourTurn", {
-            yourTurn: socket.yourTurn
-          })
-        } else {
-          socket.emit("getyourTurn", {
-            response: -1,
-            error: "Not authorized"
-          })
-        }
+        socket.emit("getyourTurn", {
+          yourTurn: socket.yourTurn
+        })
       })
       socket.on("infoChanged",()=>{
         selectTeamModule._moduleEmitter.emit("infoChanged");
@@ -141,7 +139,7 @@ class SelectTeamModule{
           } else {
             selectTeamModule._whoisTurn = 0;
           }
-          selectTeamModule.setServer();
+          // selectTeamModule.setServer();
           response = {
             response: 0,
             playerid: playerid,
@@ -150,6 +148,7 @@ class SelectTeamModule{
         }
         socket.emit("selectPlayer", response);
         selectTeamModule._moduleEmitter.emit("infoChanged");
+        selectTeamModule._moduleEmitter.emit("teamChanged");
       })
       socket.on('disconnect',()=>{
 
@@ -219,7 +218,7 @@ class SelectTeamModule{
           sendMsg2.Type = 0x65;
           sendMsg2.Unknown1 = 0x010000;
           sendMsg2.Padding = 0;
-          sendMsg2.Chat = "https://wargame2nakwonelec2.nakwonelec.com" + "/SelectTeam/" + token;
+          sendMsg2.Chat = "https://wargame3nakwonelec2.nakwonelec.com" + "/SelectTeam?code=" + token;
           eugRCON.sendProtocolsFromDedicatedToUsers(playeridTo, sendMsg2);
 
           var response = selectTeamModule.setTeam(playerid, side);
@@ -289,16 +288,19 @@ class SelectTeamModule{
   setTeam(playerid, side){
     if(this._NotSelected.indexOf(playerid)>-1){
       this._NotSelected.splice(this._NotSelected.indexOf(playerid), 1);
-    } else if(this._Team1Selected.indexOf(playerid)>-1){
+    } 
+    if(this._Team1Selected.indexOf(playerid)>-1){
       this._Team1Selected.splice(this._Team1Selected.indexOf(playerid),1);
-    } else if(this._Team2Selected.indexOf(playerid)>-1){
+    } 
+    if(this._Team2Selected.indexOf(playerid)>-1){
       this._Team2Selected.splice(this._Team2Selected.indexOf(playerid),1);
-    } else {
-      return {
-        response: -1,
-        error: "There is no player: " + playerid
-      };
-    }
+    } 
+    // {
+    //   return {
+    //     response: -1,
+    //     error: "There is no player: " + playerid
+    //   };
+    // }
     switch(side) {
       case EugPlayer.Enum.Side.Bluefor:
         this._Team1Selected.push(playerid);

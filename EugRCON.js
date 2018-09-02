@@ -80,7 +80,9 @@ class EugRCON {
       }
       this.sendProtocolsFromDedicatedToUsersIFCondition(eugProtocols, function(context) {
           var playerid = _playerids.find((playerid)=>{
-              return parseInt(playerid) == context.user.EugNetId;
+                if(context.user) {
+                    return context.user.playerid == parseInt(playerid);
+                }
           });
           return playerid;
       });
@@ -121,7 +123,9 @@ class EugRCON {
     }
     this.sendProtocolsFromUsersToDedicatedIFCondition(eugProtocols, function(context) {
         var playerid = _playerids.find((playerid)=>{
-            return parseInt(playerid) == context.user.EugNetId;
+            if(context.user) {
+                return context.user.playerid == parseInt(playerid);
+            }
         });
         return playerid;
     });

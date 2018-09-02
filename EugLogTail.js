@@ -1,7 +1,7 @@
 //"use strinct";
 /* Server Global variable */
 // const Tail = require('./tail.js').Tail;
-const Tail = require('tail').Tail;
+const Tail = require('./tail').Tail;
 const EugPlayer = require('./EugPlayer.js');
 const ServerState = require('./ServerState');
 
@@ -10,7 +10,7 @@ class EugLogTail{
         this.serverState = serverState;
         this.eugEmitter = eugEmitter;
         this.eugTcpProxyBtwUserAndDedicated = eugTcpProxyBtwUserAndDedicated;
-        this._infoRun = false;
+        this._infoRun = true;
         //registeredEvents initialize
         this.initializeRegisteredEvents();
         //registeredEvents initialize
@@ -234,10 +234,10 @@ class EugLogTail{
               }
             }
         });
-        // tail.on("historicalDataEnd", function(end){
-        //     eugLogTail._infoRun = false;
-        //     console.log("historicalDataEnd");
-        // })
+        tail.on("historicalDataEnd", function(end){
+            eugLogTail._infoRun = false;
+            console.log("historicalDataEnd");
+        })
         tail.on("error", function(error) {
             console.log('ERROR: ', error);
         });

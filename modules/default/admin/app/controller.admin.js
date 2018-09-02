@@ -107,12 +107,12 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket', 'soc
     //   $scope.Left = tmpLeft;
     // });
 
-    $scope.$watch('ServerSettings.NbMaxPlayer', function(){
-        if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('NbMaxPlayer') && !isNaN($scope.AutoLaunchCond)){
-            $scope.ServerSettings.NbMinPlayer = $scope.ServerSettings.NbMaxPlayer + $scope.AutoLaunchCond;
-            $scope.SendServerSetting('NbMinPlayer', $scope.ServerSettings.NbMinPlayer)
-        }
-    });
+    // $scope.$watch('ServerSettings.NbMaxPlayer', function(){
+    //     if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('NbMaxPlayer') && !isNaN($scope.AutoLaunchCond)){
+    //         $scope.ServerSettings.NbMinPlayer = $scope.ServerSettings.NbMaxPlayer + $scope.AutoLaunchCond;
+    //         $scope.SendServerSetting('NbMinPlayer', $scope.ServerSettings.NbMinPlayer)
+    //     }
+    // });
 
     // $scope.$watch('ServerSettings.NbMinPlayer', function(){
     //   if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('NbMaxPlayer')) {
@@ -207,6 +207,10 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket', 'soc
     $scope.changeNbMaxPlayer = function(NbMaxPlayer){
       var InitMoney = NbMaxPlayer/2*1000;
       var ScoreLimit = $scope.ServerSettings.VictoryCond === 4 ? 500 : InitMoney*2;
+      if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('NbMaxPlayer') && !isNaN($scope.AutoLaunchCond)){
+        $scope.ServerSettings.NbMinPlayer = NbMaxPlayer + $scope.AutoLaunchCond;
+        $scope.SendServerSetting('NbMinPlayer', $scope.ServerSettings.NbMinPlayer)
+      }
       $scope.SendServerSetting('NbMaxPlayer',NbMaxPlayer);
       $scope.SendServerSetting('InitMoney',InitMoney);
       $scope.SendServerSetting('ScoreLimit',ScoreLimit);
@@ -255,10 +259,10 @@ controller.directive('autoLaunchCond', function($rootScope) {
       });
       ngModel.$formatters.push(function(val){
         scope.AutoLaunchCond = val-scope.ServerSettings.NbMaxPlayer;
-        if(scope.AutoLaunchCond>1) {
+        if(scope.AutoLaunchCond==1) {
           scope.SendServerSetting('NbMinPlayer', scope.ServerSettings.NbMaxPlayer + 1)
           return 1;
-        } else if(scope.AutoLaunchCond <-1){
+        } else if(scope.AutoLaunchCond ==-1){
           scope.SendServerSetting('NbMinPlayer', scope.ServerSettings.NbMaxPlayer - 1)
           return -1;
         }
