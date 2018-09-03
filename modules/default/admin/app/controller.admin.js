@@ -115,6 +115,7 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket', 'soc
         property: property,
         value: value
       });
+      // 차후에 서버로 넘길 것임.................
       if(property == 'VictoryCond'){
         if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('VictoryCond')) {
           var val = $scope.ServerSettings.Map;
@@ -161,21 +162,21 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket', 'soc
       });
     };
 
-    $scope.changeNbMaxPlayer = function(NbMaxPlayer){
-      var InitMoney = NbMaxPlayer/2*1000;
-      var ScoreLimit = $scope.ServerSettings.VictoryCond === 4 ? 500 : InitMoney*2;
-      $scope.SendServerSetting('NbMaxPlayer',NbMaxPlayer);
-      $scope.SendServerSetting('InitMoney',InitMoney);
-      $scope.SendServerSetting('ScoreLimit',ScoreLimit);
-    }
+    // $scope.changeNbMaxPlayer = function(NbMaxPlayer){
+    //   var InitMoney = NbMaxPlayer/2*1000;
+    //   var ScoreLimit = $scope.ServerSettings.VictoryCond === 4 ? 500 : InitMoney*2;
+    //   $scope.SendServerSetting('NbMaxPlayer',NbMaxPlayer);
+    //   $scope.SendServerSetting('InitMoney',InitMoney);
+    //   $scope.SendServerSetting('ScoreLimit',ScoreLimit);
+    // }
 
-    $scope.changeVictoryCond = function(VictoryCond){
-      var InitMoney = $scope.ServerSettings.NbMaxPlayer/2*1000;
-      var ScoreLimit = VictoryCond === 4 ? 500 : InitMoney*2;
-      $scope.SendServerSetting('VictoryCond',VictoryCond);
-      $scope.SendServerSetting('InitMoney',InitMoney);
-      $scope.SendServerSetting('ScoreLimit',ScoreLimit);
-    }
+    // $scope.changeVictoryCond = function(VictoryCond){
+    //   var InitMoney = $scope.ServerSettings.NbMaxPlayer/2*1000;
+    //   var ScoreLimit = VictoryCond === 4 ? 500 : InitMoney*2;
+    //   $scope.SendServerSetting('VictoryCond',VictoryCond);
+    //   $scope.SendServerSetting('InitMoney',InitMoney);
+    //   $scope.SendServerSetting('ScoreLimit',ScoreLimit);
+    // }
   }
 ]);
 

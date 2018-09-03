@@ -235,6 +235,22 @@ class EugLogTail{
             }
         });
         tail.on("historicalDataEnd", function(end){
+            var NbMaxPlayer = eugLogTail.serverState.NbMaxPlayer;
+            var NbMinPlayer = eugLogTail.serverState.NbMinPlayer;
+            var tempAutoLaunchCond = NbMinPlayer - NbMaxPlayer;
+            switch(tempAutoLaunchCond){
+                case -1:
+                case 0:
+                case 1:
+                    eugLogTail.serverState.AutoLaunchCond = tempAutoLaunchCond;
+                    break;
+                default:
+                    if(tempAutoLaunchCond>1){
+                        eugLogTail.serverState.AutoLaunchCond = 1;
+                    } else {
+                        eugLogTail.serverState.AutoLaunchCond = -2;
+                    }
+            }
             eugLogTail._infoRun = false;
             console.log("historicalDataEnd");
         })

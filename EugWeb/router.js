@@ -51,7 +51,75 @@ module.exports = function(serverState, eugEmitter, eugRCON, importedModules, io)
         socket.on("setsvar", (data)=>{
             var property = data.property;
             var value = data.value;
-            eugRCON.setsvar(property, value);
+            function reCalculateAutoLaunchCond(valueNbMinPlayer, valueNbMaxPlayer){
+                var tempNbMinPlayer = parseInt(valueNbMinPlayer);
+                var tempAutoLaunchCond = tempNbMinPlayer - valueNbMaxPlayer;
+                switch(tempAutoLaunchCond) {
+                    case 1:
+                    case 0:
+                    case -1:
+                        serverState.AutoLaunchCond = tempAutoLaunchCond;
+                        return tempNbMinPlayer;
+                    default:
+                        if(tempAutoLaunchCond>1){
+                            serverState.AutoLaunchCond = 1;
+                            eugRCON.setsvar(property, valueNbMaxPlayer + 1);
+                            return tempNbMinPlayer + 1;
+                        } else {
+                            serverState.AutoLaunchCond = -2;
+                            return tempNbMinPlayer;
+                        }
+                }
+            }
+            switch(property){
+                case "NbMaxPlayer":
+                    var receivedNbMaxPlayer = parseInt(value);
+                    var InitMoney = receivedNbMaxPlayer/2*1000;
+                    var ScoreLimit = serverState.VictoryCond === 4 ? 500 : InitMoney*2;
+                    eugRCON.setsvar("InitMoney", InitMoney);
+                    eugRCON.setsvar("ScoreLimit", ScoreLimit);
+                    switch(serverState.AutoLaunchCond){
+                        case 1:
+                        case 0:
+                        case -1:
+                            eugRCON.setsvar(property, value);
+                            eugRCON.setsvar("NbMinPlayer", receivedNbMaxPlayer + serverState.AutoLaunchCond);
+                            break;
+                        case -2:
+                            var prevNbMaxPlayer = serverState.NbMaxPlayer;
+                            eugRCON.setsvar(property, value);
+                            reCalculateAutoLaunchCond(serverState.NbMinPlayer, prevNbMaxPlayer);
+                            break;
+                        default:
+                            throw Error("serverState.AutoLaunchCond is not in range [-2...1]")
+                    }
+                    break;
+                case "NbMinPlayer":
+                    eugRCON.setsvar(property, reCalculateAutoLaunchCond(value, serverState.NbMaxPlayer));
+                    break;
+                case "AutoLaunchCond":
+                    var receivedAutoLaunchCond = parseInt(value);
+                    switch(receivedAutoLaunchCond){
+                        case -1:
+                        case 0:
+                        case 1:
+                            eugRCON.setsvar("NbMinPlayer", serverState.NbMaxPlayer + receivedAutoLaunchCond);
+                        case -2:
+                            serverState.AutoLaunchCond = receivedAutoLaunchCond;
+                            break;
+                    }
+                    break;
+                case "VictoryCond":
+                    var receivedVictoryCond = parseInt(value);
+                    var InitMoney = serverState.NbMaxPlayer/2*1000;
+                    var ScoreLimit = receivedVictoryCond === 4 ? 500 : InitMoney*2;
+                    eugRCON.setsvar("VictoryCond", receivedVictoryCond)
+                    eugRCON.setsvar("InitMoney", InitMoney)
+                    eugRCON.setsvar("ScoreLimit", ScoreLimit)
+                default:
+                    eugRCON.setsvar(property, value);
+            }
+            // eugRCON.setsvar(property, value);
         })
         socket.on("setpvar", (data)=>{
             var playerid = data.playerid;

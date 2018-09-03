@@ -92,6 +92,9 @@ class ServerState{
     set WithHost(str) {this._WithHost = parseInt(str);}
     get WithHost() {return this._WithHost;}
 
+    set AutoLaunchCond(str) {this._AutoLaunchCond = parseInt(str);}
+    get AutoLaunchCond() {return this._AutoLaunchCond;}
+
     static get Enum() {
         return {
             GameState: {
@@ -155,7 +158,8 @@ class ServerState{
             VictoryCond: this.VictoryCond,
             WarmupCountdown: this.WarmupCountdown,
             WithHost: this.WithHost,
-            players: this.players
+            players: this.players,
+            AutoLaunchCond: this.AutoLaunchCond
         }
     }
 }

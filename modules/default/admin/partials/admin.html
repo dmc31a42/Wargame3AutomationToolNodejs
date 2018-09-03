@@ -9,7 +9,7 @@
       </select>
     <label>
       게임 모드
-      <select ng-model="ServerSettings.VictoryCond" ng-change="changeVictoryCond(ServerSettings.VictoryCond)" ng-options="VictoryCond.value as VictoryCond.name for VictoryCond in Wargame3SelectOptions.VictoryCond">
+      <select ng-model="ServerSettings.VictoryCond" ng-change="SendServerSetting('VictoryCond',ServerSettings.VictoryCond)" ng-options="VictoryCond.value as VictoryCond.name for VictoryCond in Wargame3SelectOptions.VictoryCond">
       </select>
     </label>
     <label>
@@ -27,7 +27,7 @@
     <legend>게임 상세 설정</legend>
     <label>
       Teams
-      <select ng-model="ServerSettings.NbMaxPlayer" ng-change="changeNbMaxPlayer(ServerSettings.NbMaxPlayer)" ng-options="Teams.value as Teams.name for Teams in Wargame3SelectOptions.Teams">
+      <select ng-model="ServerSettings.NbMaxPlayer" ng-change="SendServerSetting('NbMaxPlayer',ServerSettings.NbMaxPlayer)" ng-options="Teams.value as Teams.name for Teams in Wargame3SelectOptions.Teams">
       </select>
     </label>
     <label>시작 점수<input type="number" step="1000" ng-model="ServerSettings.InitMoney" ng-change="SendServerSetting('InitMoney',ServerSettings.InitMoney)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>

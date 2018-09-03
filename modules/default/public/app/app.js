@@ -120,8 +120,9 @@ app.run(['socket', 'socketMain', '$rootScope','uiSortableMultiSelectionMethods',
       {value: 5, name: "매우 높음"}],
     AutoLaunchCond:[
       {value: 0, name: "자동(풀방)"},
-      {value: 1, name: "수동"},
-      {value: -1, name: "최대인원-1"}]
+      {value: 1, name: "자동시작안함"},
+      {value: -1, name: "최대인원-1"},
+      {value: -2, name: "수동"}]
   };
 
   $rootScope.customModOptions = {

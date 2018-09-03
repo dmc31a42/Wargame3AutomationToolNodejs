@@ -18,6 +18,7 @@ class SelectTeamModule{
     this._NotSelected = [];
     this._Team1Selected = [];
     this._Team2Selected = [];
+    this._HowManySelect = 1;
     this._Team1Code = "blue";
     this._Team2Code = "red";
     this._immediately = false;
@@ -98,6 +99,7 @@ class SelectTeamModule{
           team1Selected: selectTeamModule._Team1Selected,
           team2Selected: selectTeamModule._Team2Selected,
           whoisTurn: selectTeamModule._whoisTurn,
+          HowManySelect: selectTeamModule._HowManySelect
         })
       });
       socket.on("getyourTurn",(data)=>{
@@ -124,31 +126,53 @@ class SelectTeamModule{
         selectTeamModule._moduleEmitter.emit("infoChanged");
       })
       socket.on("selectPlayer", (data)=>{
-        var playerid = data.playerid;
+        var tempPlayerids = data.playerids;
         var response;
-        if(selectTeamModule._whoisTurn != socket.yourTurn) {
-          response = {
-            response: -1,
-            error: "It is not your turn"
-          }
-        } else if(selectTeamModule._NotSelected.indexOf(playerid)==-1) {
-          response = {
-            response: -1,
-            error: "Player is already selected: " + playerid
+        function allPlayersAreInNotSelected(playerids){
+          return playerids.find((playerid)=>{
+            return selectTeamModule._NotSelected.indexOf(playerid)==-1;
+          })
+        }
+        if(Array.isArray(tempPlayerids)){
+          var playerids = tempPlayerids.map((value)=>{
+            return parseInt(value);
+          });
+          if(selectTeamModule._whoisTurn != socket.yourTurn) {
+            response = {
+              response: -1,
+              error: "It is not your turn"
+            }
+          } else if(playerids.length != selectTeamModule._HowManySelect){
+            response = {
+              response: -1,
+              error: "You have to select " + selectTeamModule._HowManySelect + " players. you: " + playerids.length
+            }
+          } else if(allPlayersAreInNotSelected(playerids)) {
+            response = {
+              response: -1,
+              error: "Player(s) is already selected"
+            }
+          } else {
+            playerids.forEach((playerid)=>{
+              selectTeamModule._NotSelected.splice(selectTeamModule._NotSelected.indexOf(playerid),-1);
+              socket.targetTeam.push(playerid);
+            })
+            if(selectTeamModule._whoisTurn == 0) {
+              selectTeamModule._whoisTurn = 1;
+            } else {
+              selectTeamModule._whoisTurn = 0;
+            }
+            // selectTeamModule.setServer();
+            response = {
+              response: 0,
+              playerids: playerids,
+              side: socket.yourTurn
+            }
           }
         } else {
-          selectTeamModule._NotSelected.splice(selectTeamModule._NotSelected.indexOf(playerid),-1);
-          socket.targetTeam.push(playerid);
-          if(selectTeamModule._whoisTurn == 0) {
-            selectTeamModule._whoisTurn = 1;
-          } else {
-            selectTeamModule._whoisTurn = 0;
-          }
-          // selectTeamModule.setServer();
           response = {
-            response: 0,
-            playerid: playerid,
-            side: socket.yourTurn
+            response: -1,
+            error: "playerids type is not array"
           }
         }
         socket.emit("selectPlayer", response);
@@ -189,7 +213,8 @@ class SelectTeamModule{
           whoisTurn: this._whoisTurn,
           team1Code: this._Team1Code,
           team2Code: this._Team2Code,
-          immediately: this._immediately
+          immediately: this._immediately,
+          HowManySelect: this._HowManySelect
         });
       });
       socket.on("infoChanged", (data)=>{
