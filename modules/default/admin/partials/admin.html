@@ -63,10 +63,10 @@
     <button ng-click="command('cancel_launch')">카운트다운 취소</button>
     <label>
       자동 시작 조건(계산해야함)
-      <select ng-model="ServerSettings.NbMinPlayer" ng-change="SendServerSetting('NbMinPlayer',ServerSettings.NbMinPlayer)" ng-options="AutoLaunchCond.value as AutoLaunchCond.name for AutoLaunchCond in Wargame3SelectOptions.AutoLaunchCond" auto-launch-cond>
+      <select ng-model="ServerSettings.AutoLaunchCond" ng-change="SendServerSetting('AutoLaunchCond', ServerSettings.AutoLaunchCond)" ng-options="AutoLaunchCond.value as AutoLaunchCond.name for AutoLaunchCond in Wargame3SelectOptions.AutoLaunchCond">
       </select>
     </label>
-    <label>자동시작 필요 인원수<input type="text" ng-model="ServerSettings.NbMinPlayer" readonly></label>
+    <label>자동시작 필요 인원수<input type="text" ng-change="SendServerSetting('NbMinPlayer', ServerSettings.NbMinPlayer)" ng-model="ServerSettings.NbMinPlayer"></label>
     <label>Countdown<input type="text" ng-model="ServerSettings.WarmupCountdown" ng-change="SendServerSetting('WarmupCountdown',ServerSettings.WarmupCountdown)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
     <label>전개 시간<input type="text" ng-model="ServerSettings.DeploiementTimeMax" ng-change="SendServerSetting('DeploiementTimeMax',ServerSettings.DeploiementTimeMax)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>
     <label>최대 허용 불러오는 시간<input type="text" ng-model="ServerSettings.LoadingTimeMax" ng-change="SendServerSetting('LoadingTimeMax',ServerSettings.LoadingTimeMax)" ng-model-options="{ updateOn: 'default blur', debounce: {'default': 500, 'blur': 0} }"></label>

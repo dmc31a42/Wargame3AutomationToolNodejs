@@ -71,6 +71,11 @@ class SelectTeamModule{
         console.log("SelectTeamModule", playerid + " is not in notselected and teams");
       }
     })
+    eugEmitter.on("serverGameStateChanged",(gameState)=>{
+      if(gameState == serverState.Enum.GameState.Loading) {
+        resetSelectTeam();
+      }
+    })
   }
 
   publicRouter(io) {
@@ -156,6 +161,19 @@ class SelectTeamModule{
     })
     app.use("/", router);
     return app;
+  }
+
+  resetSelectTeam() {
+    this._NotSelected =  Object.values(this._serverState.players).map((player)=>{
+      return player.playerid;
+    })
+    this._Team1Selected = [];
+    this._Team2Selected = [];
+    socket.emit("resetSelectTeam", {
+      response: 0
+    })
+    this._moduleEmitter.emit("infoChanged");
+    this._moduleEmitter.emit("teamChanged");
   }
 
   adminRouter(io) {
@@ -263,16 +281,7 @@ class SelectTeamModule{
         selectTeamModule._moduleEmitter.emit("infoChanged");
       })
       socket.on("resetSelectTeam", (data)=>{
-        selectTeamModule._NotSelected =  Object.values(selectTeamModule._serverState.players).map((player)=>{
-          return player.playerid;
-        })
-        selectTeamModule._Team1Selected = [];
-        selectTeamModule._Team2Selected = [];
-        socket.emit("resetSelectTeam", {
-          response: 0
-        })
-        selectTeamModule._moduleEmitter.emit("infoChanged");
-        selectTeamModule._moduleEmitter.emit("teamChanged");
+        selectTeamModule.resetSelectTeam();
       })
       socket.on("setImmediately", (data)=>{
         var immediately = data.immediately;

@@ -30,7 +30,7 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket', 'soc
         });
       }
     };
-
+    $scope.firstView = false;
     $scope.Team1 = {};
     $scope.Team2 = {};
     $scope.Left = {};
@@ -55,57 +55,13 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket', 'soc
       }
       $scope.ServerSettings = data;
       $scope.players = data.players;
-      if(!$scope.AutoLaunchCond && $scope.ServerSettings.NbMinPlayer){
-        $scope.AutoLaunchCond = $scope.ServerSettings.NbMinPlayer - $scope.ServerSettings.NbMaxPlayer;  
-      }
-      // var tmpTeam1 = {};
-      // var tmpTeam2 = {};
-      // var tmpLeft = {};
-      // var playerids = Object.keys($scope.players);
-      // playerids.forEach(function(element,index,array){
-      //   var value = parseInt(element);
-      //   if($scope.customModSettings.SelectTeam.Team1Selected.indexOf(value)>-1) {
-      //       tmpTeam1[value] = $scope.players[value];
-      //   } else if($scope.customModSettings.SelectTeam.Team2Selected.indexOf(value)>-1) {
-      //       tmpTeam2[value] = $scope.players[value];
-      //   } else {
-      //       tmpLeft[value] = $scope.players[value];
-      //   }
-      // });
-      // $scope.Team1 = tmpTeam1;
-      // $scope.Team2 = tmpTeam2;
-      // $scope.Left = tmpLeft;
+      // if(!$scope.AutoLaunchCond && $scope.ServerSettings.NbMinPlayer){
+      //   $scope.AutoLaunchCond = $scope.ServerSettings.NbMinPlayer - $scope.ServerSettings.NbMaxPlayer;  
+      // }
+      // if($scope.firstView){
+      //   $scope.AutoLaunchCond = $scope.ServerSettings.NbMinPlayer - $scope.ServerSettings.NbMaxPlayer
+      // }
     })
-    // socket.on('Admin', function(data){
-    //   if(loadFromServer){
-    //     $timeout.cancel(loadFromServer);
-    //   }
-    //   $scope.ServerSettings = data.ServerSettings;
-    //   $scope.players = data.players;
-    //   $scope.customModSettings = data.customModSettings;
-    //   $scope.customModSettingsAdmin = data.customModSettingsAdmin;
-    //   if(!$scope.AutoLaunchCond && $scope.ServerSettings.NbMinPlayer){
-    //     $scope.AutoLaunchCond = $scope.ServerSettings.NbMinPlayer - $scope.ServerSettings.NbMaxPlayer;  
-    //   }
-
-    //   var tmpTeam1 = {};
-    //   var tmpTeam2 = {};
-    //   var tmpLeft = {};
-    //   var playerids = Object.keys($scope.players);
-    //   playerids.forEach(function(element,index,array){
-    //      var value = parseInt(element);
-    //      if($scope.customModSettings.SelectTeam.Team1Selected.indexOf(value)>-1) {
-    //          tmpTeam1[value] = $scope.players[value];
-    //      } else if($scope.customModSettings.SelectTeam.Team2Selected.indexOf(value)>-1) {
-    //          tmpTeam2[value] = $scope.players[value];
-    //      } else {
-    //          tmpLeft[value] = $scope.players[value];
-    //      }
-    //   });
-    //   $scope.Team1 = tmpTeam1;
-    //   $scope.Team2 = tmpTeam2;
-    //   $scope.Left = tmpLeft;
-    // });
 
     // $scope.$watch('ServerSettings.NbMaxPlayer', function(){
     //     if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('NbMaxPlayer') && !isNaN($scope.AutoLaunchCond)){
@@ -120,15 +76,16 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket', 'soc
     //   }
     // });
 
-    $scope.$watch('ServerSettings.VictoryCond', function(){
-      if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('VictoryCond')) {
-        var VictoryCond = $scope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $scope.ServerSettings.VictoryCond);
-        if(!VictoryCond) {
-          VictoryCond = $scope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == 1);
-          $scope.ServerSettings.VictoryCond = VictoryCond.mapKey + '_' + val; 
-        }
-      }
-    });
+    // 오류도 있고, 필요없는 코드로 보여서 일단은 숨김
+    // $scope.$watch('ServerSettings.VictoryCond', function(){
+    //   if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('VictoryCond')) {
+    //     var VictoryCond = $scope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == $scope.ServerSettings.VictoryCond);
+    //     if(!VictoryCond) {
+    //       VictoryCond = $scope.Wargame3SelectOptions.VictoryCond.find(item=>item.value == 1);
+    //       $scope.ServerSettings.VictoryCond = VictoryCond.mapKey + '_' + val; 
+    //     }
+    //   }
+    // });
 
     $scope.sortableOptions = uiSortableMultiSelectionMethods.extendOptions({
       'multiSelectionOnClick': true,
@@ -207,10 +164,6 @@ controller.controller('Wargame3AutomationTool.controller.admin', ['socket', 'soc
     $scope.changeNbMaxPlayer = function(NbMaxPlayer){
       var InitMoney = NbMaxPlayer/2*1000;
       var ScoreLimit = $scope.ServerSettings.VictoryCond === 4 ? 500 : InitMoney*2;
-      if($scope.ServerSettings && $scope.ServerSettings.hasOwnProperty('NbMaxPlayer') && !isNaN($scope.AutoLaunchCond)){
-        $scope.ServerSettings.NbMinPlayer = NbMaxPlayer + $scope.AutoLaunchCond;
-        $scope.SendServerSetting('NbMinPlayer', $scope.ServerSettings.NbMinPlayer)
-      }
       $scope.SendServerSetting('NbMaxPlayer',NbMaxPlayer);
       $scope.SendServerSetting('InitMoney',InitMoney);
       $scope.SendServerSetting('ScoreLimit',ScoreLimit);
@@ -249,26 +202,26 @@ controller.directive('convertMap', function($rootScope ) {
   };
 });
 
-controller.directive('autoLaunchCond', function($rootScope) {
-  return {
-    require: 'ngModel',
-    link: function(scope, element, attrs, ngModel) {
-      ngModel.$parsers.push(function(val){
-        scope.AutoLaunchCond = val;
-        return scope.ServerSettings.NbMaxPlayer + val;
-      });
-      ngModel.$formatters.push(function(val){
-        scope.AutoLaunchCond = val-scope.ServerSettings.NbMaxPlayer;
-        if(scope.AutoLaunchCond==1) {
-          scope.SendServerSetting('NbMinPlayer', scope.ServerSettings.NbMaxPlayer + 1)
-          return 1;
-        } else if(scope.AutoLaunchCond ==-1){
-          scope.SendServerSetting('NbMinPlayer', scope.ServerSettings.NbMaxPlayer - 1)
-          return -1;
-        }
-        return scope.AutoLaunchCond;
-      })
-    }
-  }
-});
+// controller.directive('autoLaunchCond', function($rootScope) {
+//   return {
+//     require: 'ngModel',
+//     link: function(scope, element, attrs, ngModel) {
+//       ngModel.$parsers.push(function(val){
+//         scope.AutoLaunchCond = val;
+//         return scope.ServerSettings.NbMaxPlayer + val;
+//       });
+//       ngModel.$formatters.push(function(val){
+//         scope.AutoLaunchCond = val-scope.ServerSettings.NbMaxPlayer;
+//         if(scope.AutoLaunchCond==1) {
+//           scope.SendServerSetting('NbMinPlayer', scope.ServerSettings.NbMaxPlayer + 1)
+//           return 1;
+//         } else if(scope.AutoLaunchCond ==-1){
+//           scope.SendServerSetting('NbMinPlayer', scope.ServerSettings.NbMaxPlayer - 1)
+//           return -1;
+//         }
+//         return scope.AutoLaunchCond;
+//       })
+//     }
+//   }
+// });
 
