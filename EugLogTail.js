@@ -5,11 +5,33 @@ const Tail = require('./tail').Tail;
 const EugPlayer = require('./EugPlayer.js');
 const ServerState = require('./EugServerState');
 
+/**
+ * serverlog.txt에서 로그를 읽어서 서버와 플레이어의 상태를 {@link EugServerState}에 저장하는 클래스
+ * @class
+ */
 class EugLogTail{
+    /**
+     * 
+     * @param {EugServerState} serverState 
+     * @param {EugEmitter} eugEmitter 
+     * @param {EugTcpProxy} eugTcpProxyBtwUserAndDedicated 
+     */
     constructor(serverState, eugEmitter, eugTcpProxyBtwUserAndDedicated){
+        /**
+         * @member {EugServerState}
+         */
         this.serverState = serverState;
+        /**
+         * @member {EugEmitter}
+         */
         this.eugEmitter = eugEmitter;
+        /**
+         * @member {EugTcpProxy}
+         */
         this.eugTcpProxyBtwUserAndDedicated = eugTcpProxyBtwUserAndDedicated;
+        /**
+         * @member {boolean}
+         */
         this._infoRun = true;
         //registeredEvents initialize
         this.initializeRegisteredEvents();

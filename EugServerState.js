@@ -1,4 +1,11 @@
+/**
+ * 서버의 상태와 {@link EugPlayer}를 멤버로 가지고 있는 클래스
+ * @class
+ */
 class EugServerState{
+    /**
+     * @constructor
+     */
     constructor(){
         this.players = {};
     }
@@ -125,10 +132,23 @@ class EugServerState{
             }
         }
     } 
-
+    /**
+     * 서버의 상태 정보를 JSON으로 정리하여 가져올 수 있는 함수
+     * @method EugServerState.toJSON
+     * @return {EugServerStateStruct}
+     */
     toJSON() {
+        /**
+         * @typedef {Object} EugServerStateStruct
+         */
         return {
+            /**
+             * @property {number} EugServerStateStruct.DateConstraint
+             */
             DateConstraint: this.DateConstraint,
+            /**
+             * @property {number}
+             */
             DebriefingTimeMax: this.DebriefingTimeMax,
             DeltaMaxTeamSize: this.DeltaMaxTeamSize,
             DeploiementTimeMax: this.DeploiementTimeMax,
