@@ -1,6 +1,6 @@
 var ServerConfig = require('./server-config.json');
 var http = require('http');
-class Player{
+class EugPlayer{
     constructor(){
         this._connectCorrectly = false;
     }
@@ -209,4 +209,4 @@ class Player{
     }
 }
 
-module.exports = Player
+module.exports = EugPlayer

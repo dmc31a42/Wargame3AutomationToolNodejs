@@ -3,7 +3,7 @@
 // const Tail = require('./tail.js').Tail;
 const Tail = require('./tail').Tail;
 const EugPlayer = require('./EugPlayer.js');
-const ServerState = require('./ServerState');
+const ServerState = require('./EugServerState');
 
 class EugLogTail{
     constructor(serverState, eugEmitter, eugTcpProxyBtwUserAndDedicated){

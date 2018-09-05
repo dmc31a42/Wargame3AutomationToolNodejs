@@ -4,7 +4,7 @@ const EugPacketStruct = require('./EugPacketStruct');
 var ServerConfig = require('./server-config.json');
 const eugRCON = require('./EugRCON')(ServerConfig.rconPath, ServerConfig.rconRemoteHost, ServerConfig.rconRemotePort, ServerConfig.rconPassword);
 const EugPlayer = require('./EugPlayer');
-const ServerState = require('./ServerState');
+const ServerState = require('./EugServerState');
 const serverState = new ServerState();
 const EventEmitter = require('events');
 class EugEmitter extends EventEmitter {}
