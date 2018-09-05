@@ -10,7 +10,6 @@ const EventEmitter = require('events');
 class EugEmitter extends EventEmitter {}
 const eugEmitter = new EugEmitter();
 
-
 class BtwDedicatedAndEugMainModule{
     constructor(){
         this._enabled = true;

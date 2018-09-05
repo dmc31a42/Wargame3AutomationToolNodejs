@@ -9,6 +9,9 @@ class EugServerState{
     constructor(){
         this.players = {};
     }
+    /**
+     * @member {DateConstraintType}
+     */
     set DateConstraint(str) {this._DateConstraint = parseInt(str);}
     get DateConstraint() {return this._DateConstraint;}
 
@@ -21,6 +24,9 @@ class EugServerState{
     set DeploiementTimeMax(str) {this._DeploiementTimeMax = parseInt(str);}
     get DeploiementTimeMax() {return this._DeploiementTimeMax;}
 
+    /**
+     * @member {GameStateType}
+     */
     set GameState(str) {this._GameState = parseInt(str);}
     get GameState() {return this._GameState;}
 
@@ -102,8 +108,25 @@ class EugServerState{
     set AutoLaunchCond(str) {this._AutoLaunchCond = parseInt(str);}
     get AutoLaunchCond() {return this._AutoLaunchCond;}
 
+    /**
+     * @typedef EugServerStateEnum
+     * @property {GameStateType} GameState
+     * @property {DateConstraintType} DateConstraint
+     */
+    /**
+     * @member {EugServerStateEnum}
+     */
     static get Enum() {
         return {
+            /**
+             * @typedef GameStateType
+             * @property {number} Lobby - 1
+             * @property {number} Loading - 51
+             * @property {number} Deployment - 52
+             * @property {number} Game - 53
+             * @property {number} Debriefing - 101
+             * @property {number} Launch - 4
+             */
             GameState: {
                 Lobby: 0,
                 Loading: 51,
@@ -111,6 +134,12 @@ class EugServerState{
                 Game: 53,
                 Debriefing: 101,
                 Launch: 4,
+                /**
+                 * @memberof! GameStateType
+                 * @function
+                 * @name toString
+                 * @param {GameStateType} GameState
+                 */
                 toString: function(GameState){
                     switch(GameState){
                         case 0:
@@ -129,26 +158,38 @@ class EugServerState{
                             return "UNKNOWN";
                     }
                 }
+            },
+            /**
+             * @namespace DateConstraintType
+             * @property {number} No - -1
+             * @property {number} Post85 - 0
+             * @property {number} Post80 - 1
+             */
+            DateConstraint: {
+                No: -1,
+                Post85: 0,
+                Post80: 1,
+                /**
+                 * @function toString
+                 * @memberof DateConstraintType
+                 * @param {number} DateConstraint
+                 */
+                toString: function(DateConstraint){
+                    switch(DateConstraint){
+                        case -1:
+                            return "No";
+                        case 0:
+                            return "Post85";
+                        case 1:
+                            return "Post80";
+                    }
+                }
             }
         }
     } 
-    /**
-     * 서버의 상태 정보를 JSON으로 정리하여 가져올 수 있는 함수
-     * @method EugServerState.toJSON
-     * @return {EugServerStateStruct}
-     */
     toJSON() {
-        /**
-         * @typedef {Object} EugServerStateStruct
-         */
         return {
-            /**
-             * @property {number} EugServerStateStruct.DateConstraint
-             */
             DateConstraint: this.DateConstraint,
-            /**
-             * @property {number}
-             */
             DebriefingTimeMax: this.DebriefingTimeMax,
             DeltaMaxTeamSize: this.DeltaMaxTeamSize,
             DeploiementTimeMax: this.DeploiementTimeMax,

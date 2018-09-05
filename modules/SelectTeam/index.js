@@ -5,11 +5,25 @@ const ServerConfig = require('../../server-config.json');
 const EugPacketStruct = require('../../EugPacketStruct');
 class SelectTeamEmitter extends EventEmitter{}
 
+/**
+ * @class
+ */
 class SelectTeamModule{
+  /**
+   * 
+   * @param {EugServerState} serverState 
+   * @param {*} eugEmitter 
+   * @param {*} eugRCON 
+   * @param {*} importedModules 
+   * @param {*} absolutePath 
+   */
   constructor(serverState, eugEmitter, eugRCON, importedModules, absolutePath){
     // this._publicRouterView = true;
     // this._adminRouterView = true;
     this._enabled = true;
+    /**
+     * @property {EugServerState} _serverState
+     */
     this._serverState = serverState;
     this._eugEmitter = eugEmitter;
     this._eugRCON = eugRCON;
