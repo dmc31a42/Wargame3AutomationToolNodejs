@@ -10,7 +10,10 @@ class EugServerState{
         this.players = {};
     }
     /**
-     * @member {DateConstraintType}
+     * @typedef {number} EugServerState.DateConstraintType
+     */
+    /**
+     * @member {EugServerState.DateConstraintType}
      */
     set DateConstraint(str) {this._DateConstraint = parseInt(str);}
     get DateConstraint() {return this._DateConstraint;}
@@ -25,7 +28,10 @@ class EugServerState{
     get DeploiementTimeMax() {return this._DeploiementTimeMax;}
 
     /**
-     * @member {GameStateType}
+     * @typedef {number} EugServerState.GameStateType
+     */
+    /**
+     * @member {EugServerState.GameStateType}
      */
     set GameState(str) {this._GameState = parseInt(str);}
     get GameState() {return this._GameState;}
@@ -47,7 +53,8 @@ class EugServerState{
 
     set MaxTeamSize(str) {this._MaxTeamSize = parseInt(str);}
     get MaxTeamSize() {return this._MaxTeamSize;}
-
+    /**@typedef {number} EugServerState.NationConstraintType */
+    /**@member {EugServerState.NationConstraintType}*/
     set NationConstraint(str) {this._NationConstraint = parseInt(str);}
     get NationConstraint() {return this._NationConstraint}
 
@@ -83,7 +90,8 @@ class EugServerState{
 
     set ServerProtocol(str) {this._ServerProtocol = str;}
     get ServerProtocol() {return this._ServerProtocol;}
-
+    /**@typedef EugServerState.ThematicConstraintType */
+    /**@member {EugServerState.ThematicConstraintType} */
     set ThematicConstraint(str) {this._ThematicConstraint = parseInt(str);}
     get ThematicConstraint() {return this._ThematicConstraint;}
 
@@ -109,23 +117,52 @@ class EugServerState{
     get AutoLaunchCond() {return this._AutoLaunchCond;}
 
     /**
-     * @typedef EugServerStateEnum
-     * @property {GameStateType} GameState
-     * @property {DateConstraintType} DateConstraint
+     * @namespace EugServerState.EnumTypes
+     * @property {EugServerState.EnumTypes.DateConstraintTypes} DateConstraint
+     * @property {EugServerState.EnumTypes.GameStateTypes} GameState
+     * @property {EugServerState.EnumTypes.GameTypeTypes} GameType
+     * @property {EugServerState.EnumTypes.NationConstraintTypes} NationConstraint
+     * @property {EugServerState.EnumTypes.ThematicConstraintTypes} ThematicConstraint
      */
     /**
-     * @member {EugServerStateEnum}
+     * @member {EugServerState.EnumTypes}
      */
     static get Enum() {
         return {
             /**
-             * @typedef GameStateType
-             * @property {number} Lobby - 1
-             * @property {number} Loading - 51
-             * @property {number} Deployment - 52
-             * @property {number} Game - 53
-             * @property {number} Debriefing - 101
-             * @property {number} Launch - 4
+             * @namespace EugServerState.EnumTypes.DateConstraintTypes
+             * @property {EugServerState.DateConstraintType} No - -1
+             * @property {EugServerState.DateConstraintType} Post85 - 0
+             * @property {EugServerState.DateConstraintType} Post80 - 1
+             */
+            DateConstraint: {
+                No: -1,
+                Post85: 0,
+                Post80: 1,
+                /**
+                 * @function toString
+                 * @memberof EugServerState.EnumTypes.DateConstraintTypes
+                 * @param {EugServerState.DateConstraintType} DateConstraint
+                 */
+                toString: function(DateConstraint){
+                    switch(DateConstraint){
+                        case -1:
+                            return "No";
+                        case 0:
+                            return "Post85";
+                        case 1:
+                            return "Post80";
+                    }
+                }
+            },
+            /**
+             * @namespace EugServerState.EnumTypes.GameStateTypes
+             * @property {EugServerState.GameStateType} Lobby - 1
+             * @property {EugServerState.GameStateType} Loading - 51
+             * @property {EugServerState.GameStateType} Deployment - 52
+             * @property {EugServerState.GameStateType} Game - 53
+             * @property {EugServerState.GameStateType} Debriefing - 101
+             * @property {EugServerState.GameStateType} Launch - 4
              */
             GameState: {
                 Lobby: 0,
@@ -135,10 +172,10 @@ class EugServerState{
                 Debriefing: 101,
                 Launch: 4,
                 /**
-                 * @memberof! GameStateType
-                 * @function
-                 * @name toString
-                 * @param {GameStateType} GameState
+                 * @memberof! EugServerState.EnumTypes.GameStateTypes
+                 * @function toString
+                 * @param {EugServerState.GameStateType} GameState
+                 * @returns {String}
                  */
                 toString: function(GameState){
                     switch(GameState){
@@ -160,31 +197,121 @@ class EugServerState{
                 }
             },
             /**
-             * @namespace DateConstraintType
-             * @property {number} No - -1
-             * @property {number} Post85 - 0
-             * @property {number} Post80 - 1
+             * @namespace EugServerState.EnumTypes.GameTypeTypes
+             * @property {EugServerState.GameTypeType} Confrontation - 0
+             * @property {EugServerState.GameTypeType} BlueFor - 1
+             * @property {EugServerState.GameTypeType} RedFor - 2
              */
-            DateConstraint: {
-                No: -1,
-                Post85: 0,
-                Post80: 1,
+            GameType: {
+                Confrontation: 0,
+                BlueFor: 1,
+                RedFor: 2,
                 /**
+                 * @memberof! EugServerState.EnumTypes.GameTypeTypes
                  * @function toString
-                 * @memberof DateConstraintType
-                 * @param {number} DateConstraint
+                 * @param {EugServerState.GameTypeType} GameType
+                 * @returns {String}
                  */
-                toString: function(DateConstraint){
-                    switch(DateConstraint){
+                toString: function(GameType){
+                    switch(GameType){
+                        case 0:
+                            return "Confrontation";
+                        case 1:
+                            return "BlueFor";
+                        case 2:
+                            return "RedFor";
+                        default:
+                            return "UNKNOWN";
+                    }
+                }
+            },
+            /**
+             * @namespace EugServerState.EnumTypes.NationConstraintTypes
+             * @property {EugServerState.NationConstraintType} No - -1
+             * @property {EugServerState.NationConstraintType} NationsAndCoalitions - 0
+             * @property {EugServerState.NationConstraintType} NationsOnly - 1
+             * @property {EugServerState.NationConstraintType} CoalitionsOnly -2
+             */
+            NationConstraint: {
+                No: -1,
+                NationsAndCoalitions: 0,
+                NationsOnly: 1,
+                CoalitionsOnly: 2,
+                /**
+                 * @memberof! EugServerState.EnumTypes.NationConstraintTypes
+                 * @function toString
+                 * @param {EugServerState.NationConstraintType} NationConstraint
+                 * @returns {String}
+                 */
+                toString: function(NationConstraint){
+                    switch(NationConstraint){
                         case -1:
                             return "No";
                         case 0:
-                            return "Post85";
+                            return "NationsAndCoalitions";
                         case 1:
-                            return "Post80";
+                            return "NationsOnly";
+                        case 2:
+                            return "CoalitionsOnly";
+                        default:
+                            return "UNKNOWN";
+                    }
+                }
+            },
+            /**
+             * @namespace EugServerState.EnumTypes.ThematicConstraintTypes
+             * @property {EugServerState.ThematicConstraintType} No - -1
+             * @property {EugServerState.ThematicConstraintType} Any - -2
+             * @property {EugServerState.ThematicConstraintType} Motorised - 0
+             * @property {EugServerState.ThematicConstraintType} Armored - 1
+             * @property {EugServerState.ThematicConstraintType} Support - 2
+             * @property {EugServerState.ThematicConstraintType} Marine - 3
+             * @property {EugServerState.ThematicConstraintType} Mecanized - 4
+             * @property {EugServerState.ThematicConstraintType} Airborne - 5
+             * @property {EugServerState.ThematicConstraintType} Naval -6
+             */
+            ThematicConstraint: {
+                No: -1,
+                Any: -2,
+                Motorised: 0,
+                Armored: 1,
+                Support: 2,
+                Marine: 3,
+                Mecanized: 4,
+                Airborne: 5,
+                Naval: 6,
+                /**
+                * @memberof! EugServerState.EnumTypes.ThematicConstraintTypes
+                * @function toString
+                * @param {EugServerState.ThematicConstraintType} ThematicConstraint
+                * @returns {String}
+                */
+                toString:function(ThematicConstraint){
+                    switch(ThematicConstraint) {
+                        case -1:
+                            return "No";
+                        case -2:
+                            return "Any";
+                        case 0:
+                            return "Motorised";
+                        case 1:
+                            return "Armored";
+                        case 2:
+                            return "Support";
+                        case 3:
+                            return "Marine";
+                        case 4:
+                            return "Mecanized";
+                        case 5:
+                            return "Airborne";
+                        case 6:
+                            return "Navel";
+                        default:
+                            return "UNKNOWN";
                     }
                 }
             }
+            
         }
     } 
     toJSON() {
