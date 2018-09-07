@@ -1,47 +1,94 @@
 var ServerConfig = require('./server-config.json');
 var http = require('http');
+/**
+ * Dedicated 서버에 접속한 플레이어에 대한 정보를 담고있는 클래스
+ * @class
+ */
 class EugPlayer{
+    /**@constructor */
     constructor(){
+        /**
+         * 이 객체(플레이어)가 {@link EugTcpProxy}에서만 처리되었는지(false)) {@link EugLogTail}에서도 처리되었는지(true) 기록 
+         * @member {boolean}
+         */
         this._connectCorrectly = false;
     }
     
-    // 반드시 IP port 부분은 웹에서 제거해줘야함
+    /**
+     * IPv6로 표현되어있는 플레이어의 IP 주소. {@link EugTcpProxy}에서 넣어줌
+     * IP를 설정하면 {@link EugPlayer#getCountryCodeName}를 통해 플레이어가 접속한 국가를 검색함
+     * @member {String}
+     */
     set IP(str) {
         this._IP = str;
         this._CountryPromise = this.getCountryCodeName();
     }
     get IP() {return this._IP;}
 
+    /**
+     * 플레이어가 접속한 Port 번호. {@link EugTcpProxy}에서 넣어줌
+     * @member {number}
+     */
     set Port(str) {this._Port = str;}
     get Port() {return this._Port;}
 
+    /**@member {number} */
     set UserSessionId(str) {this._UserSessionId = parseInt(str);}
     get UserSessionId() {return this._UserSessionId;}
 
+    /**
+     * {@link EugPlayer#IP}가 설정되면 {@link EugPlayer#getU24}에서 API를 통해 국가의 ISO 3166-1 alpha-2 코드를 저장한다.
+     * @member {String} 
+     */
     //set country_code(str) {this._country_code = str;}
     get country_code() {return this._country_code;}
 
+    /**
+     * {@link EugPlayer#IP}가 설정되면 {@link EugPlayer#getU24}에서 API를 통해 국가의 이름을 저장한다.
+     * @member {String} 
+     */
     //set country_name(str) {this._country_name = str;}
     get country_name() {return this._country_name;}
 
+    /** 
+     * @member {String}
+     * @see EugPlayer#PlayerDeckContent
+     */
     set deck(str) {this._deck = str;}
     get deck() {return this._deck;}
+    
+    /**@member {String}*/
     set PlayerDeckContent(str) {this._deck = str;}
     get PlayerDeckContent() {return this._deck;}
 
+    /**
+     * @member {float}
+     * @see EugPlayer#PlayerElo
+     */
     set elo(str) {this._elo = parseFloat(str);}
     get elo() {return this._elo;}
+    /**@member {float} */
     set PlayerElo(str) {this._elo = parseFloat(str);}
     get PlayerElo() {return this._elo;}
 
+    /**
+     * @member {number}
+     * @see EugPlayer#PlayerLevel
+     */
     set level(str) {this._level = parseInt(str);}
     get level() {return this._level;}
+    /**@member {number} */
     set PlayerLevel(str) {this._level = parseInt(str);}
     get PlayerLevel() {return this._level;}
 
+    /**@member {String} */
     set name(str) {this._name = str;}
     get name() {return this._name;}
 
+    /**
+     * @member {number}
+     * @see EugPlayer#PlayerUserId
+     */
     set playerid(str) {
         this._playerid = parseInt(str);
         if(!this._U24Promise){
@@ -49,6 +96,10 @@ class EugPlayer{
         }
     }
     get playerid() {return this._playerid;}
+    /**
+     * @member {number}
+     * @see EugPlayer#PlayerUserId
+     */
     set EugNetId(str) {
         this._playerid = parseInt(str);
         if(!this._U24Promise){
@@ -56,6 +107,10 @@ class EugPlayer{
         }
     }
     get EugNetId() {return this._playerid;}
+    /**
+     * PlayerId를 설정하면 {@link EugPlayer#getU24}에서 EugNet API를 통해 플레이어의 전적 정보를 가져온다.
+     * @member {number}
+     */
     set PlayerUserId(str) {
         this._playerid = parseInt(str);
         if(!this._U24Promise){
@@ -64,45 +119,86 @@ class EugPlayer{
     }
     get PlayerUserId() {return this._playerid}
 
+    /**
+     * @member {number}
+     * @see EugPlayer#PlayerAlliance
+     */
     set side(str) {this._side = parseInt(str);}
     get side() {return this._side;}
+    /**@member {PlayerAllianceType} */
     set PlayerAlliance(str) {this._side = parseInt(str);}
     get PlayerAlliance() {return this._side;}
 
+    /**@member {number} */
     set socket(str) {this._socket = parseInt(str);}
     get socket() {return this._socket;}
 
     // serverlog에서 추출한 것이 아닌것
     //set u24(object) {this._u24 = object;}
+    /**@member {Object} */
     get u24() {return this._u24;}
 
+    /**@member {String} */
     set PlayerAvatar(str) {this._PlayerAvatar = str;}
     get PlayerAvatar() {return this._PlayerAvatar;}
 
+    /**@member {String} */
     set PlayerDeckName(str) {this._PlayerDeckName = str;}
     get PlayerDeckName() {return this._PlayerDeckName;}
 
+    /**@member {number} */
     set PlayerObserver(str) {this._PlayerObserver = parseInt(str);}
     get PlayerObserver() {return this._PlayerObserver;}
 
+    /**
+     * Dedicated server에서 플레이어를 1번 플레이어부터 순서로 부를 때 사용
+     * @member {number} 
+     */
     set PlayerNumber(str) {this._PlayerNumber = parseInt(str);}
     get PlayerNumber() {return this._PlayerNumber;}
 
+    /**@member {number} */
     set PlayerReady(str) {this._PlayerReady = parseInt(str);}
     get PlayerReady() {return this._PlayerReady;}
 
+    /**@member {String} */
     set PlayerTeamName(str) {this._PlayerTeamName = str;}
     get PlayerTeamName() {return this._PlayerTeamName;}
 
+    // /**
+    //  * @namespace EugPlayer.EnumTypes
+    //  * @property {EugPlayer.EnumTypes.PlayerAllianceTypes} PlayerAlliance
+    //  */
+    // /**@member {EugPlayer.EnumTypes} */
     static get Enum() {
         return  {
-            Side: {
-                Bluefor:0,
-                Redfor:1
-            }
+            // /**
+            //  * @namespace EugPlayer.EnumTypes.PlayerAllianceTypes
+            //  * @property {EugPlayer.PlayerAllianceType} Bluefor - 0
+            //  * @property {EugPlayer.PlayerAllianceType} Redfor - 1
+            //  */
+            // PlayerAlliance: {
+            //     Bluefor:0,
+            //     Redfor:1,
+            //     toString: function(PlayerAlliance){
+            //         switch(PlayerAlliance){
+            //             case 0:
+            //                 return "Bluefor";
+            //             case 1:
+            //                 return "Redfor";
+            //             default:
+            //                 return "UNKNOWN";
+            //         }
+            //     }
+            // }
         }
     }    
 
+    /**
+     * {@link EugPlayer#IP}로 플레이어가 접속한 국가를 찾는 함수
+     * @function
+     * @return {Promise}
+     */
     getCountryCodeName() {
         var player = this;
         return new Promise((resolve, reject)=>{
@@ -143,7 +239,11 @@ class EugPlayer{
             }
         })
     }
-
+    /**
+     * 플레이어의 레벨, 플레이 시간, 승패 전적 등을 EugNet에서 가져오는 함수
+     * @function
+     * @returns {Promise}
+     */
     getU24() {
         var player = this;
         return new Promise((resolve, reject)=>{
@@ -172,7 +272,11 @@ class EugPlayer{
             req_u24.end();
         })
     }
-    
+    /**
+     * getCountryCodeName과 getU24를 둘다 수행하고 수행이 다 되어있을 때를 Promise를 반환
+     * @function
+     * @returns {Promise}
+     */
     getAsync(){
         var promises = [];
         if(this._CountryPromise){
@@ -190,8 +294,8 @@ class EugPlayer{
 
     toJSON(){
         return {
-            IP: this._IP,
-            Port: this._Port,
+            // IP: this._IP,
+            // Port: this._Port,
             UserSessionId: this._UserSessionId,
             country_code: this._country_code,
             country_name: this._country_name,
