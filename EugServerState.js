@@ -8,138 +8,138 @@ class EugServerState{
      */
     constructor(){
         /**
-         * @member {Object<number, EugPlayer>}
+         * @type {Object<number, EugPlayer>}
          */
         this.players = {};
     }
     /**@typedef {number} EugServerState.DateConstraintType */
-    /**@member {EugServerState.DateConstraintType} */
+    /**@type {EugServerState.DateConstraintType} */
     set DateConstraint(str) {this._DateConstraint = parseInt(str);}
     get DateConstraint() {return this._DateConstraint;}
 
-    /**@member {number}*/
+    /**@type {number}*/
     set DebriefingTimeMax(str) {this._DebriefingTimeMax = parseInt(str);}
     get DebriefingTimeMax() {return this._DebriefingTimeMax;}
 
-    /**@member {number} */
+    /**@type {number} */
     set DeltaMaxTeamSize(str) {this._DeltaMaxTeamSize = parseInt(str);}
     get DeltaMaxTeamSize() {return this._DeltaMaxTeamSize;}
 
-    /**@member {number} */
+    /**@type {number} */
     set DeploiementTimeMax(str) {this._DeploiementTimeMax = parseInt(str);}
     get DeploiementTimeMax() {return this._DeploiementTimeMax;}
     
     /** @typedef {number} EugServerState.GameStateType */
-    /**@member {EugServerState.GameStateType} */
+    /**@type {EugServerState.GameStateType} */
     set GameState(str) {this._GameState = parseInt(str);}
     get GameState() {return this._GameState;}
 
     /**@typedef {number} EugServerState.GameTypeType */
-    /**@member {EugServerState.GameTypeType} */
+    /**@type {EugServerState.GameTypeType} */
     set GameType(str) {this._GameType = parseInt(str);}
     get GameType() {return this._GameType;}
 
     /**@typedef {number} EugServerState.IncomeRateType */
-    /**@member {EugServerState.IncomeRateType} */
+    /**@type {EugServerState.IncomeRateType} */
     set IncomeRate(str) {this._IncomeRate = parseInt(str);}
     get IncomeRate() {return this._IncomeRate;}
 
-    /**@member {number} */
+    /**@type {number} */
     set InitMoney(str) {this._InitMoney = parseInt(str);}
     get InitMoney() {return this._InitMoney;}
 
-    /**@member {number} */
+    /**@type {number} */
     set LoadingTimeMax(str) {this._LoadingTimeMax = parseInt(str);}
     get LoadingTimeMax() {return this._LoadingTimeMax;}
 
-    /**@member {String} */
+    /**@type {String} */
     set Map(str) {this._Map = str;}
     get Map() {return this._Map;}
 
-    /**@member {number} */
+    /**@type {number} */
     set MaxTeamSize(str) {this._MaxTeamSize = parseInt(str);}
     get MaxTeamSize() {return this._MaxTeamSize;}
 
     /**@typedef {number} EugServerState.NationConstraintType */
-    /**@member {EugServerState.NationConstraintType}*/
+    /**@type {EugServerState.NationConstraintType}*/
     set NationConstraint(str) {this._NationConstraint = parseInt(str);}
     get NationConstraint() {return this._NationConstraint}
 
-    /**@member {number} */
+    /**@type {number} */
     set NbIA(str) {this._NbIA = parseInt(str);}
     get NbIA() {return this._NbIA;}
 
-    /**@member {number} */
+    /**@type {number} */
     set NbMaxPlayer(str) {this._NbMaxPlayer = parseInt(str);}
     get NbMaxPlayer() {return this._NbMaxPlayer;}
 
-    /**@member {number} */
+    /**@type {number} */
     set NbMinPlayer(str) {this._NbMinPlayer = parseInt(str);}
     get NbMinPlayer() {return this._NbMinPlayer;}
 
-    /**@member {number} */
+    /**@type {number} */
     set NbPlayer(str) {this._NbPlayer = parseInt(str);}
     get NbPlayer() {return this._NbPlayer}
 
-    /**@member {number} */
+    /**@type {number} */
     set NeedPassword(str) {this._NeedPassword = parseInt(str);}
     get NeedPassword() {return this._NeedPassword;}
 
-    /**@member {String} */
+    /**@type {String} */
     set Password(str) {this._Password = str;}
     get Password() {return this._Password;}
 
-    /**@member {number} */
+    /**@type {number} */
     set Private(str) {this._Private = parseInt(str);}
     get Private() {return this._Private}
 
-    /**@member {number} */
+    /**@type {number} */
     set ScoreLimit(str) {this._ScoreLimit = parseInt(str);}
     get ScoreLimit() {return this._ScoreLimit;}
 
-    /**@member {number} */
+    /**@type {number} */
     set Seed(str) {this._Seed = parseInt(str);}
     get Seed() {return this._Seed;}
 
-    /**@member {String} */
+    /**@type {String} */
     set ServerName(str) {this._ServerName = str}
     get ServerName() {return this._ServerName;}
 
-    /**@member {String} */
+    /**@type {String} */
     set ServerProtocol(str) {this._ServerProtocol = str;}
     get ServerProtocol() {return this._ServerProtocol;}
 
     /**@typedef {number} EugServerState.ThematicConstraintType */
-    /**@member {EugServerState.ThematicConstraintType} */
+    /**@type {EugServerState.ThematicConstraintType} */
     set ThematicConstraint(str) {this._ThematicConstraint = parseInt(str);}
     get ThematicConstraint() {return this._ThematicConstraint;}
 
-    /**@member {number} */
+    /**@type {number} */
     set TimeLeft(str) {this._TimeLeft = parseInt(str);}
     get TimeLeft() {return this._TimeLeft;}
 
-    /**@member {number} */
+    /**@type {number} */
     set TimeLimit(str) {this._TimeLimit = parseInt(str);}
     get TimeLimit() {return this._TimeLimit;}
 
-    /**@member {number} */
+    /**@type {number} */
     set Version(str) {this._Version = parseInt(str);}
     get Version() {return this._Version;}
 
     /**@typedef {number} EugServerState.VictoryCondType */
-    /**@member {EugServerState.VictoryCondType} */
+    /**@type {EugServerState.VictoryCondType} */
     set VictoryCond(str) {this._VictoryCond = parseInt(str);}
     get VictoryCond() {return this._VictoryCond;}
 
-    /**@member {number} */
+    /**@type {number} */
     set WarmupCountdown(str) {this._WarmupCountdown = parseInt(str);}
     get WarmupCountdown() {return this._WarmupCountdown;}
 
-    /**@member {number} */
+    /**@type {number} */
     set WithHost(str) {this._WithHost = parseInt(str);}
     get WithHost() {return this._WithHost;}
 
-    /**@member {number} */
+    /**@type {number} */
     set AutoLaunchCond(str) {this._AutoLaunchCond = parseInt(str);}
     get AutoLaunchCond() {return this._AutoLaunchCond;}
 
@@ -153,7 +153,7 @@ class EugServerState{
      * @property {EugServerState.EnumTypes.VictoryCondTypes} VictoryCond
      */
     /**
-     * @member {EugServerState.EnumTypes}
+     * @type {EugServerState.EnumTypes}
      */
     static get Enum() {
         return {
@@ -169,7 +169,7 @@ class EugServerState{
                 Post80: 1,
                 /**
                  * @function toString
-                 * @memberof EugServerState.EnumTypes.DateConstraintTypes
+                 * @memberof! EugServerState.EnumTypes.DateConstraintTypes
                  * @param {EugServerState.DateConstraintType} DateConstraint
                  */
                 toString: function(DateConstraint){

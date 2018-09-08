@@ -1,12 +1,27 @@
 var net = require("net");
 const EugPacketStruct = require('./EugPacketStruct');
+const EugServerState = require('./EugServerState')
+const EugPacketStruct = require('./EugPacketStruct')
 
 function uniqueKey(socket) {
     var key = socket.remoteAddress + ":" + socket.remotePort;
     return key;
 }
 
+/**@class */
 class EugTcpProxy {
+    /**
+     * 
+     * @param {number} proxyPort 
+     * @param {String} serviceHost 
+     * @param {number} servicePort 
+     * @param {*} options 
+     * @param {EugServerState} serverState 
+     * @param {Object.<string, EugProtocol>} proxyToServiceClasses 
+     * @param {ProtocolModular[]} proxyToServiceModulars 
+     * @param {Object.<string, EugProtocol>} serviceToProxyClasses 
+     * @param {ProtocolModular[]} serviceToProxyModulars 
+     */
     constructor(proxyPort, serviceHost, servicePort, options, serverState, proxyToServiceClasses, proxyToServiceModulars, serviceToProxyClasses, serviceToProxyModulars) {
         this.proxyPort = proxyPort;
         this.serviceHost = serviceHost;
@@ -20,6 +35,9 @@ class EugTcpProxy {
             this.options = options;
         }
         this.proxySockets = {};
+        /**@type {Object.<string, EugTcpProxy.Context>}*/
+        // https://github.com/Microsoft/TypeScript/issues/26573
+        // https://github.com/Microsoft/vscode/issues/56884
         this.contexts = {};
         this.serverState = serverState;
         this.proxyToServiceModulars = proxyToServiceModulars;
@@ -63,6 +81,14 @@ class EugTcpProxy {
         proxy.server = net.createServer(function (proxySocket) {
             var key = uniqueKey(proxySocket);
             proxy.proxySockets[key] = proxySocket;
+            /**
+             * @typedef EugTcpProxy.Context
+             * @property {Buffer[]} buffers
+             * @property {Boolean} connected
+             * @property {Socket} proxySockets
+             * @property {EugPlayer} user
+             */
+            /**@type {EugTcpProxy.Context} */
             var context = {
                 buffers: [],
                 connected: false,

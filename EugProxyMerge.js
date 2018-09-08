@@ -7,10 +7,47 @@ const EugPlayer = require('./EugPlayer');
 const ServerState = require('./EugServerState');
 const serverState = new ServerState();
 const EventEmitter = require('events');
+/**@class */
 class EugEmitter extends EventEmitter {}
 const eugEmitter = new EugEmitter();
 
-class BtwDedicatedAndEugMainModule{
+// @interface와 @implements 로 그리고 이 인터페이스는 js파일로 빼는것으로.....
+class BtwProxyAndServiceModule {
+    
+    set enabled(value){this._enabled = value}
+    get enabled() {return this._enabled}
+    /**
+     * @typedef {function(EugProtocol, {pre:EugProtocol[], post:EugProtocol[]}, EugServerState, EugTcpProxy.Context): {protocol:EugProtocol, extraProtocols:{pre:EugProtocol[], post:EugProtocol[]}}} ModifierFunction 
+     */
+    // /**
+    //  * @typedef {function} ModifierFunction
+    //  * @param {EugProtocol} protocol
+    //  * @param {{pre:EugProtocol[], post:EugProtocol[]}} extraProtocols
+    //  * @param {EugServerState} serverState
+    //  * @param {EugTcpProxy.Context} context
+    //  * @returns {{protocol:EugProtocol, extraProtocols:{pre:EugProtocol[], post:EugProtocol[]}}}
+    //  */
+    // /**@function ModifierFunction
+    //  * @param {EugProtocol} protocol
+    //  * @param {{pre:EugProtocol[], post:EugProtocol[]}} extraProtocols
+    //  * @param {EugServerState} serverState
+    //  * @param {EugTcpProxy.Context} context
+    //  * @returns {{protocol:EugProtocol, extraProtocols:{pre:EugProtocol[], post:EugProtocol[]}}}
+    //  */
+    /**
+     * @typedef ProtocolModular
+     * @property {boolean} enabled
+     * @property {Object.<string, ModifierFunction>} Modifier
+     */
+    /**@returns {{proxyToService: ProtocolModular, serviceToProxy: ProtocolModular}} */
+    get ProtocolModulars() {
+        return {
+            proxyToService: new Object(),
+            serviceToProxy: new Object(),
+        }
+    }
+}
+class BtwDedicatedAndEugMainModule extends BtwProxyAndServiceModule{
     constructor(){
         this._enabled = true;
         this.setProtocolModulars();
@@ -33,7 +70,7 @@ class BtwDedicatedAndEugMainModule{
 
     set enabled(value){}
     get enabled() {return this._enabled;}
-    
+    /**@returns {{proxyToService: ProtocolModular, serviceToProxy: ProtocolModular}} */
     get ProtocolModulars() {
         return {
             proxyToService: this._DedicatedToEugProtocols,
@@ -77,7 +114,7 @@ class BtwUserAndDedicatedMainModule{
 
     set enabled(value){}
     get enabled() {return this._enabled;}
-
+    /**@returns {{proxyToService: ProtocolModular, serviceToProxy: ProtocolModular}} */
     get ProtocolModulars() {
         return {
             proxyToService: this._UserToDedicatedProtocols,

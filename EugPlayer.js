@@ -9,7 +9,7 @@ class EugPlayer{
     constructor(){
         /**
          * 이 객체(플레이어)가 {@link EugTcpProxy}에서만 처리되었는지(false)) {@link EugLogTail}에서도 처리되었는지(true) 기록 
-         * @member {boolean}
+         * @type {boolean}
          */
         this._connectCorrectly = false;
     }
@@ -17,7 +17,7 @@ class EugPlayer{
     /**
      * IPv6로 표현되어있는 플레이어의 IP 주소. {@link EugTcpProxy}에서 넣어줌
      * IP를 설정하면 {@link EugPlayer#getCountryCodeName}를 통해 플레이어가 접속한 국가를 검색함
-     * @member {String}
+     * @type {String}
      */
     set IP(str) {
         this._IP = str;
@@ -27,66 +27,66 @@ class EugPlayer{
 
     /**
      * 플레이어가 접속한 Port 번호. {@link EugTcpProxy}에서 넣어줌
-     * @member {number}
+     * @type {number}
      */
     set Port(str) {this._Port = str;}
     get Port() {return this._Port;}
 
-    /**@member {number} */
+    /**@type {number} */
     set UserSessionId(str) {this._UserSessionId = parseInt(str);}
     get UserSessionId() {return this._UserSessionId;}
 
     /**
      * {@link EugPlayer#IP}가 설정되면 {@link EugPlayer#getU24}에서 API를 통해 국가의 ISO 3166-1 alpha-2 코드를 저장한다.
-     * @member {String} 
+     * @type {String} 
      */
     //set country_code(str) {this._country_code = str;}
     get country_code() {return this._country_code;}
 
     /**
      * {@link EugPlayer#IP}가 설정되면 {@link EugPlayer#getU24}에서 API를 통해 국가의 이름을 저장한다.
-     * @member {String} 
+     * @type {String} 
      */
     //set country_name(str) {this._country_name = str;}
     get country_name() {return this._country_name;}
 
     /** 
-     * @member {String}
+     * @type {String}
      * @see EugPlayer#PlayerDeckContent
      */
     set deck(str) {this._deck = str;}
     get deck() {return this._deck;}
     
-    /**@member {String}*/
+    /**@type {String}*/
     set PlayerDeckContent(str) {this._deck = str;}
     get PlayerDeckContent() {return this._deck;}
 
     /**
-     * @member {float}
+     * @type {float}
      * @see EugPlayer#PlayerElo
      */
     set elo(str) {this._elo = parseFloat(str);}
     get elo() {return this._elo;}
-    /**@member {float} */
+    /**@type {float} */
     set PlayerElo(str) {this._elo = parseFloat(str);}
     get PlayerElo() {return this._elo;}
 
     /**
-     * @member {number}
+     * @type {number}
      * @see EugPlayer#PlayerLevel
      */
     set level(str) {this._level = parseInt(str);}
     get level() {return this._level;}
-    /**@member {number} */
+    /**@type {number} */
     set PlayerLevel(str) {this._level = parseInt(str);}
     get PlayerLevel() {return this._level;}
 
-    /**@member {String} */
+    /**@type {String} */
     set name(str) {this._name = str;}
     get name() {return this._name;}
 
     /**
-     * @member {number}
+     * @type {number}
      * @see EugPlayer#PlayerUserId
      */
     set playerid(str) {
@@ -97,7 +97,7 @@ class EugPlayer{
     }
     get playerid() {return this._playerid;}
     /**
-     * @member {number}
+     * @type {number}
      * @see EugPlayer#PlayerUserId
      */
     set EugNetId(str) {
@@ -109,7 +109,7 @@ class EugPlayer{
     get EugNetId() {return this._playerid;}
     /**
      * PlayerId를 설정하면 {@link EugPlayer#getU24}에서 EugNet API를 통해 플레이어의 전적 정보를 가져온다.
-     * @member {number}
+     * @type {number}
      */
     set PlayerUserId(str) {
         this._playerid = parseInt(str);
@@ -120,48 +120,48 @@ class EugPlayer{
     get PlayerUserId() {return this._playerid}
 
     /**
-     * @member {number}
+     * @type {number}
      * @see EugPlayer#PlayerAlliance
      */
     set side(str) {this._side = parseInt(str);}
     get side() {return this._side;}
-    /**@member {PlayerAllianceType} */
+    /**@type {number} */
     set PlayerAlliance(str) {this._side = parseInt(str);}
     get PlayerAlliance() {return this._side;}
 
-    /**@member {number} */
+    /**@type {number} */
     set socket(str) {this._socket = parseInt(str);}
     get socket() {return this._socket;}
 
     // serverlog에서 추출한 것이 아닌것
     //set u24(object) {this._u24 = object;}
-    /**@member {Object} */
+    /**@type {Object} */
     get u24() {return this._u24;}
 
-    /**@member {String} */
+    /**@type {String} */
     set PlayerAvatar(str) {this._PlayerAvatar = str;}
     get PlayerAvatar() {return this._PlayerAvatar;}
 
-    /**@member {String} */
+    /**@type {String} */
     set PlayerDeckName(str) {this._PlayerDeckName = str;}
     get PlayerDeckName() {return this._PlayerDeckName;}
 
-    /**@member {number} */
+    /**@type {number} */
     set PlayerObserver(str) {this._PlayerObserver = parseInt(str);}
     get PlayerObserver() {return this._PlayerObserver;}
 
     /**
      * Dedicated server에서 플레이어를 1번 플레이어부터 순서로 부를 때 사용
-     * @member {number} 
+     * @type {number} 
      */
     set PlayerNumber(str) {this._PlayerNumber = parseInt(str);}
     get PlayerNumber() {return this._PlayerNumber;}
 
-    /**@member {number} */
+    /**@type {number} */
     set PlayerReady(str) {this._PlayerReady = parseInt(str);}
     get PlayerReady() {return this._PlayerReady;}
 
-    /**@member {String} */
+    /**@type {String} */
     set PlayerTeamName(str) {this._PlayerTeamName = str;}
     get PlayerTeamName() {return this._PlayerTeamName;}
 
@@ -169,7 +169,7 @@ class EugPlayer{
     //  * @namespace EugPlayer.EnumTypes
     //  * @property {EugPlayer.EnumTypes.PlayerAllianceTypes} PlayerAlliance
     //  */
-    // /**@member {EugPlayer.EnumTypes} */
+    // /**@type {EugPlayer.EnumTypes} */
     static get Enum() {
         return  {
             // /**
