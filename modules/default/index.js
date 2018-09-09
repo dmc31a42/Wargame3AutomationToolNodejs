@@ -44,20 +44,23 @@ class DefaultModule{
   setProtocolModulars() {
     this._DedicatedToUserProtocols = {
       enabled: true,
+      EugProtocolModifierFunctions: {}
     };
     this._UserToDedicatedProtocols = {
       enabled: true,
-      C2: (protocol, extraProtocols, serverState, context) => {
-        if(protocol.Type==0x65){
-          const DeckRegExp = /^@(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/;
-          if(DeckRegExp.exec(protocol.Chat)){
-              this._eugRCON.setpvar(context.user.EugNetId, 'PlayerDeckContent', protocol.Chat)
+      EugProtocolModifierFunctions: {
+        C2: (protocol, extraProtocols, serverState, context) => {
+          if(protocol.Type==0x65){
+            const DeckRegExp = /^@(?:[A-Za-z0-9+/]{4})*(?:[A-Za-z0-9+/]{2}==|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{4})$/;
+            if(DeckRegExp.exec(protocol.Chat)){
+                this._eugRCON.setpvar(context.user.EugNetId, 'PlayerDeckContent', protocol.Chat)
+            }
           }
+          return {
+            protocol: protocol,
+            extraProtocols: extraProtocols
+          };
         }
-        return {
-          protocol: protocol,
-          extraProtocols: extraProtocols
-        };
       }
     };
   }

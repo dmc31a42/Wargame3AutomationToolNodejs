@@ -183,6 +183,4 @@ class EugRCON {
     }
 }
 
-module.exports = function(rconPath, rconRemoteHost, rconRemotePort, rconPassword){
-  return new EugRCON(rconPath, rconRemoteHost, rconRemotePort, rconPassword);
-}
+module.exports = EugRCON;

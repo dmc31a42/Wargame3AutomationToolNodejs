@@ -107,7 +107,7 @@ class EugLogTail{
             
             player.UserSessionId = RegExpExec[2];
             player.socket = RegExpExec[3];
-            player.side = EugPlayer.Enum.Side.Bluefor;
+            player.side = 0;
             player._connectCorrectly = true;
             // This part is processed in EugTcpProxy
             // player.IP = RegExpExec[4];

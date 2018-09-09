@@ -2,7 +2,8 @@
 const fs = require('fs');
 const EugPacketStruct = require('./EugPacketStruct');
 var ServerConfig = require('./server-config.json');
-const eugRCON = require('./EugRCON')(ServerConfig.rconPath, ServerConfig.rconRemoteHost, ServerConfig.rconRemotePort, ServerConfig.rconPassword);
+const EugRCON = require('./EugRCON');
+const eugRCON = new EugRCON(ServerConfig.rconPath, ServerConfig.rconRemoteHost, ServerConfig.rconRemotePort, ServerConfig.rconPassword);
 const EugPlayer = require('./EugPlayer');
 const ServerState = require('./EugServerState');
 const serverState = new ServerState();
@@ -10,67 +11,42 @@ const EventEmitter = require('events');
 /**@class */
 class EugEmitter extends EventEmitter {}
 const eugEmitter = new EugEmitter();
+const BtwProxyAndServiceModule = require('./BtwProxyAndServiceModule')
+const EugProtocolModular = require('./EugProtocolModular');
+const EugProtocolModifierFunction = require('./EugProtocolModifierFunction')
 
-// @interface와 @implements 로 그리고 이 인터페이스는 js파일로 빼는것으로.....
-class BtwProxyAndServiceModule {
-    
-    set enabled(value){this._enabled = value}
-    get enabled() {return this._enabled}
-    /**
-     * @typedef {function(EugProtocol, {pre:EugProtocol[], post:EugProtocol[]}, EugServerState, EugTcpProxy.Context): {protocol:EugProtocol, extraProtocols:{pre:EugProtocol[], post:EugProtocol[]}}} ModifierFunction 
-     */
-    // /**
-    //  * @typedef {function} ModifierFunction
-    //  * @param {EugProtocol} protocol
-    //  * @param {{pre:EugProtocol[], post:EugProtocol[]}} extraProtocols
-    //  * @param {EugServerState} serverState
-    //  * @param {EugTcpProxy.Context} context
-    //  * @returns {{protocol:EugProtocol, extraProtocols:{pre:EugProtocol[], post:EugProtocol[]}}}
-    //  */
-    // /**@function ModifierFunction
-    //  * @param {EugProtocol} protocol
-    //  * @param {{pre:EugProtocol[], post:EugProtocol[]}} extraProtocols
-    //  * @param {EugServerState} serverState
-    //  * @param {EugTcpProxy.Context} context
-    //  * @returns {{protocol:EugProtocol, extraProtocols:{pre:EugProtocol[], post:EugProtocol[]}}}
-    //  */
-    /**
-     * @typedef ProtocolModular
-     * @property {boolean} enabled
-     * @property {Object.<string, ModifierFunction>} Modifier
-     */
-    /**@returns {{proxyToService: ProtocolModular, serviceToProxy: ProtocolModular}} */
-    get ProtocolModulars() {
-        return {
-            proxyToService: new Object(),
-            serviceToProxy: new Object(),
-        }
-    }
-}
+/**@implements {BtwProxyAndServiceModule} */
 class BtwDedicatedAndEugMainModule extends BtwProxyAndServiceModule{
     constructor(){
+        super();
         this._enabled = true;
         this.setProtocolModulars();
     }
     setProtocolModulars() {
+        /**@type {EugProtocolModular} */
         this._DedicatedToEugProtocols = {
             enabled: true,
-            E1: (protocol, extraProtocols, serverState, context) => {
-                protocol.ServerPort = 10810;
-                return {
-                    protocol: protocol,
-                    extraProtocols: extraProtocols
-                };
+            EugProtocolModifierFunctions: {
+                /**@type {EugProtocolModifierFunction} */
+                E1: (protocol, extraProtocols, serverState, context) => {
+                    protocol.ServerPort = 10810;
+                    return {
+                        protocol: protocol,
+                        extraProtocols: extraProtocols
+                    };
+                }
             }
         };
+        /**@type {EugProtocolModular} */
         this._EugToDedicatedProtocols = {
             enabled: true,
+            EugProtocolModifierFunctions: {}
         }
     }
 
     set enabled(value){}
     get enabled() {return this._enabled;}
-    /**@returns {{proxyToService: ProtocolModular, serviceToProxy: ProtocolModular}} */
+    /**@returns {{proxyToService: EugProtocolModular, serviceToProxy: EugProtocolModular}} */
     get ProtocolModulars() {
         return {
             proxyToService: this._DedicatedToEugProtocols,
@@ -79,42 +55,50 @@ class BtwDedicatedAndEugMainModule extends BtwProxyAndServiceModule{
     }
 }
 
-class BtwUserAndDedicatedMainModule{
+/**@implements {BtwProxyAndServiceModule} */
+class BtwUserAndDedicatedMainModule extends BtwProxyAndServiceModule{
     constructor(){
+        super();
         this._enabled = true;
         this.setProtocolModulars();
     }
     setProtocolModulars(){
+        /**@type {EugProtocolModular} */
         this._UserToDedicatedProtocols = {
             enabled: true,
-            C1: (protocol, extraProtocols, serverState, context) => {
-                const EugNetId = protocol.EugNetId;
-
-                // var EugNetIdKeys = Object.keys(serverState.players);
-                // if(EugNetIdKeys.indexOf(EugNetId)==-1){
-                //     var player = new EugPlayer();
-                //     serverState.players[EugNetId] = player;
-                // }
-                // context.user = serverState.players[EugNetId];
-                context.user = new EugPlayer();
-                context.user.EugNetId = EugNetId;
-                context.user.IP = context.proxySocket.remoteAddress;
-                context.user.Port = context.proxySocket.remotePort;
-                context.user.context = context;
-                return {
-                    protocol: protocol,
-                    extraProtocols: extraProtocols
-                };
+            EugProtocolModifierFunctions: {
+                /**@type {EugProtocolModifierFunction} */
+                C1: (protocol, extraProtocols, serverState, context) => {
+                    const EugNetId = protocol.EugNetId;
+    
+                    // var EugNetIdKeys = Object.keys(serverState.players);
+                    // if(EugNetIdKeys.indexOf(EugNetId)==-1){
+                    //     var player = new EugPlayer();
+                    //     serverState.players[EugNetId] = player;
+                    // }
+                    // context.user = serverState.players[EugNetId];
+                    context.user = new EugPlayer();
+                    context.user.EugNetId = EugNetId;
+                    context.user.IP = context.proxySocket.remoteAddress;
+                    context.user.Port = context.proxySocket.remotePort;
+                    context.user.context = context;
+                    return {
+                        protocol: protocol,
+                        extraProtocols: extraProtocols
+                    };
+                }
             }
         }
+        /**@type {EugProtocolModular} */
         this._DedicatedToUserProtocols = {
             enabled: true,
+            EugProtocolModifierFunctions: {}
         }
     }
 
     set enabled(value){}
     get enabled() {return this._enabled;}
-    /**@returns {{proxyToService: ProtocolModular, serviceToProxy: ProtocolModular}} */
+    /**@returns {{proxyToService: EugProtocolModular, serviceToProxy: EugProtocolModular}} */
     get ProtocolModulars() {
         return {
             proxyToService: this._UserToDedicatedProtocols,
@@ -127,7 +111,7 @@ const btwDedicatedAndEugMainModule = new BtwDedicatedAndEugMainModule();
 const btwUserAndDedicatedMainModule = new BtwUserAndDedicatedMainModule();
 
 const btwUserAndDedicatedModules = [btwUserAndDedicatedMainModule];
-//
+/**@type {BtwProxyAndServiceModule[]} */
 const importedModules = require('./modules')(serverState, eugEmitter, eugRCON, btwUserAndDedicatedModules);
 importedModules.forEach((importedModule)=>{
     btwUserAndDedicatedModules.push(importedModule);

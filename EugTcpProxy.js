@@ -1,8 +1,9 @@
 var net = require("net");
 const EugPacketStruct = require('./EugPacketStruct');
 const EugServerState = require('./EugServerState')
-const EugPacketStruct = require('./EugPacketStruct')
-
+const EugProtocolModular = require('./EugProtocolModular')
+const SocketContext = require('./SocketContext')
+const Server = net.Server
 function uniqueKey(socket) {
     var key = socket.remoteAddress + ":" + socket.remotePort;
     return key;
@@ -18,15 +19,22 @@ class EugTcpProxy {
      * @param {*} options 
      * @param {EugServerState} serverState 
      * @param {Object.<string, EugProtocol>} proxyToServiceClasses 
-     * @param {ProtocolModular[]} proxyToServiceModulars 
+     * @param {EugProtocolModular[]} proxyToServiceModulars 
      * @param {Object.<string, EugProtocol>} serviceToProxyClasses 
-     * @param {ProtocolModular[]} serviceToProxyModulars 
+     * @param {EugProtocolModular[]} serviceToProxyModulars 
      */
     constructor(proxyPort, serviceHost, servicePort, options, serverState, proxyToServiceClasses, proxyToServiceModulars, serviceToProxyClasses, serviceToProxyModulars) {
+        /**@type {number} */
         this.proxyPort = proxyPort;
+        /**@type {String} */
         this.serviceHost = serviceHost;
+        /**@type {number} */
         this.servicePort = servicePort;
         if (options === undefined) {
+            /**
+             * 이 옵션은 TcpProxy의 원본을 가지고 확인해봐야함.
+             * @type {Object}
+             */
             this.options = {
                 quiet: false
             };
@@ -34,30 +42,51 @@ class EugTcpProxy {
         else {
             this.options = options;
         }
+        /**@type {Object.<String, Socket>} */
         this.proxySockets = {};
-        /**@type {Object.<string, EugTcpProxy.Context>}*/
+        /**@type {Object.<string, SocketContext>}*/
         // https://github.com/Microsoft/TypeScript/issues/26573
         // https://github.com/Microsoft/vscode/issues/56884
         this.contexts = {};
+        /**@type {EugServerState}*/
         this.serverState = serverState;
+        /**@type {EugProtocolModular[]} */
         this.proxyToServiceModulars = proxyToServiceModulars;
+        /**@type {EugProtocolModular[]} */
         this.serviceToProxyModulars = serviceToProxyModulars;
+        /**@type {Object.<string, EugProtocol>}*/
         this.proxyToServiceClasses = proxyToServiceClasses;
+        /**@type {Object.<string, EugProtocol>}*/
         this.serviceToProxyClasses = serviceToProxyClasses;
         this.initializeCommandCodes();
         this.createProxy();
+        /**
+         * @type {Server}
+         */
+        this.server;
     }
 
+    /**
+     * @access private
+     */
     initializeCommandCodes(){
-        var proxyToServiceCommandCodes = {};
-        var serviceToProxyCommandCodes = {};
+        /**
+         * @typedef BtwProxyAndServiceCommandCode
+         * @property {EugProtocol} Class
+         * @property {EugProtocolModular[]} Modulars
+         */
+        /**@type {Object.<String, BtwProxyAndServiceCommandCode>} */
+        var proxyToServiceCommandCodes = new Object();
+        /**@type {Object.<String, BtwProxyAndServiceCommandCode>} */
+        var serviceToProxyCommandCodes = new Object();
         for(var commandKey in this.proxyToServiceClasses) {
             proxyToServiceCommandCodes[commandKey] = {
                 Class: this.proxyToServiceClasses[commandKey]
             }
             proxyToServiceCommandCodes[commandKey].Modulars = [];
             this.proxyToServiceModulars.forEach((proxyToServiceModular)=>{
-                if(proxyToServiceModular[commandKey]){
+                if(proxyToServiceModular.EugProtocolModifierFunctions !== undefined && 
+                    "function" === typeof proxyToServiceModular.EugProtocolModifierFunctions[commandKey]){
                     proxyToServiceCommandCodes[commandKey].Modulars.push(proxyToServiceModular);
                 }
             })
@@ -68,7 +97,8 @@ class EugTcpProxy {
             }
             serviceToProxyCommandCodes[commandKey].Modulars = [];
             this.serviceToProxyModulars.forEach((serviceToProxyModular)=>{
-                if(serviceToProxyModular[commandKey]){
+                if(serviceToProxyModular.EugProtocolModifierFunctions !== undefined &&
+                    "function" === typeof serviceToProxyModular.EugProtocolModifierFunctions[commandKey]){
                     serviceToProxyCommandCodes[commandKey].Modulars.push(serviceToProxyModular);
                 }
             })
@@ -76,19 +106,17 @@ class EugTcpProxy {
         this.proxyToServiceCommandCodes = proxyToServiceCommandCodes;
         this.serviceToProxyCommandCodes = serviceToProxyCommandCodes;
     }
+    /**
+     * @access private
+     */
     createProxy() {
+        /**@type {EugTcpProxy} */
         const proxy = this;
         proxy.server = net.createServer(function (proxySocket) {
             var key = uniqueKey(proxySocket);
             proxy.proxySockets[key] = proxySocket;
-            /**
-             * @typedef EugTcpProxy.Context
-             * @property {Buffer[]} buffers
-             * @property {Boolean} connected
-             * @property {Socket} proxySockets
-             * @property {EugPlayer} user
-             */
-            /**@type {EugTcpProxy.Context} */
+            
+            /**@type {SocketContext} */
             var context = {
                 buffers: [],
                 connected: false,
@@ -142,6 +170,10 @@ class EugTcpProxy {
         });
         proxy.server.listen(proxy.proxyPort, proxy.options.hostname);
     }
+    /**
+     * @access private
+     * @param {SocketContext} context 
+     */
     createServiceSocket(context) {
         const proxy = this;
         context.serviceSocket = new net.Socket();
@@ -194,6 +226,12 @@ class EugTcpProxy {
         });
         return context;
     }
+    /**
+     * 
+     * @param {number} receiver - 채팅 메세지를 받을 PlayerUserId
+     * @param {String} msg - 채팅 메세지의 내용
+     * @param {number} sender  - 채팅 메세지를 보낸 것으로 표시할 PlayerUserId
+     */
     SendMessage(receiver, msg, sender) {
         if (!sender) {
             sender = 986359;
@@ -217,6 +255,9 @@ class EugTcpProxy {
             }
         }        
     }
+    /**
+     * 이 EugTcpProxy를 종료함
+     */
     end() {
         this.server.close();
         for (var key in this.proxySockets) {
@@ -224,12 +265,28 @@ class EugTcpProxy {
         }
         this.server.unref();
     }
+    /**
+     * @access private
+     * @param {Buffer} msg 
+     */
     log(msg) {
         if (!this.options.quiet) {
             //console.log(msg);
         }
     }
 
+    /**
+     * 
+     * @param {number} proxyPort 
+     * @param {String} serviceHost 
+     * @param {number} servicePort 
+     * @param {*} options 
+     * @param {EugServerState} serverState 
+     * @param {Object.<string, EugProtocol>} proxyToServiceClasses 
+     * @param {EugProtocolModular[]} proxyToServiceModulars 
+     * @param {Object.<string, EugProtocol>} serviceToProxyClasses 
+     * @param {EugProtocolModular[]} serviceToProxyModulars 
+     */
     static createProxy(proxyPort, serviceHost, servicePort, options, serverState, proxyToServiceClasses, proxyToServiceModulars, serviceToProxyClasses, serviceToProxyModulars) {
         return new this(proxyPort, serviceHost, servicePort, options, serverState, proxyToServiceClasses, proxyToServiceModulars, serviceToProxyClasses, serviceToProxyModulars);    
     }
@@ -237,6 +294,14 @@ class EugTcpProxy {
 
 module.exports = EugTcpProxy;
 
+/**
+ * @memberof EugTcpProxy.checkWargame3Packet
+ * @access private
+ * @param {Buffer} data 
+ * @param {Object.<String, BtwProxyAndServiceCommandCode>} commandCodes 
+ * @param {EugServerState} serverState 
+ * @param {SocketContext} context 
+ */
 function checkWargame3Packet(data, commandCodes, serverState, context) {
     var pos = 0;
     var buffers = [];
@@ -244,20 +309,28 @@ function checkWargame3Packet(data, commandCodes, serverState, context) {
         var slicedBuffer = data.slice(pos);
         if(slicedBuffer.length>=3){
             var commandKey = slicedBuffer[2].toString(16).toUpperCase();
+            /**@type {BtwProxyAndServiceCommandCode} */
             var commandCode = commandCodes[commandKey];
             var length = slicedBuffer.readUIntBE(0,2); 
             if(commandCode){
+                /**@type {EugProtocol} */
                 var wargame3Protocol = new commandCodes[commandKey].Class().FromBuffer(slicedBuffer);
+                /**@type {EugProtocol[]} */
                 var preProtocol = [];
+                /**@type {EugProtocol[]} */
                 var postProtocol = [];
+                /**@type {EugProtocol} */
                 var modifiedProtocol = wargame3Protocol;
                 var extraProtocols = {
                     pre: preProtocol,
                     post: postProtocol
                 }
+                /**
+                 * @param {EugProtocolModular} modular
+                 */
                 commandCode.Modulars.forEach((modular)=>{
                     if(modular.enabled){
-                        var result = modular[commandKey](modifiedProtocol, extraProtocols, serverState, context);
+                        var result = modular.EugProtocolModifierFunctions[commandKey](modifiedProtocol, extraProtocols, serverState, context);
                         modifiedProtocol = result.protocol;
                         extraProtocols = result.extraProtocols;
                     }

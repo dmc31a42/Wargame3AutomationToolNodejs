@@ -50,12 +50,12 @@ class SelectTeamModule{
       if(this._immediately || this._NotSelected.length == 0){
         while(!team1Done && !team2Done){
           if(this._Team1Selected.length>i){
-            eugRCON.setpvar(this._Team1Selected[i], "PlayerAlliance", EugPlayer.Enum.Side.Bluefor); 
+            eugRCON.setpvar(this._Team1Selected[i], "PlayerAlliance", 0); 
           } else {
             team1Done = true;
           }
           if(this._Team2Selected.length>i){
-            eugRCON.setpvar(this._Team2Selected[i], "PlayerAlliance", EugPlayer.Enum.Side.Redfor);
+            eugRCON.setpvar(this._Team2Selected[i], "PlayerAlliance", 0);
           } else {
             team2Done = true;
           }
@@ -65,10 +65,10 @@ class SelectTeamModule{
     });
 
     eugEmitter.on("playerSideChanged", (playerid, side)=>{
-      if(this._Team1Selected.indexOf(playerid)>-1 && serverState.players[playerid].side != EugPlayer.Enum.Side.Bluefor) {
-        eugRCON.setpvar(playerid, "PlayerAlliance", EugPlayer.Enum.Side.Bluefor);
-      } else if(this._Team2Selected.indexOf(playerid)>-1 && serverState.players[playerid].side != EugPlayer.Enum.Side.Redfor){
-        eugRCON.setpvar(playerid, "PlayerAlliance", EugPlayer.Enum.Side.Redfor);
+      if(this._Team1Selected.indexOf(playerid)>-1 && serverState.players[playerid].side != 0) {
+        eugRCON.setpvar(playerid, "PlayerAlliance", 0);
+      } else if(this._Team2Selected.indexOf(playerid)>-1 && serverState.players[playerid].side != 1){
+        eugRCON.setpvar(playerid, "PlayerAlliance", 1);
       }
     });
 
@@ -297,10 +297,10 @@ class SelectTeamModule{
         var code = data.code;
         var response;
         switch(side) {
-          case EugPlayer.Enum.Side.Bluefor:
+          case 0:
             selectTeamModule._Team1Code = code.trim();
             break;
-          case EugPlayer.Enum.Side.Redfor:
+          case 1:
             selectTeamModule._Team2Code = code.trim();
             break;
           default:
@@ -350,10 +350,10 @@ class SelectTeamModule{
     //   };
     // }
     switch(side) {
-      case EugPlayer.Enum.Side.Bluefor:
+      case 0:
         this._Team1Selected.push(playerid);
         break;
-      case EugPlayer.Enum.Side.Redfor:
+      case 1:
         this._Team2Selected.push(playerid);
         break;
       case -1:
@@ -386,9 +386,11 @@ class SelectTeamModule{
   setProtocolModulars() {
     this._DedicatedToUserProtocols = {
       enabled: true,
+      EugProtocolModifierFunctions: {}
     };
     this._UserToDedicatedProtocols = {
       enabled: true,
+      EugProtocolModifierFunctions: {}
     };
   }
 

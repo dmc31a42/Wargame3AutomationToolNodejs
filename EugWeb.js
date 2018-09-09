@@ -1,11 +1,31 @@
 const express = require('express');
-
+const EugServerState = require('./EugServerState')
+const EventEmitter = require('events')
+class EugEmitter extends EventEmitter {}
+const EugRCON = require('./EugRCON');
+const BtwProxyAndServiceModule = require('./BtwProxyAndServiceModule')
+/**
+ * @class
+ */
 class EugWeb {
+  /**
+   * 
+   * @param {number} servicePort 
+   * @param {EugServerState} serverState 
+   * @param {EugEmitter} eugEmitter 
+   * @param {EugRCON} eugRCON
+   * @param {BtwProxyAndServiceModule[]} importedModules 
+   */
   constructor(servicePort, serverState, eugEmitter, eugRCON, importedModules){
+    /**@type {number} */
     this.servicePort = servicePort;
+    /**@type {EugServerState} */
     this.serverState = serverState;
+    /**@type {EugEmitter} */
     this.eugEmitter = eugEmitter;
+    /**@type {EugRCON} */
     this.eugRCON = eugRCON;
+    /**@type {BtwProxyAndServiceModule[]} */
     this.importedModules = importedModules;
 
 

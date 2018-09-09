@@ -80,9 +80,11 @@ class ChatNoticeModule{
   setProtocolModulars() {
     this._DedicatedToUserProtocols = {
       enabled: true,
+      EugProtocolModifierFunctions: {}
     };
     this._UserToDedicatedProtocols = {
       enabled: true,
+      EugProtocolModifierFunctions: {}
     };
   }
 
