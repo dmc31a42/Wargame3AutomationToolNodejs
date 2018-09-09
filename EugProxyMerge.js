@@ -16,7 +16,7 @@ const EugProtocolModular = require('./EugProtocolModular');
 const EugProtocolModifierFunction = require('./EugProtocolModifierFunction')
 
 /**@implements {BtwProxyAndServiceModule} */
-class BtwDedicatedAndEugMainModule extends BtwProxyAndServiceModule{
+class BtwDedicatedAndEugMainModule {
     constructor(){
         super();
         this._enabled = true;
@@ -46,7 +46,7 @@ class BtwDedicatedAndEugMainModule extends BtwProxyAndServiceModule{
 
     set enabled(value){}
     get enabled() {return this._enabled;}
-    /**@returns {{proxyToService: EugProtocolModular, serviceToProxy: EugProtocolModular}} */
+    /**@returns {EugProtocolModular} */
     get ProtocolModulars() {
         return {
             proxyToService: this._DedicatedToEugProtocols,
@@ -56,7 +56,7 @@ class BtwDedicatedAndEugMainModule extends BtwProxyAndServiceModule{
 }
 
 /**@implements {BtwProxyAndServiceModule} */
-class BtwUserAndDedicatedMainModule extends BtwProxyAndServiceModule{
+class BtwUserAndDedicatedMainModule {
     constructor(){
         super();
         this._enabled = true;
@@ -111,7 +111,10 @@ const btwDedicatedAndEugMainModule = new BtwDedicatedAndEugMainModule();
 const btwUserAndDedicatedMainModule = new BtwUserAndDedicatedMainModule();
 
 const btwUserAndDedicatedModules = [btwUserAndDedicatedMainModule];
-/**@type {BtwProxyAndServiceModule[]} */
+/**
+ * @ignore
+ * @type {BtwProxyAndServiceModule[]} 
+ */
 const importedModules = require('./modules')(serverState, eugEmitter, eugRCON, btwUserAndDedicatedModules);
 importedModules.forEach((importedModule)=>{
     btwUserAndDedicatedModules.push(importedModule);

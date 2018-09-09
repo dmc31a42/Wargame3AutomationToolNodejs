@@ -3,10 +3,29 @@ const EugPacketStruct = require('./EugPacketStruct')
 const Express = require('express')()
 const Router = require('express').Router;
 const EugProtocolModulars = require('./EugProtocolModulars')
+const EugServerState = require('./EugServerState')
+const EventEmitter = require('events')
+class EugEmitter extends EventEmitter{}
+const EugRCON = require('./EugRCON')
 
-/**@interface */
+/**
+ * @class
+ */
 class BtwProxyAndServiceModule {
-    constructor(){
+    /**
+     * @constructor
+     * @param {EugServerState} serverState 
+     * @param {EugEmitter} eugEmitter 
+     * @param {EugRCON} eugRCON 
+     * @param {BtwProxyAndServiceModule[]} importedModules 
+     * @param {String} absolutePath 
+     */
+    constructor(serverState, eugEmitter, eugRCON, importedModules, absolutePath){
+        this.serverState = serverState;
+        this.eugEmitter = eugEmitter;
+        this.eugRCON = eugRCON;
+        this.importedModules = importedModules;
+        this.absolutePath = absolutePath;
         /**
          * @type {{name:String, path:String}} 
         */

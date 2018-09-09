@@ -1,4 +1,6 @@
-/**@interface */
+/**
+ * @class
+ */
 class EugProtocol {
   /**@constructor */
   constructor(){}
