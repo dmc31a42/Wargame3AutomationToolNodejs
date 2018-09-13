@@ -1,0 +1,19 @@
+{
+	"rconPath": "mcrcon",
+	"rconRemoteHost": "localhost",
+	"rconRemotePort": "10812",
+	"rconPassword": "rconPassword",
+	"AdminCode": "webpagePassword",
+	"ServicePort": 3000,
+	"__IPInfoDB_API_KEY": "API_KEY",
+	"__ipstack_API_KEY": "API_KEY",
+	"ip_mms": "178.32.126.73",
+    "port_mms": 10002,
+    "game_external_port": 10810,
+    "game_local_port": 10811,
+	"external_ip": "external_ip",
+	"SESSION": {
+		"secret": "keyboard cat"
+	},
+	"serverAdminEugNetId": 1
+}

@@ -4,6 +4,7 @@
   "description": "Wargame server control =========================== A Python 3 script for Wargame server automation",
   "main": "control.js",
   "dependencies": {
+    "@types/node": "^10.9.4",
     "bit-buffer": "^0.2.3",
     "bitwise": "^1.5.2",
     "delay": "^2.0.0",
