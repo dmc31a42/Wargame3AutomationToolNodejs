@@ -18,7 +18,6 @@ const EugProtocolModifierFunction = require('./EugProtocolModifierFunction')
 /**@implements {BtwProxyAndServiceModule} */
 class BtwDedicatedAndEugMainModule {
     constructor(){
-        super();
         this._enabled = true;
         this.setProtocolModulars();
     }
@@ -58,7 +57,7 @@ class BtwDedicatedAndEugMainModule {
 /**@implements {BtwProxyAndServiceModule} */
 class BtwUserAndDedicatedMainModule {
     constructor(){
-        super();
+        //super();
         this._enabled = true;
         this.setProtocolModulars();
     }

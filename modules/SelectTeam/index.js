@@ -36,6 +36,7 @@ class SelectTeamModule{
     this._Team1Code = "blue";
     this._Team2Code = "red";
     this._immediately = false;
+    this._SelectedDone = false;
     this._whoisTurn = 0;
     this.setProtocolModulars();
     this._moduleEmitter = new SelectTeamEmitter();
@@ -48,27 +49,35 @@ class SelectTeamModule{
       var team1Done = false;
       var team2Done = false;
       if(this._immediately || this._NotSelected.length == 0){
+        this._SelectedDone = false;
         while(!team1Done && !team2Done){
           if(this._Team1Selected.length>i){
-            eugRCON.setpvar(this._Team1Selected[i], "PlayerAlliance", 0); 
+            if(serverState.players[this._Team1Selected[i]].side == 1) {
+              eugRCON.setpvar(this._Team1Selected[i], "PlayerAlliance", 0); 
+            }
           } else {
             team1Done = true;
           }
           if(this._Team2Selected.length>i){
-            eugRCON.setpvar(this._Team2Selected[i], "PlayerAlliance", 0);
+            if(serverState.players[this._Team2Selected[i]].side == 0) {
+              eugRCON.setpvar(this._Team2Selected[i], "PlayerAlliance", 1);
+            }
           } else {
             team2Done = true;
           }
           i++;
         }
+        this._SelectedDone = true;
       }
     });
 
     eugEmitter.on("playerSideChanged", (playerid, side)=>{
-      if(this._Team1Selected.indexOf(playerid)>-1 && serverState.players[playerid].side != 0) {
-        eugRCON.setpvar(playerid, "PlayerAlliance", 0);
-      } else if(this._Team2Selected.indexOf(playerid)>-1 && serverState.players[playerid].side != 1){
-        eugRCON.setpvar(playerid, "PlayerAlliance", 1);
+      if(this._immediately || this._SelectedDone) {
+        if(this._Team1Selected.indexOf(playerid)>-1 && serverState.players[playerid].side != 0) {
+          eugRCON.setpvar(playerid, "PlayerAlliance", 0);
+        } else if(this._Team2Selected.indexOf(playerid)>-1 && serverState.players[playerid].side != 1){
+          eugRCON.setpvar(playerid, "PlayerAlliance", 1);
+        }
       }
     });
 
@@ -88,7 +97,10 @@ class SelectTeamModule{
     })
     eugEmitter.on("serverGameStateChanged",(gameState)=>{
       if(gameState == serverState.Enum.GameState.Loading) {
-        resetSelectTeam();
+        this.resetSelectTeam();
+        socket.emit("resetSelectTeam", {
+          response: 0
+        })
       }
     })
   }
@@ -168,13 +180,16 @@ class SelectTeamModule{
             }
           } else {
             playerids.forEach((playerid)=>{
-              selectTeamModule._NotSelected.splice(selectTeamModule._NotSelected.indexOf(playerid),-1);
+              selectTeamModule._NotSelected.splice(selectTeamModule._NotSelected.indexOf(playerid),1);
               socket.targetTeam.push(playerid);
             })
             if(selectTeamModule._whoisTurn == 0) {
               selectTeamModule._whoisTurn = 1;
             } else {
               selectTeamModule._whoisTurn = 0;
+            }
+            if(selectTeamModule._NotSelected.length == 0){
+              selectTeamModule._SelectedDone = false;
             }
             // selectTeamModule.setServer();
             response = {
@@ -207,9 +222,7 @@ class SelectTeamModule{
     })
     this._Team1Selected = [];
     this._Team2Selected = [];
-    socket.emit("resetSelectTeam", {
-      response: 0
-    })
+    this.__SelectedDone = false;
     this._moduleEmitter.emit("infoChanged");
     this._moduleEmitter.emit("teamChanged");
   }
