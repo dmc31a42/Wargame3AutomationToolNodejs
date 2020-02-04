@@ -28,7 +28,7 @@ class BtwDedicatedAndEugMainModule {
             EugProtocolModifierFunctions: {
                 /**@type {EugProtocolModifierFunction} */
                 E1: (protocol, extraProtocols, serverState, context) => {
-                    protocol.ServerPort = 10810;
+                    protocol.ServerPort = ServerConfig.game_external_port;
                     return {
                         protocol: protocol,
                         extraProtocols: extraProtocols
