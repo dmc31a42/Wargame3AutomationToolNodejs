@@ -210,7 +210,7 @@ class EugPlayer{
                 var option = {
                     hostname: 'api.ipstack.com',
                     port: 80,
-                    path: '/'+ this._IP + '?access_key=' + ServerConfig.ipstack_API_KEY,
+                    path: '/'+ encodeURI(this._IP) + '?access_key=' + ServerConfig.ipstack_API_KEY,
                     method: 'GET'
                 };
                 var req = http.request(option, function(res) {
