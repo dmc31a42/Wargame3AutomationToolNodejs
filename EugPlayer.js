@@ -207,10 +207,14 @@ class EugPlayer{
                 player._country_name = "Special";
                 resolve();
             } else if(ServerConfig.ipstack_API_KEY && ServerConfig.ipstack_API_KEY != '') {
+                let ip = this._IP;
+                if(ip.match("::ffff:")) {
+                    ip = ip.replace("::ffff:","");
+                }
                 var option = {
                     hostname: 'api.ipstack.com',
                     port: 80,
-                    path: '/'+ encodeURI(this._IP) + '?access_key=' + ServerConfig.ipstack_API_KEY,
+                    path: '/'+ encodeURI(ip) + '?access_key=' + ServerConfig.ipstack_API_KEY,
                     method: 'GET'
                 };
                 var req = http.request(option, function(res) {
