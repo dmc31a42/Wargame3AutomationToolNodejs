@@ -828,7 +828,7 @@ UdpProxy.prototype.createClient = function createClient(msg, sender) {
 UdpProxy.prototype.end = function(){
     console.log("UdpProxy", "Closing Udp proxy")
     clearTimeout(this._server.t);
-    this._server.close();
+    // this._server.close();
     for(var key in this.connections){
         clearTimeout(this.connections[key].t);
         this.connections[key].close();

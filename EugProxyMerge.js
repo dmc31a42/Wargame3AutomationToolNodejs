@@ -190,4 +190,5 @@ process.on("SIGINT", function() {
     eugTcpProxyBtwUserAndDedicated.end();
     eugUdpProxyBtwUserAndDedicated.end();
     eugLogTail.unwatch();
+    process.exit();
 });
