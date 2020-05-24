@@ -128,7 +128,7 @@ btwUserAndDedicatedModules.forEach((element)=>{
 const EugTcpProxy = require('./EugTcpProxy.js');
 
 const eugTcpProxyBtwDedicatedAndEug = EugTcpProxy.createProxy(
-    ServerConfig.port_mms,
+    ServerConfig.internal_port_mms,
     ServerConfig.ip_mms, 
     ServerConfig.port_mms,
     {}, 
