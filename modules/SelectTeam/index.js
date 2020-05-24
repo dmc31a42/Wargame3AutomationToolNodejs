@@ -3,6 +3,7 @@ const EugPlayer = require('../../EugPlayer');
 const EventEmitter = require('events');
 const ServerConfig = require('../../server-config.json');
 const EugPacketStruct = require('../../EugPacketStruct');
+const EugServerState = require('../../EugServerState');
 class SelectTeamEmitter extends EventEmitter{}
 
 /**
@@ -96,9 +97,9 @@ class SelectTeamModule{
       }
     })
     eugEmitter.on("serverGameStateChanged",(gameState)=>{
-      if(gameState == serverState.Enum.GameState.Loading) {
+      if(gameState == EugServerState.Enum.GameState.Loading) {
         this.resetSelectTeam();
-        socket.emit("resetSelectTeam", {
+        eugEmitter.emit("resetSelectTeam", {
           response: 0
         })
       }
