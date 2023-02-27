@@ -14,7 +14,7 @@
     "jsdoc": "^3.5.5",
     "net": "^1.0.2",
     "node-bitarray": "^0.1.0",
-    "node-tcp-proxy": "0.0.8",
+    "node-tcp-proxy": "0.0.28",
     "socket.io": "~2.0.4",
     "tail": "~1.2.3",
     "udp-proxy": "^1.0.1"
